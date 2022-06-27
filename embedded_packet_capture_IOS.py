@@ -115,7 +115,7 @@ if __name__ == '__main__':
     if pkts_rcvd.group():
         print(pkts_rcvd.group())
     else:
-        print('=> Packets received = 0')
+        print('=> Packets Received = 0')
 
     # Asking to copy the file to JC tftp
     copy_JC = input("==> Jose, do you want to copy the pcap file to your personal TFTP,(Y) to continue (N) to cancel:").lower()
