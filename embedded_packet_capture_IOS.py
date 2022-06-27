@@ -95,7 +95,7 @@ if __name__ == '__main__':
     else:
         print('=> Capture has not started')
 
-    # waiting
+    # Waiting
     time.sleep(timer)
     # print('=> Capture will run for ' + " " + str(timer) + " " + 'seconds')
 
