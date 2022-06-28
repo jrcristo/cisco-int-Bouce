@@ -672,7 +672,7 @@ def panos_credentials():
         'device_type': 'paloalto_panos',
         'ip': IP,
         'username': 'Read_Only',
-        'password': 'R0-Only1',
+        'password': 'S$@!L!nG!12',
     }
     return panos
 

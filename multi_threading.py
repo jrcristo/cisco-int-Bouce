@@ -4,25 +4,24 @@
 
 # This method will spin up threads and process IP addresses in a queue
 
+import os
+import signal
+import threading
+# Additional modules imported for getting password, pretty print
+from pprint import pprint
+# Queuing and threading libraries
+from queue import Queue
+
 # Importing Netmiko modules
 from netmiko import Netmiko
 from netmiko.ssh_exception import NetMikoAuthenticationException, NetMikoTimeoutException
-
-# Additional modules imported for getting password, pretty print
-from getpass import getpass
-from pprint import pprint
-import signal, os
-
-# Queuing and threading libraries
-from queue import Queue
-import threading
 
 # These capture errors relating to hitting ctrl+C (I forget the source)
 # signal.signal(signal.SIGPIPE, signal.SIG_DFL)  # IOError: Broken pipe
 # signal.signal(signal.SIGINT, signal.SIG_DFL)  # KeyboardInterrupt: Ctrl-C
 
 # Get the password
-password = getpass()
+### password = getpass()
 
 # Switch IP addresses from text file that has one IP per line
 ip_addrs_file = open('ips.txt')
@@ -56,7 +55,7 @@ def deviceconnector(i, q):
         device_dict = {
             'host': ip,
             'username': 'ccl',
-            'password': password,
+            'password': 'N@v!gaT!nG~',
             'device_type': 'cisco_ios'
         }
 
