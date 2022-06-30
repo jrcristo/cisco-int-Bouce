@@ -955,6 +955,29 @@ def connect_wlc(isIP):
     return JC
 
 
+def get_wlc_facts(net_connect):
+    output = net_connect.send_command("show ver")
+    if 'Incorrect usage' in output:
+        sysinfo = net_connect.send_command("show sysinfo")
+        inv = net_connect.send_command("show inventory")
+        model = re.search(r'PID.\s(\w+.\w+.\w+)', inv)
+        name = re.search(r'System\sNam\w+\S+\s(.*)', sysinfo)
+        os_ver = re.search(r'Prod\w+\sVer\w+\S+\s(.*)', sysinfo)
+        print('==> Platform AireOS =>', model.group(1))
+        print('=> System Name:', name.group(1))
+        print('=> OS version:', os_ver.group(1))
+        print('*---*-*---*-*---*-*---*-*---*')
+
+
+def get_wlc_wlan_qos(net_connect):
+    # getting MedNet or CrewNet ID
+    ssid_id = net_connect.send_command("show wlan summa")
+    MedNet = re.search(r'(\d+).*\bMedallionNet\b', ssid_id)
+    CreNet = re.search(r'(\d+).*\bCrewNet\b', ssid_id)
+    print('MedNet id =', MedNet.group(1))
+    print('CrewNet ID =', CreNet.group(1))
+
+
 def get_wlc_ap_facts(ap_name, net_connect):
     output = net_connect.send_command("show ap config general" + " " + ap_name)
     #    print(ch.send_command("show ap config general" + " " + ap_name))
