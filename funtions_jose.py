@@ -963,10 +963,11 @@ def get_wlc_facts(net_connect):
         model = re.search(r'PID.\s(\w+.\w+.\w+)', inv)
         name = re.search(r'System\sNam\w+\S+\s(.*)', sysinfo)
         os_ver = re.search(r'Prod\w+\sVer\w+\S+\s(.*)', sysinfo)
+        print('*---*-*---*-*---*-*---*-*---*')
         print('==> Platform AireOS =>', model.group(1))
         print('=> System Name:', name.group(1))
         print('=> OS version:', os_ver.group(1))
-        print('*---*-*---*-*---*-*---*-*---*')
+        # print('*---*-*---*-*---*-*---*-*---*')
 
 
 def get_wlc_wlan_qos(net_connect):
@@ -974,8 +975,39 @@ def get_wlc_wlan_qos(net_connect):
     ssid_id = net_connect.send_command("show wlan summa")
     MedNet = re.search(r'(\d+).*\bMedallionNet\b', ssid_id)
     CreNet = re.search(r'(\d+).*\bCrewNet\b', ssid_id)
-    print('MedNet id =', MedNet.group(1))
-    print('CrewNet ID =', CreNet.group(1))
+    print('=> MedNet ID =', MedNet.group(1))
+    print('=> CrewNet ID =', CreNet.group(1))
+    print('*---*-*---*-*---*-*---*-*---*')
+
+    # getting wlan info MedNet
+    print('==> MedNet Info <==')
+    wlan_MedNet = net_connect.send_command("show wlan" + " " + MedNet.group(1))
+    ssid = re.search(r'Name\s\(SSID\)\S+\s(\w+)', wlan_MedNet)
+    ssid_status = re.search(r'Status\S+\s(\w+)', wlan_MedNet)
+    broadcast = re.search(r'Broad\w+\sS\w+\S+\s(\w+)', wlan_MedNet)
+    qos = re.search(r'Qual\w+\s\w+\s\w+\S+\s(\w+)', wlan_MedNet)
+
+    print('=> SSID =', ssid.group(1))
+    print('=> SSID Status =', ssid_status.group(1))
+    print('=> Broadcast SSID', broadcast.group(1))
+    print('=> Quality of Service', qos.group(1))
+    print('*---*-*---*-*---*-*---*-*---*')
+    print('==> Per-SSID Rate Limits     Upstream      Downstream')
+    x = ' '
+    per_wlan = re.search(r'Per-SSID Rate Limits.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)', wlan_MedNet)
+    wlc_ave_data_rate = re.search(r'Ave\w+\sD\w+\s\w+\S+\s+(\d+)\s+(\d+)', per_wlan.group(1))
+    wlc_real_time_data_rate = re.search(r'Ave\w+\sRe\w+\sD\w+\sR\w+\S+\s+(\d+)\s+(\d+)', per_wlan.group(2))
+    wlc_burst_data_rate = re.search(r'Bur\w+\sDa\w+\sR\w+\S+\s+(\d+)\s+(\d+)', per_wlan.group(3))
+    wlc_burst_realtime_data_rate = re.search(r'Bur\w+\sRe\w+\sD\w+\sRa\w+\S+\s+(\d+)\s+(\d+)', per_wlan.group(4))
+    print('=> Average Data Rate           ', wlc_ave_data_rate.group(1), x*12, wlc_ave_data_rate.group(2))
+    print('=> Average Realtime Data Rate  ', wlc_real_time_data_rate.group(1), x*12, wlc_real_time_data_rate.group(2))
+    print('=> Burst Data Rate             ', wlc_burst_data_rate.group(1), x*12, wlc_burst_data_rate.group(2))
+    print('=> Burst Realtime Data Rate    ', wlc_burst_realtime_data_rate.group(1), x*12, wlc_burst_realtime_data_rate.group(2))
+
+    # print(per_wlan.group(1))
+    # print(per_wlan.group(2))
+    # print(per_wlan.group(3))
+    #print(per_wlan.group(4))
 
 
 def get_wlc_ap_facts(ap_name, net_connect):
