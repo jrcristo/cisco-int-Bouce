@@ -922,6 +922,7 @@ def check_ocean_dmvpn(net_connect):
 def connect_wlc(isIP):
     if isIP:
         IP = isIP
+        print('*---*-*---*-*---*-*---*-*---*')
         print('==> Using CCL credentials')
         # USERNAME = input("What's the username: ")
         # PASS = input("What's the password: ")
