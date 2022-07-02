@@ -1000,17 +1000,17 @@ def get_wlc_wlan_qos(net_connect):
     print('=> SSID Status =', ssid_status.group(1))
     print('=> Broadcast SSID =', broadcast.group(1))
     print('=> Quality of Service =', qos.group(1))
-    print('==> Per-SSID Rate Limits     Upstream      Downstream')
+    print('==> Per-SSID Rate Limits     Upstream             Downstream')
     x = ' '
     per_wlan = re.search(r'Per-SSID Rate Limits.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)', wlan_MedNet)
     wlc_ave_data_rate = re.search(r'Ave\w+\sD\w+\s\w+\S+\s+(\d+)\s+(\d+)', per_wlan.group(1))
     wlc_real_time_data_rate = re.search(r'Ave\w+\sRe\w+\sD\w+\sR\w+\S+\s+(\d+)\s+(\d+)', per_wlan.group(2))
     wlc_burst_data_rate = re.search(r'Bur\w+\sDa\w+\sR\w+\S+\s+(\d+)\s+(\d+)', per_wlan.group(3))
     wlc_burst_realtime_data_rate = re.search(r'Bur\w+\sRe\w+\sD\w+\sRa\w+\S+\s+(\d+)\s+(\d+)', per_wlan.group(4))
-    print('=> Average Data Rate           ', wlc_ave_data_rate.group(1), x*12, wlc_ave_data_rate.group(2))
-    print('=> Average Realtime Data Rate  ', wlc_real_time_data_rate.group(1), x*12, wlc_real_time_data_rate.group(2))
-    print('=> Burst Data Rate             ', wlc_burst_data_rate.group(1), x*12, wlc_burst_data_rate.group(2))
-    print('=> Burst Realtime Data Rate    ', wlc_burst_realtime_data_rate.group(1), x*12, wlc_burst_realtime_data_rate.group(2))
+    print('=> Average Data Rate           ', wlc_ave_data_rate.group(1)+' kbps', x*12, wlc_ave_data_rate.group(2)+' kbps')
+    print('=> Average Realtime Data Rate  ', wlc_real_time_data_rate.group(1)+' kbps', x*12, wlc_real_time_data_rate.group(2)+' kbps')
+    print('=> Burst Data Rate             ', wlc_burst_data_rate.group(1)+' kbps', x*12, wlc_burst_data_rate.group(2)+' kbps')
+    print('=> Burst Realtime Data Rate    ', wlc_burst_realtime_data_rate.group(1)+' kbps', x*12, wlc_burst_realtime_data_rate.group(2)+' kbps')
 
     # getting wlan info CrewNet
     print('*---*-*---*-*---*-*---*-*---*')
@@ -1025,7 +1025,7 @@ def get_wlc_wlan_qos(net_connect):
     print('=> SSID Status =', crewnet_ssid_status.group(1))
     print('=> Broadcast SSID =', crewnet_broadcast.group(1))
     print('=> Quality of Service =', crewnet_qos.group(1))
-    print('==> Per-Client Rate Limits     Upstream      Downstream')
+    print('==> Per-Client Rate Limits      Upstream              Downstream')
     per_wlan = re.search(r'Per-Client Rate Limits.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)',
                          wlan_CrewNet)
     crewnet_wlc_ave_data_rate = re.search(r'Ave\w+\sD\w+\s\w+\S+\s+(\d+)\s+(\d+)', per_wlan.group(1))
@@ -1033,11 +1033,11 @@ def get_wlc_wlan_qos(net_connect):
     crewnet_wlc_burst_data_rate = re.search(r'Bur\w+\sDa\w+\sR\w+\S+\s+(\d+)\s+(\d+)', per_wlan.group(3))
     crewnet_wlc_burst_realtime_data_rate = re.search(r'Bur\w+\sRe\w+\sD\w+\sRa\w+\S+\s+(\d+)\s+(\d+)', per_wlan.group(4))
 
-    print('=> Average Data Rate           ', crewnet_wlc_ave_data_rate.group(1), x * 12, crewnet_wlc_ave_data_rate.group(2))
-    print('=> Average Realtime Data Rate  ', crewnet_wlc_real_time_data_rate.group(1), x * 12, crewnet_wlc_real_time_data_rate.group(2))
-    print('=> Burst Data Rate             ', crewnet_wlc_burst_data_rate.group(1), x * 12, crewnet_wlc_burst_data_rate.group(2))
-    print('=> Burst Realtime Data Rate    ', crewnet_wlc_burst_realtime_data_rate.group(1), x * 12,
-          crewnet_wlc_burst_realtime_data_rate.group(2))
+    print('=> Average Data Rate           ', crewnet_wlc_ave_data_rate.group(1)+' kbps', x * 12, crewnet_wlc_ave_data_rate.group(2)+' kbps')
+    print('=> Average Realtime Data Rate  ', crewnet_wlc_real_time_data_rate.group(1)+' kbps', x * 12, crewnet_wlc_real_time_data_rate.group(2)+' kbps')
+    print('=> Burst Data Rate             ', crewnet_wlc_burst_data_rate.group(1)+' kbps', x * 12, crewnet_wlc_burst_data_rate.group(2)+' kbps')
+    print('=> Burst Realtime Data Rate    ', crewnet_wlc_burst_realtime_data_rate.group(1)+' kbps', x * 12,
+          crewnet_wlc_burst_realtime_data_rate.group(2)+' kbps')
 
 
 def get_wlc_ap_facts(ap_name, net_connect):
