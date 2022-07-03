@@ -355,12 +355,19 @@ if __name__ == '__main__':
                 net_connect = ConnectHandler(**JC)
                 net_connect.enable()
 
-                # showing WLC facts
-                funtions_jose.get_wlc_facts(net_connect)
-                # showing QoS
-                funtions_jose.get_wlc_wlan_qos(net_connect)
-                # print('*---*-*---*-*---*-*---*-*---*-*---*-')
-                # print('*---*-*---*-*---*-*---*-*---*-*---*-')
+                # exception to WLC98k
+                if '10.125.71.225' in line or '10.125.135.225' in line:
+                    # showing WLC facts
+                    funtions_jose.get_wlc_facts(net_connect)
+                    # showing QoS
+                    funtions_jose.get_wlc_wlan_qos_9800(net_connect)
+                else:
+                    # showing WLC facts
+                    funtions_jose.get_wlc_facts(net_connect)
+                    # showing QoS
+                    funtions_jose.get_wlc_wlan_qos(net_connect)
+                    # print('*---*-*---*-*---*-*---*-*---*-*---*-')
+                    # print('*---*-*---*-*---*-*---*-*---*-*---*-')
 
     else:
         print('==> Exiting <==')
