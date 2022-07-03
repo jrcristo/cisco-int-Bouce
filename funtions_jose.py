@@ -1091,6 +1091,7 @@ def get_wlc_wlan_qos_9800(net_connect):
     total_clients = re.search(r'Acti\w+\sCl\w+\s+.\s(\d+)', wlan_MedNet)
     auth = re.search(r'802.11\sAu\w+\s+.\s(.*)', wlan_MedNet)
 
+    print('==> MedallionNet Info <==')
     print('=> SSID =', ssid.group(1))
     print('=> SSID Status =', ssid_status.group(1))
     print('=> Broadcast SSID =', broadcast.group(1))
@@ -1098,12 +1099,12 @@ def get_wlc_wlan_qos_9800(net_connect):
     print('=> 802.11 Authentication =', auth.group(1))
     print('==> QOS per SSID')
     mednet_qos_ssid = re.search('QOS\sper\sS.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)', MedNet_profile)
-    ingres_mednet = re.search('In\S+\s\S+\s\S+\s+.\s(\w+)', mednet_qos_ssid.group(1))
-    egress_mednet = re.search('Eg\S+\s\S+\s\S+\s+.\s(\w+)', mednet_qos_ssid.group(2))
+    ingres_mednet = re.search('In\S+\s\S+\s\S+\s+.\s(.*)', mednet_qos_ssid.group(1))
+    egress_mednet = re.search('Eg\S+\s\S+\s\S+\s+.\s(.*)', mednet_qos_ssid.group(2))
     if 'Not' in ingres_mednet.group(1):
         print('=> Ingress = Not Configured')
     else:
-        print('=> Ingress = ', ingres_mednet.group(1))
+        print('=> Ingress =', ingres_mednet.group(1))
 
     if 'Not' in egress_mednet.group(1):
         print('=> Egress = Not Configured')
@@ -1112,8 +1113,8 @@ def get_wlc_wlan_qos_9800(net_connect):
 
     print('==> QOS per Client')
     mednet_qos_client = re.search('QOS\sper\sC.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)', MedNet_profile)
-    ingres_client = re.search('In\S+\s\S+\s\S+\s+.\s(\w+)', mednet_qos_client.group(1))
-    egress_client = re.search('Eg\S+\s\S+\s\S+\s+.\s(\w+)', mednet_qos_client.group(2))
+    ingres_client = re.search('In\S+\s\S+\s\S+\s+.\s(.*)', mednet_qos_client.group(1))
+    egress_client = re.search('Eg\S+\s\S+\s\S+\s+.\s(.*)', mednet_qos_client.group(2))
     if 'Not' in ingres_client.group(1):
         print('=> Ingress = Not Configured')
     else:
@@ -1124,6 +1125,49 @@ def get_wlc_wlan_qos_9800(net_connect):
     else:
         print('=> Egress  =', egress_client.group(1))
 
+    # getting wlan info CrewNet
+    print('*---*-*---*-*---*-*---*-*---*')
+    wlan_CrewNet = net_connect.send_command("show wlan id" + " " + CreNet.group(1))
+    CrewNet_profile = net_connect.send_command('sho wireless profile policy detailed MedallionCrew_Profile')
+    ssid = re.search(r'Name\s\(SSID\)\s+.\s(\w+)', wlan_CrewNet)
+    ssid_status = re.search(r'Status\s+.\s(\w+)', wlan_CrewNet)
+    broadcast = re.search(r'Broad\w+\s\w+\s+.\s(\w+)', wlan_CrewNet)
+    total_clients = re.search(r'Acti\w+\sCl\w+\s+.\s(\d+)', wlan_CrewNet)
+    auth = re.search(r'802.11\sAu\w+\s+.\s(.*)', wlan_CrewNet)
+
+    print('==> CrewNet Info <==')
+    print('=> SSID =', ssid.group(1))
+    print('=> SSID Status =', ssid_status.group(1))
+    print('=> Broadcast SSID =', broadcast.group(1))
+    print('=> Total Clients connected', total_clients.group(1))
+    print('=> 802.11 Authentication =', auth.group(1))
+    print('==> QOS per SSID')
+    crewnet_qos_ssid = re.search('QOS\sper\sS.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)', CrewNet_profile)
+    ingres_crewnet = re.search('In\S+\s\S+\s\S+\s+.\s(.*)', crewnet_qos_ssid.group(1))
+    egress_crewnet = re.search('Eg\S+\s\S+\s\S+\s+.\s(.*)', crewnet_qos_ssid.group(2))
+    if 'Not' in ingres_crewnet.group(1):
+        print('=> Ingress = Not Configured')
+    else:
+        print('=> Ingress =', ingres_crewnet.group(1))
+
+    if 'Not' in egress_crewnet.group(1):
+        print('=> Egress = Not Configured')
+    else:
+        print('=> Egress  =', egress_crewnet.group(1))
+
+    print('==> QOS per Client')
+    crewnet_qos_client = re.search('QOS\sper\sC.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)', CrewNet_profile)
+    ingres_client_crew = re.search('In\S+\s\S+\s\S+\s+.\s(.*)', crewnet_qos_client.group(1))
+    egress_client_crew = re.search('Eg\S+\s\S+\s\S+\s+.\s(.*)', crewnet_qos_client.group(2))
+    if 'Not' in ingres_client_crew.group(1):
+        print('=> Ingress = Not Configured')
+    else:
+        print('=> Ingress =', ingres_client_crew.group(1))
+
+    if 'Not' in egress_client_crew.group(1):
+        print('=> Egress = Not Configured')
+    else:
+        print('=> Egress  =', egress_client_crew.group(1))
 
 
 def get_wlc_ap_facts(ap_name, net_connect):
