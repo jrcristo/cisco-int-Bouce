@@ -976,7 +976,26 @@ def get_wlc_facts(net_connect):
         print('=> Total of WLANs:', wlans_total.group(1))
         print('=> Total Clients:', total_clients.group(1))
 
-        # print('*---*-*---*-*---*-*---*-*---*')
+    elif 'Cisco IOS XE':
+        inv_9800 = net_connect.send_command("show inventory")
+        model = re.search(r'Cha\w+\s\d+".*[\r\n]+([^\r\n]+)', inv_9800)
+        model_inv = re.search(r'P\w+.\s(\S+)', model.group(1))
+        name = re.search(r'(.*)\s\buptime\b', output)
+        os = re.search(r'Ci\w+\sIOS\sXE\s\S+\s\S+\s(.*)', output)
+        uptime = re.search(r'uptime\s\S+\s(.*)', output)
+        serial1 = re.search(r'Chassis\s1".*[\r\n]+([^\r\n]+)', inv_9800)
+        ser = re.search(r'SN.\s(\S+)', serial1.group())
+        serial2 = re.search(r'Chassis\s2".*[\r\n]+([^\r\n]+)', inv_9800)
+        ser2 = re.search(r'SN.\s(\S+)', serial2.group())
+        print('*---*-*---*-*---*-*---*-*---*')
+        print('==> Platform IOS =>', 'Model=' + model_inv.group(1))
+        print('=> System Name:', name.group(1))
+        print('=> OS version:', os.group(1))
+        print('=> UPTIME:', uptime.group(1))
+        if ser2.group(1):
+            print('=> Serial #(s) =', '[' + ser.group(1), ',' + ser2.group(1) + ']')
+        else:
+            print('=> Serial # =', ser.group(1))
 
 
 def get_wlc_wlan_qos(net_connect):
@@ -995,22 +1014,29 @@ def get_wlc_wlan_qos(net_connect):
     ssid_status = re.search(r'Status\S+\s(\w+)', wlan_MedNet)
     broadcast = re.search(r'Broad\w+\sS\w+\S+\s(\w+)', wlan_MedNet)
     qos = re.search(r'Qual\w+\s\w+\s\w+\S+\s(\w+)', wlan_MedNet)
+    total_clients = re.search(r'Acti\w+\sC\w+\S+\s(\d+)', wlan_MedNet)
 
     print('=> SSID =', ssid.group(1))
+    print('=> Active Clients =', total_clients.group(1))
     print('=> SSID Status =', ssid_status.group(1))
     print('=> Broadcast SSID =', broadcast.group(1))
     print('=> Quality of Service =', qos.group(1))
     print('==> Per-SSID Rate Limits     Upstream             Downstream')
     x = ' '
-    per_wlan = re.search(r'Per-SSID Rate Limits.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)', wlan_MedNet)
+    per_wlan = re.search(r'Per-SSID Rate Limits.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)',
+                         wlan_MedNet)
     wlc_ave_data_rate = re.search(r'Ave\w+\sD\w+\s\w+\S+\s+(\d+)\s+(\d+)', per_wlan.group(1))
     wlc_real_time_data_rate = re.search(r'Ave\w+\sRe\w+\sD\w+\sR\w+\S+\s+(\d+)\s+(\d+)', per_wlan.group(2))
     wlc_burst_data_rate = re.search(r'Bur\w+\sDa\w+\sR\w+\S+\s+(\d+)\s+(\d+)', per_wlan.group(3))
     wlc_burst_realtime_data_rate = re.search(r'Bur\w+\sRe\w+\sD\w+\sRa\w+\S+\s+(\d+)\s+(\d+)', per_wlan.group(4))
-    print('=> Average Data Rate           ', wlc_ave_data_rate.group(1)+' kbps', x*12, wlc_ave_data_rate.group(2)+' kbps')
-    print('=> Average Realtime Data Rate  ', wlc_real_time_data_rate.group(1)+' kbps', x*12, wlc_real_time_data_rate.group(2)+' kbps')
-    print('=> Burst Data Rate             ', wlc_burst_data_rate.group(1)+' kbps', x*12, wlc_burst_data_rate.group(2)+' kbps')
-    print('=> Burst Realtime Data Rate    ', wlc_burst_realtime_data_rate.group(1)+' kbps', x*12, wlc_burst_realtime_data_rate.group(2)+' kbps')
+    print('=> Average Data Rate           ', wlc_ave_data_rate.group(1) + ' kbps', x * 12,
+          wlc_ave_data_rate.group(2) + ' kbps')
+    print('=> Average Realtime Data Rate  ', wlc_real_time_data_rate.group(1) + ' kbps', x * 12,
+          wlc_real_time_data_rate.group(2) + ' kbps')
+    print('=> Burst Data Rate             ', wlc_burst_data_rate.group(1) + ' kbps', x * 12,
+          wlc_burst_data_rate.group(2) + ' kbps')
+    print('=> Burst Realtime Data Rate    ', wlc_burst_realtime_data_rate.group(1) + ' kbps', x * 12,
+          wlc_burst_realtime_data_rate.group(2) + ' kbps')
 
     # getting wlan info CrewNet
     print('*---*-*---*-*---*-*---*-*---*')
@@ -1020,24 +1046,84 @@ def get_wlc_wlan_qos(net_connect):
     crewnet_ssid_status = re.search(r'Status\S+\s(\w+)', wlan_CrewNet)
     crewnet_broadcast = re.search(r'Broad\w+\sS\w+\S+\s(\w+)', wlan_CrewNet)
     crewnet_qos = re.search(r'Qual\w+\s\w+\s\w+\S+\s(\w+)', wlan_CrewNet)
+    crewnet_total_clients = re.search(r'Acti\w+\sC\w+\S+\s(\d+)', wlan_CrewNet)
 
     print('=> SSID =', crewnet_ssid.group(1))
+    print('=> Active Clients =', crewnet_total_clients.group(1))
     print('=> SSID Status =', crewnet_ssid_status.group(1))
     print('=> Broadcast SSID =', crewnet_broadcast.group(1))
     print('=> Quality of Service =', crewnet_qos.group(1))
     print('==> Per-Client Rate Limits      Upstream              Downstream')
-    per_wlan = re.search(r'Per-Client Rate Limits.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)',
-                         wlan_CrewNet)
+    per_wlan = re.search(
+        r'Per-Client Rate Limits.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)',
+        wlan_CrewNet)
     crewnet_wlc_ave_data_rate = re.search(r'Ave\w+\sD\w+\s\w+\S+\s+(\d+)\s+(\d+)', per_wlan.group(1))
     crewnet_wlc_real_time_data_rate = re.search(r'Ave\w+\sRe\w+\sD\w+\sR\w+\S+\s+(\d+)\s+(\d+)', per_wlan.group(2))
     crewnet_wlc_burst_data_rate = re.search(r'Bur\w+\sDa\w+\sR\w+\S+\s+(\d+)\s+(\d+)', per_wlan.group(3))
-    crewnet_wlc_burst_realtime_data_rate = re.search(r'Bur\w+\sRe\w+\sD\w+\sRa\w+\S+\s+(\d+)\s+(\d+)', per_wlan.group(4))
+    crewnet_wlc_burst_realtime_data_rate = re.search(r'Bur\w+\sRe\w+\sD\w+\sRa\w+\S+\s+(\d+)\s+(\d+)',
+                                                     per_wlan.group(4))
 
-    print('=> Average Data Rate           ', crewnet_wlc_ave_data_rate.group(1)+' kbps', x * 12, crewnet_wlc_ave_data_rate.group(2)+' kbps')
-    print('=> Average Realtime Data Rate  ', crewnet_wlc_real_time_data_rate.group(1)+' kbps', x * 12, crewnet_wlc_real_time_data_rate.group(2)+' kbps')
-    print('=> Burst Data Rate             ', crewnet_wlc_burst_data_rate.group(1)+' kbps', x * 12, crewnet_wlc_burst_data_rate.group(2)+' kbps')
-    print('=> Burst Realtime Data Rate    ', crewnet_wlc_burst_realtime_data_rate.group(1)+' kbps', x * 12,
-          crewnet_wlc_burst_realtime_data_rate.group(2)+' kbps')
+    print('=> Average Data Rate           ', crewnet_wlc_ave_data_rate.group(1) + ' kbps', x * 12,
+          crewnet_wlc_ave_data_rate.group(2) + ' kbps')
+    print('=> Average Realtime Data Rate  ', crewnet_wlc_real_time_data_rate.group(1) + ' kbps', x * 12,
+          crewnet_wlc_real_time_data_rate.group(2) + ' kbps')
+    print('=> Burst Data Rate             ', crewnet_wlc_burst_data_rate.group(1) + ' kbps', x * 12,
+          crewnet_wlc_burst_data_rate.group(2) + ' kbps')
+    print('=> Burst Realtime Data Rate    ', crewnet_wlc_burst_realtime_data_rate.group(1) + ' kbps', x * 12,
+          crewnet_wlc_burst_realtime_data_rate.group(2) + ' kbps')
+
+
+def get_wlc_wlan_qos_9800(net_connect):
+    # getting MedNet or CrewNet ID
+    ssid_id = net_connect.send_command("show wlan summa")
+    MedNet = re.search(r'(\d+).*\bMedallionNet\b', ssid_id)
+    CreNet = re.search(r'(\d+).*\bCrewNet\b', ssid_id)
+    print('=> MedNet ID =', MedNet.group(1))
+    print('=> CrewNet ID =', CreNet.group(1))
+    print('*---*-*---*-*---*-*---*-*---*')
+
+    # getting wlan info MedNet
+    wlan_MedNet = net_connect.send_command("show wlan id" + " " + MedNet.group(1))
+    MedNet_profile = net_connect.send_command('sho wireless profile policy detailed MedallionNet_Policy')
+    ssid = re.search(r'Name\s\(SSID\)\s+.\s(\w+)', wlan_MedNet)
+    ssid_status = re.search(r'Status\s+.\s(\w+)', wlan_MedNet)
+    broadcast = re.search(r'Broad\w+\s\w+\s+.\s(\w+)', wlan_MedNet)
+    total_clients = re.search(r'Acti\w+\sCl\w+\s+.\s(\d+)', wlan_MedNet)
+    auth = re.search(r'802.11\sAu\w+\s+.\s(.*)', wlan_MedNet)
+
+    print('=> SSID =', ssid.group(1))
+    print('=> SSID Status =', ssid_status.group(1))
+    print('=> Broadcast SSID =', broadcast.group(1))
+    print('=> Total Clients connected', total_clients.group(1))
+    print('=> 802.11 Authentication =', auth.group(1))
+    print('==> QOS per SSID')
+    mednet_qos_ssid = re.search('QOS\sper\sS.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)', MedNet_profile)
+    ingres_mednet = re.search('In\S+\s\S+\s\S+\s+.\s(\w+)', mednet_qos_ssid.group(1))
+    egress_mednet = re.search('Eg\S+\s\S+\s\S+\s+.\s(\w+)', mednet_qos_ssid.group(2))
+    if 'Not' in ingres_mednet.group(1):
+        print('=> Ingress = Not Configured')
+    else:
+        print('=> Ingress = ', ingres_mednet.group(1))
+
+    if 'Not' in egress_mednet.group(1):
+        print('=> Egress = Not Configured')
+    else:
+        print('=> Egress  =', egress_mednet.group(1))
+
+    print('==> QOS per Client')
+    mednet_qos_client = re.search('QOS\sper\sC.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)', MedNet_profile)
+    ingres_client = re.search('In\S+\s\S+\s\S+\s+.\s(\w+)', mednet_qos_client.group(1))
+    egress_client = re.search('Eg\S+\s\S+\s\S+\s+.\s(\w+)', mednet_qos_client.group(2))
+    if 'Not' in ingres_client.group(1):
+        print('=> Ingress = Not Configured')
+    else:
+        print('=> Ingress =', ingres_client.group(1))
+
+    if 'Not' in egress_client.group(1):
+        print('=> Egress = Not Configured')
+    else:
+        print('=> Egress  =', egress_client.group(1))
+
 
 
 def get_wlc_ap_facts(ap_name, net_connect):
