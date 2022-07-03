@@ -29,7 +29,47 @@ if __name__ == '__main__':
             ip = re.match('^IP', ship)
             ru = re.match('^RU', ship)
             sa = re.match('^SA', ship)
+            ex = re.match('^EX', ship)
+            xp = re.match('^XP', ship)
             pev2 = re.match('^PEV', ship)
+
+        except AttributeError:
+            pass
+
+        try:
+            if ex.group():
+                isIP = '10.125.71.225'
+                print('==> Connecting to EX=ENCHANTED WLC at' + " " + isIP)
+                JC = funtions_jose.connect_wlc(isIP)
+                net_connect = ConnectHandler(**JC)
+                net_connect.enable()
+
+                # showing WLC facts
+                funtions_jose.get_wlc_facts(net_connect)
+
+                # showing QoS
+                funtions_jose.get_wlc_wlan_qos_9800(net_connect)
+
+                exit(0)
+
+        except AttributeError:
+            pass
+
+        try:
+            if xp.group():
+                isIP = '10.125.135.225'
+                print('==> Connecting to XP=DISCOVERY WLC at' + " " + isIP)
+                JC = funtions_jose.connect_wlc(isIP)
+                net_connect = ConnectHandler(**JC)
+                net_connect.enable()
+
+                # showing WLC facts
+                funtions_jose.get_wlc_facts(net_connect)
+
+                # showing QoS
+                funtions_jose.get_wlc_wlan_qos_9800(net_connect)
+
+                exit(0)
 
         except AttributeError:
             pass
