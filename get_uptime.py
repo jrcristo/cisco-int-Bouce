@@ -13,17 +13,5 @@ net_connect.enable()
 # output = net_connect.send_config_set(config_commands)
 # print(output)
 
-# validating if nexus
-output = net_connect.send_command('sh ver | inc Nexus')
-if output:
-    print('==> Nexus Device Detected <==')
-    nexus = net_connect.send_command('sh system uptime')
-    # getting hostname
-    nexus_hostname = net_connect.send_command('sh run | inc hostname')
-    hostname = re.search(r'PCL.*', nexus_hostname)
-    print(nexus, hostname.group())
-
-else:
-    print('==> IOS Device Detected <==')
-    output = net_connect.send_command('sh ver | inc uptime|Uptime|Last')
-    print(output)
+# calling the function
+funtions_jose.get_hostname(net_connect)
