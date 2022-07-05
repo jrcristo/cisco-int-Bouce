@@ -728,6 +728,26 @@ def check_bgp_network(bgp_route, net_connect):
                     print('=> The neighbor' + " " + bgp_route + " " + 'is down <==\n')
 
             else:
+                # testing with vrf details #
+                vrf_list = ['MDL-CREW', 'MDL-PAX', 'Ocean', 'Trident-SDN', 'Voice']
+                global_routing = net_connect.send_command('sh ip bgp neighbor' + " " + bgp_route)
+                if 'No such neighbor' in global_routing:
+                    for c in range(len(vrf_list)):
+                        vrf = net_connect.send_command(
+                            'sh ip bgp vpnv4 vrf' + " " + str(vrf_list[c]) + " " + 'neighbors' + " " + bgp_route)
+                        # print('vrf', vrf)
+                        if 'No such neighbor' in vrf:
+                            pass
+                        else:
+                            # getting bgp version
+                            bgp_nei = re.search(r'BGP\sne.*', vrf)
+                            bgp_ver = re.search(r'BGP\sv.*', vrf)
+                            bgp_state = re.search(r'BGP\ss.*', vrf)
+                            print('=>' + bgp_nei.group())
+                            print('=>' + bgp_ver.group())
+                            print('=>' + bgp_state.group())
+                ## end Testing ##
+
                 print('==> more than one BGP neighbor received <==')
                 print('=> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
                 get_ios_nxos_name(net_connect)
@@ -741,6 +761,26 @@ def check_bgp_network(bgp_route, net_connect):
         print('==> Only one neighbor received <==')
         print('=> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
         get_ios_nxos_name(net_connect)
+        # testing with vrf details #
+        vrf_list = ['MDL-CREW', 'MDL-PAX', 'Ocean', 'Trident-SDN', 'Voice']
+        global_routing = net_connect.send_command('sh ip bgp neighbor' + " " + bgp_route)
+        if 'No such neighbor' in global_routing:
+            for c in range(len(vrf_list)):
+                vrf = net_connect.send_command(
+                    'sh ip bgp vpnv4 vrf' + " " + str(vrf_list[c]) + " " + 'neighbors' + " " + bgp_route)
+                # print('vrf', vrf)
+                if 'No such neighbor' in vrf:
+                    pass
+                else:
+                    # getting bgp version
+                    bgp_nei = re.search(r'BGP\sne.*', vrf)
+                    bgp_ver = re.search(r'BGP\sv.*', vrf)
+                    bgp_state = re.search(r'BGP\ss.*', vrf)
+                    print('=>' + bgp_nei.group())
+                    print('=>' + bgp_ver.group())
+                    print('=>' + bgp_state.group())
+        ## end Testing ##
+
         for j in range(len(output_filter)):
             # tired of the errors..FU......K, searching for Active or something
             not_up1 = re.search(r'\b(\w+)+\b$', output_filter[j])
@@ -1647,7 +1687,6 @@ def panos_check_interface(net_connect):
     except AttributeError:
         pass
     print('*---*-*---*-*---*-*---*-')
-
 
 
 def panos_filter_logs(src_ip, net_connect):
