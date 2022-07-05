@@ -690,7 +690,8 @@ def panos_credentials():
         'device_type': 'paloalto_panos',
         'ip': IP,
         'username': 'Read_Only',
-        'password': 'S$@!L!nG!12',
+        # 'password': 'S$@!L!nG!12',
+        'password': 'R0-Only1',
     }
     return panos
 
@@ -1603,6 +1604,50 @@ def panos_show_system_info(net_connect):
         # software_version
         sw_version = re.search(r'sw-v.*', output)
         print(sw_version.group())
+
+
+def panos_check_interface(net_connect):
+    # getting interface
+    interface = str(input("Whats the interface:"))
+    sysinfo = net_connect.send_command('show system info')
+    output = net_connect.send_command('show interface' + " " + interface)
+
+    hostname = re.search(r'host\w+.\s(.*)', sysinfo)
+    ipv4 = re.search(r'ip-ad\S+\s(\d+.*)', sysinfo)
+    uptime = re.search(r'upt\S+\s(.*)', sysinfo)
+    model = re.search(r'mod\S+\s(P.*)', sysinfo)
+    print('*---*-*---*-*---*-*---*-')
+    print('=> Hostname =', hostname.group(1))
+    print('=> IP =', ipv4.group(1))
+    print('=> UPTIME =', uptime.group(1))
+    print('=> Model =', model.group(1))
+    print('*---*-*---*-*---*-*---*-')
+    print('=> Interface =', interface)
+    link_data = re.search(r'Lin.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)',
+                          output)
+    print(link_data.group())
+    print('*---*-*---*-*---*-*---*-')
+
+    vr = re.search(r'Vir.*', output)
+    mtu = re.search(r'.* \bMTU\b. *', output)
+    inter_ip = re.search(r'Interface\sI.*', output)
+    inter_mgmt = re.search(r'Interface\sma.*', output)
+    zone = re.search(r'Zon.*', output)
+    try:
+        if vr.group():
+            print(vr.group())
+        if mtu.group():
+            print(mtu.group())
+        if inter_ip.group():
+            print(inter_ip.group())
+        if inter_mgmt.group():
+            print(inter_mgmt.group())
+        if zone.group():
+            print(zone.group())
+    except AttributeError:
+        pass
+    print('*---*-*---*-*---*-*---*-')
+
 
 
 def panos_filter_logs(src_ip, net_connect):
