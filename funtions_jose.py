@@ -728,16 +728,17 @@ def check_bgp_network(bgp_route, net_connect):
 
             else:
                 print('==> more than one BGP neighbor received <==')
+                print('=> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
                 get_ios_nxos_name(net_connect)
                 result_first = re.search(r'(\d+\.\d+\.\d+\.\d+\s+\d\s+\d+.\d+)', output)
                 result_2nd = re.search(r'(\d{2}:\d{2}:\d+)|(\d{1,2}[a-z]\w+)', output)
                 result_3rd = re.search(r'\d+$', output)
-                print('=> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
                 print('Neighbor        V        AS   Up/Down PfxRcd')
                 print(result_first.group() + " " + result_2nd.group(), result_3rd.group(), '\n')
 
     else:
         print('==> Only one neighbor received <==')
+        print('=> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
         get_ios_nxos_name(net_connect)
         for j in range(len(output_filter)):
             # tired of the errors..FU......K, searching for Active or something
@@ -752,7 +753,6 @@ def check_bgp_network(bgp_route, net_connect):
                 result_first = re.search(r'(\d+\.\d+\.\d+\.\d+\s+\d\s+\d+.\d+)', output)
                 result_2nd = re.search(r'(\d{2}:\d{2}:\d+)|(\d{1,2}[a-z]\w+)', output)
                 result_3rd = re.search(r'\d+$', output)
-                print('=> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
                 print('Neighbor        V        AS   Up/Down PfxRcd')
                 print(result_first.group() + " " + result_2nd.group(), result_3rd.group())
 
