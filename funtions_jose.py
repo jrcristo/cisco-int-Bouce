@@ -1,5 +1,7 @@
 import datetime
 import getpass
+import time
+from time import time
 
 from netmiko import ConnectHandler
 import re
@@ -714,6 +716,7 @@ def check_bgp_network(bgp_route, net_connect):
                 result_first = re.search(r'(\d+\.\d+\.\d+\.\d+\s+\d\s+\d+.\d+)', output)
                 result_2nd = re.search(r'(\d{2}:\d{2}:\d+)|(\d{1,2}[a-z]\w+)', output)
                 result_3rd = re.search(r'\d+$', output)
+                print('=> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
                 print('Neighbor        V        AS   Up/Down PfxRcd')
                 print(result_first.group() + " " + result_2nd.group(), result_3rd.group(), '\n')
 
@@ -733,6 +736,7 @@ def check_bgp_network(bgp_route, net_connect):
                 result_first = re.search(r'(\d+\.\d+\.\d+\.\d+\s+\d\s+\d+.\d+)', output)
                 result_2nd = re.search(r'(\d{2}:\d{2}:\d+)|(\d{1,2}[a-z]\w+)', output)
                 result_3rd = re.search(r'\d+$', output)
+                print('=> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
                 print('Neighbor        V        AS   Up/Down PfxRcd')
                 print(result_first.group() + " " + result_2nd.group(), result_3rd.group())
 
@@ -1508,7 +1512,7 @@ def check_power_inline_details(inter, net_connect):
 
 
 def get_time_date():
-    date_time = datetime.datetime.now()
+    date_time = datetime.datetime.now().strftime("%H:%M:%S")
     date = datetime.date.today()
     # print('Current time = %s' % time)
 
