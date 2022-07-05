@@ -553,6 +553,22 @@ def check_interface_status(inter, net_connect):
     return
 
 
+def get_hostname(net_connect):
+    output = net_connect.send_command('sh ver | inc Nexus')
+    if output:
+        print('==> Nexus Device Detected <==')
+        nexus = net_connect.send_command('sh system uptime')
+        # getting hostname
+        nexus_hostname = net_connect.send_command('sh run | inc hostname')
+        hostname = re.search(r'host\w+\s(.*)', nexus_hostname)
+        print(nexus, hostname.group(1))
+
+    else:
+        print('==> IOS Device Detected <==')
+        output = net_connect.send_command('sh ver | inc uptime|Uptime|Last')
+        print(output)
+
+
 def check_interface_details_and_po(inter, net_connect):
     # checking running int config to validate if INT is member of a PO
     if 'po' in inter or 'port-channel' in inter:
