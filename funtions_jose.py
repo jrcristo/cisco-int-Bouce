@@ -784,10 +784,11 @@ def check_bgp_network(bgp_route, net_connect):
 
         for j in range(len(output_filter)):
             # tired of the errors..FU......K, searching for Active or something
-            not_up1 = re.search(r'\b(\w+)+\b$', output_filter[j])
-            # print(not_up1.group())
+            not_up1 = re.search(r'\((.+)\)|\b(\w+)+\b$', output_filter[j])
+            # print('not_up', not_up1.group())
+            # print('=>', not_up1.group())
 
-            if 'Active' in not_up1.group() or 'never' in not_up1.group() or 'Idle' in not_up1.group():
+            if 'Active' in not_up1.group() or 'never' in not_up1.group() or 'Idle' in not_up1.group() or 'Admin' in not_up1.group():
                 bgp_ip = re.search(r'\d[1-9]{1,3}\.\d+\.\d+\.\d+', output_filter[j])
                 print('=> The neighbor' + " " + bgp_route + " " + 'is down <==\n')
 
