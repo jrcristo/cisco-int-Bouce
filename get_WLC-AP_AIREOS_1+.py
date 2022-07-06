@@ -238,8 +238,20 @@ if __name__ == '__main__':
     except AttributeError:
         pass
 
-    else:
-        print('exiting')
+    print('=> Using statically WLC connector')
+    wlc_ip = str(input("==> What's the WLC IP) <==: ")).lower()
+    ap = str(input("==> What's the AP name) <==: ")).lower()
+    JC = funtions_jose.connect_wlc(wlc_ip)
+    net_connect = ConnectHandler(**JC)
+    net_connect.enable()
+
+    # connecting WLC
+    funtions_jose.get_wlc_ap_facts(ap, net_connect)
+
+    print('exiting')
+
+
+    # else:
 
     #    IP = input("Give me the device IP: ")
     #    USERNAME = input("What's the username: ")
