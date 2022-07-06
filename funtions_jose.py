@@ -743,9 +743,9 @@ def check_bgp_network(bgp_route, net_connect):
                             bgp_nei = re.search(r'BGP\sne.*', vrf)
                             bgp_ver = re.search(r'BGP\sv.*', vrf)
                             bgp_state = re.search(r'BGP\ss.*', vrf)
-                            print('=>' + bgp_nei.group())
-                            print('=>' + bgp_ver.group())
-                            print('=>' + bgp_state.group())
+                            print('=> ' + bgp_nei.group())
+                            print('=> ' + bgp_ver.group())
+                            print('=> ' + bgp_state.group())
                 ## end Testing ##
 
                 print('==> more than one BGP neighbor received <==')
@@ -776,9 +776,9 @@ def check_bgp_network(bgp_route, net_connect):
                     bgp_nei = re.search(r'BGP\sne.*', vrf)
                     bgp_ver = re.search(r'BGP\sv.*', vrf)
                     bgp_state = re.search(r'BGP\ss.*', vrf)
-                    print('=>' + bgp_nei.group())
-                    print('=>' + bgp_ver.group())
-                    print('=>' + bgp_state.group())
+                    print('=> ' + bgp_nei.group())
+                    print('=> ' + bgp_ver.group())
+                    print('=> ' + bgp_state.group())
 
         ## end Testing ##
 
