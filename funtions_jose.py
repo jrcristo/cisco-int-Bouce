@@ -1648,6 +1648,17 @@ def panos_show_system_info(net_connect):
         print(sw_version.group())
 
 
+def panos_ha_state(net_connect):
+    output = net_connect.send_command('show high-availability state')
+    ha = re.search(r'Group\s1.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)', output)
+    ha_state = re.search(r'Sta\S+\s(\w+)', ha.group(5))
+    ha_mode = re.search(r'Mod\S+\s(.*)', ha.group(1))
+    print('=> High Availability Mode =', ha_mode.group(1))
+    print('=> High Availability State =', ha_state.group(1))
+
+    return ha_mode.group(1), ha_state.group(1)
+
+
 def panos_check_interface(net_connect):
     # getting interface
     interface = str(input("Whats the interface:"))
@@ -1663,32 +1674,38 @@ def panos_check_interface(net_connect):
     print('=> IP =', ipv4.group(1))
     print('=> UPTIME =', uptime.group(1))
     print('=> Model =', model.group(1))
+    print(panos_ha_state(net_connect))
     print('*---*-*---*-*---*-*---*-')
     print('=> Interface =', interface)
     link_data = re.search(r'Lin.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)',
                           output)
-    print(link_data.group())
-    print('*---*-*---*-*---*-*---*-')
+    if 'down' in link_data.group(1):
+        print('=> The interface is down')
+    else:
+        print(link_data.group())
+        print('*---*-*---*-*---*-*---*-')
+        vr = re.search(r'Vir.*', output)
+        mtu = re.search(r'.* \bMTU\b. *', output)
+        inter_ip = re.search(r'Interface\sI.*', output)
+        inter_mgmt = re.search(r'Interface\sma.*', output)
+        zone = re.search(r'Zon.*', output)
+        try:
+            if vr.group():
+                print(vr.group())
+            if mtu.group():
+                print(mtu.group())
+            if inter_ip.group():
+                print(inter_ip.group())
+            if inter_mgmt.group():
+                print(inter_mgmt.group())
+            if zone.group():
+                print(zone.group())
+        except AttributeError:
+            pass
+        print('*---*-*---*-*---*-*---*-')
 
-    vr = re.search(r'Vir.*', output)
-    mtu = re.search(r'.* \bMTU\b. *', output)
-    inter_ip = re.search(r'Interface\sI.*', output)
-    inter_mgmt = re.search(r'Interface\sma.*', output)
-    zone = re.search(r'Zon.*', output)
-    try:
-        if vr.group():
-            print(vr.group())
-        if mtu.group():
-            print(mtu.group())
-        if inter_ip.group():
-            print(inter_ip.group())
-        if inter_mgmt.group():
-            print(inter_mgmt.group())
-        if zone.group():
-            print(zone.group())
-    except AttributeError:
-        pass
-    print('*---*-*---*-*---*-*---*-')
+
+
 
 
 def panos_filter_logs(src_ip, net_connect):
