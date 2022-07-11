@@ -26,9 +26,17 @@ if __name__ == '__main__':
             print('=> NXOS Interface is not UP')
     else:
         # getting interface details IOS
-        is_up = net_connect.send_command('sh int' + " " + inter)
-        if 'connected' in is_up:
-            print('=> Interface' + " " + inter + " " + 'is up, showing results')
-            funtions_jose.check_interface_details_and_po(inter, net_connect)
+        if 'vl' in inter:
+            vl_int_state = net_connect.send_command('sh int' + " " + inter + " " + '| inc Vl')
+            if 'up' in vl_int_state:
+                print('=> Interface' + " " + inter + " " + 'is up, showing results')
+                funtions_jose.check_interface_details_and_po(inter, net_connect)
         else:
-            print("=> IOS interface isn't UP")
+            is_up = net_connect.send_command('sh int' + " " + inter)
+            if 'connected' in is_up:
+                print('=> Interface' + " " + inter + " " + 'is up, showing results')
+                funtions_jose.check_interface_details_and_po(inter, net_connect)
+            else:
+                print("=> IOS interface isn't UP")
+
+
