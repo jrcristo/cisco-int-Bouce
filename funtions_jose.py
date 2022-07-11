@@ -1653,8 +1653,8 @@ def panos_ha_state(net_connect):
     ha = re.search(r'Group\s1.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)', output)
     ha_state = re.search(r'Sta\S+\s(\w+)', ha.group(5))
     ha_mode = re.search(r'Mod\S+\s(.*)', ha.group(1))
-    print('=> High Availability Mode =', ha_mode.group(1))
-    print('=> High Availability State =', ha_state.group(1))
+    # print('=> High Availability Mode =', ha_mode.group(1))
+    # print('=> High Availability State =', ha_state.group(1))
 
     return ha_mode.group(1), ha_state.group(1)
 
@@ -1664,6 +1664,9 @@ def panos_check_interface(net_connect):
     interface = str(input("Whats the interface:"))
     sysinfo = net_connect.send_command('show system info')
     output = net_connect.send_command('show interface' + " " + interface)
+    ha = panos_ha_state(net_connect)
+    if 'passive' in ha[1]:
+        print('==>**** This is a STANDBY device, a lot of interfaces will be down ****<==')
 
     hostname = re.search(r'host\w+.\s(.*)', sysinfo)
     ipv4 = re.search(r'ip-ad\S+\s(\d+.*)', sysinfo)
@@ -1674,7 +1677,8 @@ def panos_check_interface(net_connect):
     print('=> IP =', ipv4.group(1))
     print('=> UPTIME =', uptime.group(1))
     print('=> Model =', model.group(1))
-    print(panos_ha_state(net_connect))
+    print('=> High Availability Mode =', ha[0])
+    print('=> High Availability State =', ha[1])
     print('*---*-*---*-*---*-*---*-')
     print('=> Interface =', interface)
     link_data = re.search(r'Lin.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)',
