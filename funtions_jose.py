@@ -1666,7 +1666,7 @@ def panos_check_interface(net_connect):
     output = net_connect.send_command('show interface' + " " + interface)
     ha = panos_ha_state(net_connect)
     if 'passive' in ha[1]:
-        print('==>**** This is a STANDBY device, a lot of interfaces will be down ****<==')
+        print('==>**** This is a STANDBY device, a lot of interfaces may be down ****<==')
 
     hostname = re.search(r'host\w+.\s(.*)', sysinfo)
     ipv4 = re.search(r'ip-ad\S+\s(\d+.*)', sysinfo)
@@ -1683,10 +1683,14 @@ def panos_check_interface(net_connect):
     print('=> Interface =', interface)
     link_data = re.search(r'Lin.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)',
                           output)
-    if 'down' in link_data.group(1):
+    if 'down' in output:
         print('=> The interface is down')
     else:
-        print(link_data.group())
+        try:
+            if link_data.group():
+                print(link_data.group())
+        except AttributeError:
+            pass
         print('*---*-*---*-*---*-*---*-')
         vr = re.search(r'Vir.*', output)
         mtu = re.search(r'.* \bMTU\b. *', output)
