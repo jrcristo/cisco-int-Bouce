@@ -576,7 +576,7 @@ def check_interface_details_and_po(inter, net_connect):
         po_int = net_connect.send_command('sh int' + " " + inter + " " + '| inc Desc|Hard|MTU|line|media|Input|CRC')
         print(po_int)
 
-    elif 'gi' in inter or 'te' in inter:
+    elif 'gi' in inter or 'te' in inter or 'vl' in inter:
         print('=> IOS device detected')
         # getting device name
         dev_name = net_connect.send_command('sh run' + " " + '| inc hostname')
@@ -690,8 +690,8 @@ def panos_credentials():
         'device_type': 'paloalto_panos',
         'ip': IP,
         'username': 'Read_Only',
-        # 'password': 'S$@!L!nG!12',
-        'password': 'R0-Only1',
+        'password': 'S$@!L!nG!12',
+        # 'password': 'R0-Only1',
     }
     return panos
 
@@ -729,7 +729,7 @@ def check_bgp_network(bgp_route, net_connect):
 
             else:
                 # testing with vrf details #
-                vrf_list = ['MDL-CREW', 'MDL-PAX', 'Ocean', 'Trident-SDN', 'Voice']
+                vrf_list = ['Trident', 'Trident-SDN', 'MDL-PAX', 'Ocean', 'Voice', 'MDL-CREW']
                 global_routing = net_connect.send_command('sh ip bgp neighbor' + " " + bgp_route)
                 if 'No such neighbor' in global_routing:
                     for c in range(len(vrf_list)):
@@ -762,7 +762,7 @@ def check_bgp_network(bgp_route, net_connect):
         print('=> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
         get_ios_nxos_name(net_connect)
         # testing with vrf details #
-        vrf_list = ['Trident', 'MDL-CREW', 'MDL-PAX', 'Ocean', 'Trident-SDN', 'Voice']
+        vrf_list = ['Trident', 'Trident-SDN', 'MDL-PAX', 'Ocean', 'Voice', 'MDL-CREW']
         global_routing = net_connect.send_command('sh ip bgp neighbor' + " " + bgp_route)
         if 'No such neighbor' in global_routing:
             for c in range(len(vrf_list)):
