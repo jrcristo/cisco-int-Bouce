@@ -643,7 +643,7 @@ def get_credentials_and_interface():
             'device_type': 'cisco_ios',
             'ip': IP,
             'username': 'jcr8398',
-            'password': 'STP cce2010',
+            'password': 'ISIS cce2010',
             'timeout': 29,
             'global_delay_factor': 6,
 
