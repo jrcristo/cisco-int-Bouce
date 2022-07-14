@@ -17,7 +17,7 @@ if __name__ == '__main__':
     # platform
     platform = net_connect.send_command('sh ver')
     if 'Nexus' in platform:
-        int_nxos_up = net_connect.send_command('sh int' + " " + inter + " " + '| inc Ethernet')
+        int_nxos_up = net_connect.send_command('sh int' + " " + inter + " " + '| inc Ethernet|port-channel')
         if 'up' in int_nxos_up:
             print('*---*-*---*-*---*-*---*-')
             print('=> Interface' + " " + inter + " " + 'is up, showing results')
