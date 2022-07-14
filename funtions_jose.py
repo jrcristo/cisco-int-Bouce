@@ -573,7 +573,7 @@ def check_interface_details_and_po(inter, net_connect):
     # checking running int config to validate if INT is member of a PO
     if 'po' in inter or 'port-channel' in inter:
         print('=> PO interface selected')
-        po_int = net_connect.send_command('sh int' + " " + inter + " " + '| inc Desc|Hard|MTU|line|media|Input|CRC')
+        po_int = net_connect.send_command('sh int' + " " + inter + " " + '| inc Desc|Hard|MTU|line|media|Input|CRC|port-channel')
         print(po_int)
 
     elif 'gi' in inter or 'te' in inter or 'vl' in inter:
