@@ -676,7 +676,7 @@ def if_credential_connection(ip):
         'device_type': 'cisco_ios',
         'ip': ip,
         'username': 'jcr8398',
-        'password': 'STP cce2010',
+        'password': 'ISIS cce2010',
     }
     return JC
 
