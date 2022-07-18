@@ -627,7 +627,7 @@ def get_credentials_and_interface():
     # USERNAME = input("What's the username: ")
     # PASS = getpass.getpass()
 
-    if '10.5.144' in IP or '10.126.140' in IP or '10.126.70' in IP:
+    if '10.5.144' in IP or '10.126.140' in IP or '10.126.70' in IP or '10.5.160' in IP:
         print('=> Using CCL Credentials')
         JC = {
             'device_type': 'cisco_ios',
