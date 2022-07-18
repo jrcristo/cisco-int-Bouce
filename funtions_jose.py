@@ -573,7 +573,8 @@ def check_interface_details_and_po(inter, net_connect):
     # checking running int config to validate if INT is member of a PO
     if 'po' in inter or 'port-channel' in inter:
         print('=> PO interface selected')
-        po_int = net_connect.send_command('sh int' + " " + inter + " " + '| inc Desc|Hard|MTU|line|media|Input|CRC|port-channel')
+        po_int = net_connect.send_command(
+            'sh int' + " " + inter + " " + '| inc Desc|Hard|MTU|line|media|Input|CRC|port-channel')
         print(po_int)
 
     elif 'gi' in inter or 'te' in inter or 'vl' in inter:
@@ -626,7 +627,7 @@ def get_credentials_and_interface():
     # USERNAME = input("What's the username: ")
     # PASS = getpass.getpass()
 
-    if '10.5' in IP or '10.126.140' in IP:
+    if '10.5.144' in IP or '10.126.140' in IP:
         print('=> Using CCL Credentials')
         JC = {
             'device_type': 'cisco_ios',
@@ -1650,7 +1651,8 @@ def panos_show_system_info(net_connect):
 
 def panos_ha_state(net_connect):
     output = net_connect.send_command('show high-availability state')
-    ha = re.search(r'Group\s1.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)', output)
+    ha = re.search(r'Group\s1.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)',
+                   output)
     ha_state = re.search(r'Sta\S+\s(\w+)', ha.group(5))
     ha_mode = re.search(r'Mod\S+\s(.*)', ha.group(1))
     # print('=> High Availability Mode =', ha_mode.group(1))
@@ -1711,9 +1713,6 @@ def panos_check_interface(net_connect):
         except AttributeError:
             pass
         print('*---*-*---*-*---*-*---*-')
-
-
-
 
 
 def panos_filter_logs(src_ip, net_connect):
