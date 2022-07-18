@@ -38,6 +38,15 @@ def getting_model():
     return mod_detail
 
 
+def saving_config():
+    write = cli('wr mem')
+    if 'OK' in write:
+        print('=> Config was saved')
+    else:
+        print('=> Config was not saved')
+
+
+
 def find_certs():
     certs = cli('show run | include crypto pki')
     if certs:
@@ -171,6 +180,9 @@ def main():
             # replacing config and ssh GEN
             configure_replace(config_file)
             configure('crypto key generate rsa modulus 4096')
+
+            # saving config
+            saving_config()
 
 
     elif 'C9300-48U' in device_model:
