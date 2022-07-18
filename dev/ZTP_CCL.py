@@ -20,7 +20,7 @@ C930048U_ver = '16.12.4'
 ### WS-C3560CX-8PT-S ###
 C3560CX = 'cat3k_caa-universalk9.16.06.02.SPA.bin'
 C3560CX_md5 = 'ebec919da12d0ac5a49886531b8b82cc'
-C3560CX_ver = '16.12.04'
+C3560CX_ver = '15.2(7)E2'
 
 
 def getting_ios_version():
@@ -46,7 +46,6 @@ def saving_config():
         print('=> Config was not saved')
 
 
-
 def find_certs():
     certs = cli('show run | include crypto pki')
     if certs:
@@ -57,12 +56,10 @@ def find_certs():
             configure(command)
 
 
-
 def configure_replace(file, file_system='flash:/'):
     config_command = 'configure replace %s%s force' % (file_system, file)
     config_repl = cli(config_command)
     time.sleep(120)
-
 
 
 def check_file_exists(file, file_system='flash:/'):
@@ -162,7 +159,7 @@ def main():
         else:
             print("=> IOS upgrade isn't required")
 
-            # Cleanup any leftover install files
+            # Cleanup any leftover installation files
             print('*** Deploying Cleanup EEM Script ***')
             deploy_eem_cleanup_script()
             print('*** Running Cleanup EEM Script ***')
@@ -176,6 +173,9 @@ def main():
             else:
                 file_transfer(ftp_server, config_file)
                 time.sleep(17)
+                print('*** Removing any existing certs ***')
+                find_certs()
+                time.sleep(10)
 
             # replacing config and ssh GEN
             configure_replace(config_file)
