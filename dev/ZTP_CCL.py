@@ -120,6 +120,16 @@ def file_transfer(ftp_server, file, file_system='flash:/'):
         print('=> file upload fail')
 
 
+def tftp_file_transfer(tftp_server, file, file_system='flash:/'):
+    transfer_file = 'copy tftp://' + tftp_server + '/' + file + " " + file_system
+    print('Transferring %s to %s' % (file, file_system))
+    transfer_results = cli(transfer_file)
+    if 'OK' in transfer_results:
+        print('=> tftp file successfully uploaded!!!!')
+    else:
+        print('=> tftp ile upload fail')
+
+
 def check_ios_md5(file, md5, file_system='flash:/'):
     verify_md5 = 'verify /md5 ' + file_system + file + " " + md5
     md5_result = cli(verify_md5)
@@ -220,11 +230,11 @@ def main():
             time.sleep(30)
 
             # moving config file into flash
-            if not check_file_exists(config_file):
+            if check_file_exists(config_file):
                 print('=> Config File is already in flash')
 
             else:
-                file_transfer(ftp_server, config_file)
+                tftp_file_transfer(ftp_server, config_file)
                 time.sleep(17)
                 print('*** Removing any existing certs ***')
                 find_certs()
@@ -268,11 +278,11 @@ def main():
             time.sleep(30)
 
             # moving config file into flash
-            if not check_file_exists(config_file):
+            if check_file_exists(config_file):
                 print('=> Config File is already in flash')
 
             else:
-                file_transfer(ftp_server, config_file)
+                tftp_file_transfer(ftp_server, config_file)
                 time.sleep(17)
                 print('*** Removing any existing certs ***')
                 find_certs()
