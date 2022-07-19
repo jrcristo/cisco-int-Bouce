@@ -4,8 +4,8 @@ import json
 import time
 
 # Set Global variables to be used in later functions
-tftp_server = '192.168.200.7'
-ftp_server = '192.168.200.7'
+tftp_server = '192.168.200.15'
+ftp_server = '192.168.200.15'
 
 ### WS-C3650-48PD ###
 WS365048PD = 'cat3k_caa-universalk9.16.06.02.SPA.bin'
@@ -13,8 +13,8 @@ WS365048PD_md5 = 'ebec919da12d0ac5a49886531b8b82cc'
 WS365048PD_ver = '16.6.2'
 
 ### C9300-48U ###
-C930048U = 'cat3k_caa-universalk9.16.06.02.SPA.bin'
-C930048U_md5 = 'ebec919da12d0ac5a49886531b8b82cc'
+C930048U = 'cat9k_iosxe.16.12.04.SPA.bin'
+C930048U_md5 = '16e8583ca6184c54f9d9fccf4574fa6e'
 C930048U_ver = '16.12.4'
 
 ### WS-C3560CX-8PT-S ###
@@ -60,6 +60,11 @@ def configure_replace(file, file_system='flash:/'):
     config_command = 'configure replace %s%s force' % (file_system, file)
     config_repl = cli(config_command)
     time.sleep(120)
+    write_mem = cli('wr mem')
+    if 'OK' in write_mem:
+        print('=> Config was saved')
+    else:
+        print('=> Config was not saved')
 
 
 def check_file_exists(file, file_system='flash:/'):
@@ -184,9 +189,54 @@ def main():
             # saving config
             saving_config()
 
-
     elif 'C9300-48U' in device_model:
-        pass
+        # print('Device model =', device_model)
+        # validating IOS version
+        if device_ios != C930048U_ver:
+            print('=> IOS upgrade required')
+            # checking IOS on flash
+            if not check_file_exists(C930048U):
+                file_transfer(ftp_server, C930048U)
+            else:
+                print('=> IOS file is already in flash')
+            # validation MD5 in ios file
+            check_ios_md5(C930048U, C930048U_md5)
+
+            # upgrading IOS
+            print('=> Starting upgrade')
+            deploy_eem_upgrade_script(C930048U)
+            print('*** Performing the upgrade - switch will reboot ***\n')
+            cli('event manager run upgrade')
+            time.sleep(600)
+
+        else:
+            print("=> IOS upgrade isn't required")
+
+            # Cleanup any leftover installation files
+            print('*** Deploying Cleanup EEM Script ***')
+            deploy_eem_cleanup_script()
+            print('*** Running Cleanup EEM Script ***')
+            cli('event manager run cleanup')
+            time.sleep(30)
+
+            # moving config file into flash
+            if not check_file_exists(config_file):
+                print('=> Config File is already in flash')
+
+            else:
+                file_transfer(ftp_server, config_file)
+                time.sleep(17)
+                print('*** Removing any existing certs ***')
+                find_certs()
+                time.sleep(10)
+
+            # replacing config and ssh GEN
+            configure_replace(config_file)
+            configure('crypto key generate rsa modulus 4096')
+
+            # saving config
+            saving_config()
+
 
 
 if __name__ in "__main__":
