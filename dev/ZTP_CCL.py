@@ -12,15 +12,15 @@ WS365048PD = 'cat3k_caa-universalk9.16.06.02.SPA.bin'
 WS365048PD_md5 = 'ebec919da12d0ac5a49886531b8b82cc'
 WS365048PD_ver = '16.6.2'
 
-### C9300-48U ###
-C930048U = 'cat9k_iosxe.16.12.04.SPA.bin'
-C930048U_md5 = '16e8583ca6184c54f9d9fccf4574fa6e'
-C930048U_ver = '16.12.4'
+### C9300-48T ###
+C930048T = 'cat9k_iosxe.16.12.04.SPA.bin'
+C930048T_md5 = '16e8583ca6184c54f9d9fccf4574fa6e'
+C930048T_ver = '16.12.4'
 
-### WS-C3560CX-8PT-S ###
-C3560CX = 'cat3k_caa-universalk9.16.06.02.SPA.bin'
-C3560CX_md5 = 'ebec919da12d0ac5a49886531b8b82cc'
-C3560CX_ver = '15.2(7)E2'
+### WS-C3850-48U ###
+C385048U = 'cat3k_caa-universalk9.16.09.06.SPA.bin'
+C385048U_md5 = '710e1bbaa07b0c8f593af3cab9b5c385'
+C385048U_ver = '16.09.06'
 
 
 def getting_ios_version():
@@ -71,10 +71,10 @@ def check_file_exists(file, file_system='flash:/'):
     dir_check = 'dir ' + file_system + " " + '| inc ' + file
     if len(dir_check):
         # print('=> IOS File is already in flash')
-        return True
+        return False
     else:
         print('=> IOS File is not in flash, starting copy process')
-        return False
+        return True
 
 
 def deploy_eem_cleanup_script():
@@ -189,22 +189,22 @@ def main():
             # saving config
             saving_config()
 
-    elif 'C9300-48U' in device_model:
+    elif 'C9300-48T' in device_model:
         # print('Device model =', device_model)
         # validating IOS version
-        if device_ios != C930048U_ver:
+        if device_ios != C930048T_ver:
             print('=> IOS upgrade required')
             # checking IOS on flash
-            if not check_file_exists(C930048U):
-                file_transfer(ftp_server, C930048U)
+            if not check_file_exists(C930048T):
+                file_transfer(ftp_server, C930048T)
             else:
                 print('=> IOS file is already in flash')
             # validation MD5 in ios file
-            check_ios_md5(C930048U, C930048U_md5)
+            check_ios_md5(C930048T, C930048T_md5)
 
             # upgrading IOS
             print('=> Starting upgrade')
-            deploy_eem_upgrade_script(C930048U)
+            deploy_eem_upgrade_script(C930048T)
             print('*** Performing the upgrade - switch will reboot ***\n')
             cli('event manager run upgrade')
             time.sleep(600)
@@ -237,6 +237,53 @@ def main():
             # saving config
             saving_config()
 
+    elif 'WS-C3850-48U' in device_model:
+        # print('Device model =', device_model)
+        # validating IOS version
+        if device_ios != C385048U_ver:
+            print('=> IOS upgrade required')
+            # checking IOS on flash
+            if not check_file_exists(C385048U):
+                file_transfer(ftp_server, C385048U)
+            else:
+                print('=> IOS file is already in flash')
+            # validation MD5 in ios file
+            check_ios_md5(C385048U, C385048U_md5)
+
+            # upgrading IOS
+            print('=> Starting upgrade')
+            deploy_eem_upgrade_script(C385048U)
+            print('*** Performing the upgrade - switch will reboot ***\n')
+            cli('event manager run upgrade')
+            time.sleep(600)
+
+        else:
+            print("=> IOS upgrade isn't required")
+
+            # Cleanup any leftover installation files
+            print('*** Deploying Cleanup EEM Script ***')
+            deploy_eem_cleanup_script()
+            print('*** Running Cleanup EEM Script ***')
+            cli('event manager run cleanup')
+            time.sleep(30)
+
+            # moving config file into flash
+            if not check_file_exists(config_file):
+                print('=> Config File is already in flash')
+
+            else:
+                file_transfer(ftp_server, config_file)
+                time.sleep(17)
+                print('*** Removing any existing certs ***')
+                find_certs()
+                time.sleep(10)
+
+            # replacing config and ssh GEN
+            configure_replace(config_file)
+            configure('crypto key generate rsa modulus 4096')
+
+            # saving config
+            saving_config()
 
 
 if __name__ in "__main__":
