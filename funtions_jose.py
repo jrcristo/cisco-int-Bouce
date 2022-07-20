@@ -1087,6 +1087,7 @@ def get_wlc_wlan_qos(net_connect):
     print('=> Quality of Service =', qos.group(1))
     print('==> Per-SSID Rate Limits     Upstream             Downstream')
     x = ' '
+    # per SSID
     per_wlan = re.search(r'Per-SSID Rate Limits.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)',
                          wlan_MedNet)
     wlc_ave_data_rate = re.search(r'Ave\w+\sD\w+\s\w+\S+\s+(\d+)\s+(\d+)', per_wlan.group(1))
@@ -1101,6 +1102,23 @@ def get_wlc_wlan_qos(net_connect):
           wlc_burst_data_rate.group(2) + ' kbps')
     print('=> Burst Realtime Data Rate    ', wlc_burst_realtime_data_rate.group(1) + ' kbps', x * 12,
           wlc_burst_realtime_data_rate.group(2) + ' kbps')
+
+    print('==> Per-Client Rate Limits     Upstream             Downstream')
+    # per Clients
+    per_clients = re.search(r'Per-Client Rate Limits.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)', wlan_MedNet)
+    mednet_wlc_ave_data_rate = re.search(r'Ave\w+\sD\w+\s\w+\S+\s+(\d+)\s+(\d+)', per_clients.group(1))
+    mednet_wlc_real_time_data_rate = re.search(r'Ave\w+\sRe\w+\sD\w+\sR\w+\S+\s+(\d+)\s+(\d+)', per_clients.group(2))
+    mednet_wlc_burst_data_rate = re.search(r'Bur\w+\sDa\w+\sR\w+\S+\s+(\d+)\s+(\d+)', per_clients.group(3))
+    mednet_wlc_burst_realtime_data_rate = re.search(r'Bur\w+\sRe\w+\sD\w+\sRa\w+\S+\s+(\d+)\s+(\d+)', per_clients.group(4))
+
+    print('=> Average Data Rate           ', mednet_wlc_ave_data_rate.group(1) + ' kbps', x * 12,
+          mednet_wlc_ave_data_rate.group(2) + ' kbps')
+    print('=> Average Realtime Data Rate  ', mednet_wlc_real_time_data_rate.group(1) + ' kbps', x * 12,
+          mednet_wlc_real_time_data_rate.group(2) + ' kbps')
+    print('=> Burst Data Rate             ', mednet_wlc_burst_data_rate.group(1) + ' kbps', x * 12,
+          mednet_wlc_burst_data_rate.group(2) + ' kbps')
+    print('=> Burst Realtime Data Rate    ', mednet_wlc_burst_realtime_data_rate.group(1) + ' kbps', x * 12,
+          mednet_wlc_burst_realtime_data_rate.group(2) + ' kbps')
 
     # getting wlan info CrewNet
     print('*---*-*---*-*---*-*---*-*---*')
@@ -1117,6 +1135,25 @@ def get_wlc_wlan_qos(net_connect):
     print('=> SSID Status =', crewnet_ssid_status.group(1))
     print('=> Broadcast SSID =', crewnet_broadcast.group(1))
     print('=> Quality of Service =', crewnet_qos.group(1))
+    print('==> Per-SSID Rate Limits     Upstream             Downstream')
+
+    per_wlan_ssid = re.search(
+        r'Per-SSID Rate Limits.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)',
+        wlan_CrewNet)
+    wlc_ssid_ave_data_rate = re.search(r'Ave\w+\sD\w+\s\w+\S+\s+(\d+)\s+(\d+)',per_wlan_ssid.group(1))
+    wlc_ssid_real_time_data_rate = re.search(r'Ave\w+\sRe\w+\sD\w+\sR\w+\S+\s+(\d+)\s+(\d+)', per_wlan_ssid.group(2))
+    wlc_ssid_burst_data_rate = re.search(r'Bur\w+\sDa\w+\sR\w+\S+\s+(\d+)\s+(\d+)', per_wlan_ssid.group(3))
+    wlc_ssid_burst_realtime_data_rate = re.search(r'Bur\w+\sRe\w+\sD\w+\sRa\w+\S+\s+(\d+)\s+(\d+)', per_wlan_ssid.group(4))
+    print('=> Average Data Rate           ', wlc_ssid_ave_data_rate.group(1) + ' kbps', x * 12,
+          wlc_ssid_ave_data_rate.group(2) + ' kbps')
+    print('=> Average Realtime Data Rate  ', wlc_ssid_real_time_data_rate.group(1) + ' kbps', x * 12,
+          wlc_ssid_real_time_data_rate.group(2) + ' kbps')
+    print('=> Burst Data Rate             ', wlc_ssid_burst_data_rate.group(1) + ' kbps', x * 12,
+          wlc_ssid_burst_data_rate.group(2) + ' kbps')
+    print('=> Burst Realtime Data Rate    ', wlc_ssid_burst_realtime_data_rate.group(1) + ' kbps', x * 12,
+          wlc_ssid_burst_realtime_data_rate.group(2) + ' kbps')
+
+    # per Clients
     print('==> Per-Client Rate Limits      Upstream              Downstream')
     per_wlan = re.search(
         r'Per-Client Rate Limits.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)',
