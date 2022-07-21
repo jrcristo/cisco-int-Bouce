@@ -1021,6 +1021,79 @@ def connect_wlc(isIP):
     return JC
 
 
+def wlc_clients_associated_ap_details(ap_name, net_connect):
+    output = net_connect.send_command("show ap config general" + " " + ap_name)
+    print('*---*-*---*-*---*-*---*-*---*')
+    ap_name = re.search(r'AP\sNa\w+\S+\s(.*)', output)
+    ap_mac = re.search(r'MAC\sAd\w+\S+\s([0-9a-f].*)', output)
+    ipv4_mode = re.search(r'Addr\w+\sCo\S+\s(.*)', output)
+    ipv4_bulk = re.search(r'IP\sAdd\w+\sConfiguration.*[\r\n]+([^\r\n]+)', output).group(1)
+    ipv4 = re.search(r'IP\sAddre\w+\S+\s(.*)', ipv4_bulk)
+    netmask = re.search(r'NetMas\S+\s(.*)', output)
+    gw = re.search(r'Gatew\S+\s\w+\s\S+\s(.*)', output)
+    capwap_path_mtu = re.search(r'CAPW\S+\s\S+\s\S+\s(.*)', output)
+    location = re.search(r'Locati\S+\s(.*)', output)
+    group_name = re.search(r'Group\sNam\S+\s(.*)', output)
+    admin_state = re.search(r'Adminis\S+\s\S+\s\S+\s(.*)', output)
+    operation_mode = re.search(r'Opera\w+\s\S+\s\S+\s(.*)', output)
+    ap_mode = re.search(r'AP\sMode\s\S+\s(.*)', output)
+    soft_ver = re.search(r'S\/W\s+\S+\s\S+\s(.*)', output)
+    ap_model = re.search(r'AP\sModel\S+\s(.*)', output)
+    ap_image = re.search(r'AP\sIma\S+\s(.*)', output)
+    sn = re.search(r'Seri\S+\s\S+\s(.*)', output)
+    ap_uptime = re.search(r'AP\sUp\s\S+\s(.*)', output)
+    ap_lwapp_uptime = re.search(r'AP\sLW\S+\s\w+\s\S+\s(.*)', output)
+    join_date_time = re.search(r'Join\sDate\s\w+\s\S+\s(.*)', output)
+    join_taken_time = re.search(r'Join\sTa\w+\s\S+\s(.*)', output)
+
+    print('=> The AP name is =', ap_name.group(1))
+    print('=> The AP mac-add =', ap_mac.group(1))
+    print('=> The IPv4 address config =', ipv4_mode.group(1))
+    print('=> The AP IPv4 IP =', ipv4.group(1))
+    print('=> The AP netmask is =', netmask.group(1))
+    print('=> The AP gateway =', gw.group(1))
+    print('=> The AP CAPWAP path MTU =', capwap_path_mtu.group(1))
+    print('=> The AP location =', location.group(1))
+    print('=> The AP group name =', group_name.group(1))
+    print('=> The AP Admin state =', admin_state.group(1))
+    print('=> The AP Operation mode =', operation_mode.group(1))
+    print('=> The AP mode =', ap_mode.group(1))
+    print('=> The AP software version =', soft_ver.group(1))
+    print('=> The AP Model =', ap_model.group(1))
+    print('=> The AP image =', ap_image.group(1))
+    print('=> The AP S/N =', sn.group(1))
+    print('=> The AP uptime =', ap_uptime.group(1))
+    print('=> The AP LWAPP uptime is =', ap_lwapp_uptime.group(1))
+    print('=> The Join Data and Time =', join_date_time.group(1))
+    print('=> The Join Taken Time =', join_taken_time.group(1))
+    print('*---*-*---*-*---*-*---*-*---*')
+
+
+def wlc_clients_associated(ap_name, net_connect):
+    # getting output for 5Ghz
+    print("==> Getting 5Ghz clients associates with", ap_name)
+    output = net_connect.send_command("show client ap 802.11a" + " " + ap_name)
+    # filtering output for 5Ghz
+    five = re.findall(r'[a-fA-F0-9]{2}:.*', output)
+    print('MAC Address        AP Id   Status         WLAN Id    Authenticated')
+    for j in five:
+        print(j)
+
+    print('=> Total 5GHz clients connected =', len(five))
+    print('\n')
+
+    # getting output for 2.4Ghz
+    print("==> Getting 2.4Ghz clients associates with", ap_name)
+    output1 = net_connect.send_command("show client ap 802.11b" + " " + ap_name)
+    print('MAC Address        AP Id   Status         WLAN Id    Authenticated')
+    # filtering output for 2.4Ghz
+    two = re.findall(r'[a-fA-F0-9]{2}:.*', output1)
+    for c in two:
+        print(c)
+    print('=> Total 2.4GHz clients connected =', len(two))
+    print('==> Total clients connected to ' + ap_name + " " + '=', len(five)+len(two))
+
+
 def get_wlc_facts(net_connect):
     output = net_connect.send_command("show ver")
     if 'Incorrect usage' in output:
