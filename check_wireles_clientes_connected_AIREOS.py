@@ -49,6 +49,16 @@ if __name__ == '__main__':
                 pass
             print('*---*-*---*-*---*-*---*-*---*')
             funtions_jose.wlc_clients_associated(ap_name, net_connect)
+
+            print('*---*-*---*-*---*-*---*-*---*')
+            # asking for client details
+            client_detail = input("==> do you want to check client details?, (Y) to continue (N) to cancel:").lower()
+            if client_detail in yes_option:
+                mac_addr = str(input("==> please, copy and paste the mac-add <==: ")).lower()
+                print("==> Getting Client details")
+                funtions_jose.wlc_aireos_client_details(mac_addr, net_connect)
+            else:
+                pass
             exit(0)
 
     except AttributeError:
@@ -72,6 +82,16 @@ if __name__ == '__main__':
                 pass
             print('*---*-*---*-*---*-*---*-*---*')
             funtions_jose.wlc_clients_associated(ap_name, net_connect)
+
+            print('*---*-*---*-*---*-*---*-*---*')
+            # asking for client details
+            client_detail = input("==> do you want to check client details?, (Y) to continue (N) to cancel:").lower()
+            if client_detail in yes_option:
+                mac_addr = str(input("==> please, copy and paste the mac-add <==: ")).lower()
+                print("==> Getting Client details")
+                funtions_jose.wlc_aireos_client_details(mac_addr, net_connect)
+            else:
+                pass
             exit(0)
 
     except AttributeError:
@@ -95,6 +115,16 @@ if __name__ == '__main__':
                 pass
             print('*---*-*---*-*---*-*---*-*---*')
             funtions_jose.wlc_clients_associated(ap_name, net_connect)
+
+            print('*---*-*---*-*---*-*---*-*---*')
+            # asking for client details
+            client_detail = input("==> do you want to check client details?, (Y) to continue (N) to cancel:").lower()
+            if client_detail in yes_option:
+                mac_addr = str(input("==> please, copy and paste the mac-add <==: ")).lower()
+                print("==> Getting Client details")
+                funtions_jose.wlc_aireos_client_details(mac_addr, net_connect)
+            else:
+                pass
             exit(0)
 
     except AttributeError:
@@ -118,6 +148,16 @@ if __name__ == '__main__':
                 pass
             print('*---*-*---*-*---*-*---*-*---*')
             funtions_jose.wlc_clients_associated(ap_name, net_connect)
+
+            print('*---*-*---*-*---*-*---*-*---*')
+            # asking for client details
+            client_detail = input("==> do you want to check client details?, (Y) to continue (N) to cancel:").lower()
+            if client_detail in yes_option:
+                mac_addr = str(input("==> please, copy and paste the mac-add <==: ")).lower()
+                print("==> Getting Client details")
+                funtions_jose.wlc_aireos_client_details(mac_addr, net_connect)
+            else:
+                pass
             exit(0)
 
     except AttributeError:
@@ -141,6 +181,16 @@ if __name__ == '__main__':
                 pass
             print('*---*-*---*-*---*-*---*-*---*')
             funtions_jose.wlc_clients_associated(ap_name, net_connect)
+
+            print('*---*-*---*-*---*-*---*-*---*')
+            # asking for client details
+            client_detail = input("==> do you want to check client details?, (Y) to continue (N) to cancel:").lower()
+            if client_detail in yes_option:
+                mac_addr = str(input("==> please, copy and paste the mac-add <==: ")).lower()
+                print("==> Getting Client details")
+                funtions_jose.wlc_aireos_client_details(mac_addr, net_connect)
+            else:
+                pass
             exit(0)
 
     except AttributeError:
@@ -164,6 +214,16 @@ if __name__ == '__main__':
                 pass
             print('*---*-*---*-*---*-*---*-*---*')
             funtions_jose.wlc_clients_associated(ap_name, net_connect)
+
+            print('*---*-*---*-*---*-*---*-*---*')
+            # asking for client details
+            client_detail = input("==> do you want to check client details?, (Y) to continue (N) to cancel:").lower()
+            if client_detail in yes_option:
+                mac_addr = str(input("==> please, copy and paste the mac-add <==: ")).lower()
+                print("==> Getting Client details")
+                funtions_jose.wlc_aireos_client_details(mac_addr, net_connect)
+            else:
+                pass
             exit(0)
 
     except AttributeError:
@@ -187,6 +247,16 @@ if __name__ == '__main__':
                 pass
             print('*---*-*---*-*---*-*---*-*---*')
             funtions_jose.wlc_clients_associated(ap_name, net_connect)
+
+            print('*---*-*---*-*---*-*---*-*---*')
+            # asking for client details
+            client_detail = input("==> do you want to check client details?, (Y) to continue (N) to cancel:").lower()
+            if client_detail in yes_option:
+                mac_addr = str(input("==> please, copy and paste the mac-add <==: ")).lower()
+                print("==> Getting Client details")
+                funtions_jose.wlc_aireos_client_details(mac_addr, net_connect)
+            else:
+                pass
             exit(0)
 
     except AttributeError:
@@ -210,6 +280,16 @@ if __name__ == '__main__':
                 pass
             print('*---*-*---*-*---*-*---*-*---*')
             funtions_jose.wlc_clients_associated(ap_name, net_connect)
+
+            print('*---*-*---*-*---*-*---*-*---*')
+            # asking for client details
+            client_detail = input("==> do you want to check client details?, (Y) to continue (N) to cancel:").lower()
+            if client_detail in yes_option:
+                mac_addr = str(input("==> please, copy and paste the mac-add <==: ")).lower()
+                print("==> Getting Client details")
+                funtions_jose.wlc_aireos_client_details(mac_addr, net_connect)
+            else:
+                pass
             exit(0)
 
     except AttributeError:
@@ -233,6 +313,16 @@ if __name__ == '__main__':
                 pass
             print('*---*-*---*-*---*-*---*-*---*')
             funtions_jose.wlc_clients_associated(ap_name, net_connect)
+
+            print('*---*-*---*-*---*-*---*-*---*')
+            # asking for client details
+            client_detail = input("==> do you want to check client details?, (Y) to continue (N) to cancel:").lower()
+            if client_detail in yes_option:
+                mac_addr = str(input("==> please, copy and paste the mac-add <==: ")).lower()
+                print("==> Getting Client details")
+                funtions_jose.wlc_aireos_client_details(mac_addr, net_connect)
+            else:
+                pass
             exit(0)
 
     except AttributeError:
@@ -256,6 +346,16 @@ if __name__ == '__main__':
                 pass
             print('*---*-*---*-*---*-*---*-*---*')
             funtions_jose.wlc_clients_associated(ap_name, net_connect)
+
+            print('*---*-*---*-*---*-*---*-*---*')
+            # asking for client details
+            client_detail = input("==> do you want to check client details?, (Y) to continue (N) to cancel:").lower()
+            if client_detail in yes_option:
+                mac_addr = str(input("==> please, copy and paste the mac-add <==: ")).lower()
+                print("==> Getting Client details")
+                funtions_jose.wlc_aireos_client_details(mac_addr, net_connect)
+            else:
+                pass
             exit(0)
 
     except AttributeError:
@@ -279,6 +379,16 @@ if __name__ == '__main__':
                 pass
             print('*---*-*---*-*---*-*---*-*---*')
             funtions_jose.wlc_clients_associated(ap_name, net_connect)
+
+            print('*---*-*---*-*---*-*---*-*---*')
+            # asking for client details
+            client_detail = input("==> do you want to check client details?, (Y) to continue (N) to cancel:").lower()
+            if client_detail in yes_option:
+                mac_addr = str(input("==> please, copy and paste the mac-add <==: ")).lower()
+                print("==> Getting Client details")
+                funtions_jose.wlc_aireos_client_details(mac_addr, net_connect)
+            else:
+                pass
             exit(0)
 
     except AttributeError:
@@ -302,6 +412,16 @@ if __name__ == '__main__':
                 pass
             print('*---*-*---*-*---*-*---*-*---*')
             funtions_jose.wlc_clients_associated(ap_name, net_connect)
+
+            print('*---*-*---*-*---*-*---*-*---*')
+            # asking for client details
+            client_detail = input("==> do you want to check client details?, (Y) to continue (N) to cancel:").lower()
+            if client_detail in yes_option:
+                mac_addr = str(input("==> please, copy and paste the mac-add <==: ")).lower()
+                print("==> Getting Client details")
+                funtions_jose.wlc_aireos_client_details(mac_addr, net_connect)
+            else:
+                pass
             exit(0)
 
     except AttributeError:
@@ -325,6 +445,16 @@ if __name__ == '__main__':
                 pass
             print('*---*-*---*-*---*-*---*-*---*')
             funtions_jose.wlc_clients_associated(ap_name, net_connect)
+
+            print('*---*-*---*-*---*-*---*-*---*')
+            # asking for client details
+            client_detail = input("==> do you want to check client details?, (Y) to continue (N) to cancel:").lower()
+            if client_detail in yes_option:
+                mac_addr = str(input("==> please, copy and paste the mac-add <==: ")).lower()
+                print("==> Getting Client details")
+                funtions_jose.wlc_aireos_client_details(mac_addr, net_connect)
+            else:
+                pass
             exit(0)
 
     except AttributeError:
@@ -348,6 +478,16 @@ if __name__ == '__main__':
                 pass
             print('*---*-*---*-*---*-*---*-*---*')
             funtions_jose.wlc_clients_associated(ap_name, net_connect)
+
+            print('*---*-*---*-*---*-*---*-*---*')
+            # asking for client details
+            client_detail = input("==> do you want to check client details?, (Y) to continue (N) to cancel:").lower()
+            if client_detail in yes_option:
+                mac_addr = str(input("==> please, copy and paste the mac-add <==: ")).lower()
+                print("==> Getting Client details")
+                funtions_jose.wlc_aireos_client_details(mac_addr, net_connect)
+            else:
+                pass
             exit(0)
 
     except AttributeError:
