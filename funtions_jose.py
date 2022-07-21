@@ -1075,6 +1075,8 @@ def wlc_clients_associated_ap_details(ap_name, net_connect):
 
 
 def wlc_clients_associated(ap_name, net_connect):
+    # date and time
+    print('==> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
     # getting output for 5Ghz
     print("==> Getting 5Ghz clients associates with", ap_name)
     output = net_connect.send_command("show client ap 802.11a" + " " + ap_name)
