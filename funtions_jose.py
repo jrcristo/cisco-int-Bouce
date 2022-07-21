@@ -1021,6 +1021,11 @@ def connect_wlc(isIP):
     return JC
 
 
+def wlc_aireos_client_details(mac, net_connect):
+    output = net_connect.send_command("show  client detail" + " " + mac)
+    print(output)
+
+
 def wlc_clients_associated_ap_details(ap_name, net_connect):
     output = net_connect.send_command("show ap config general" + " " + ap_name)
     print('*---*-*---*-*---*-*---*-*---*')
