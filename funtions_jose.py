@@ -1022,6 +1022,7 @@ def connect_wlc(isIP):
 
 
 def wlc_aireos_client_details(mac, net_connect):
+    print('==> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
     output = net_connect.send_command("show  client detail" + " " + mac)
     print(output)
 
