@@ -1021,6 +1021,65 @@ def connect_wlc(isIP):
     return JC
 
 
+# function to get specific details from Wireless Client
+def wlc_aireos_client(mac, net_connect):
+    print('==> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
+    output = net_connect.send_command("show  client detail" + " " + mac)
+    x = ' '
+    print('*---*-*---*-*---*-*---*-*---*')
+    print('=> Client mac-add =', mac)
+    print('Client Username =>', x*22, re.search(r'Clie\S+\sUsern\S+\s\S+\s(.*)', output).group(1))
+    print('Client Webauth Username =>', x*14, re.search(r'Clie\S+\sWe\S+\s\S+\s\S+\s(.*)', output).group(1))
+    print('Hostname =>', x*29, re.search(r'Host\w+.\s\S+\s(.*)', output).group(1))
+    print('Device Type =>', x*26, re.search(r'Dev\S+\s\S+.\S+\s(.*)', output).group(1))
+    print('Connected to =>', x*25, re.search(r'AP\sNa\S+\s(\S+)', output).group(1))
+    print('Client State =>', x*25, re.search(r'Cli\w+\sSt\S+\s(.*)', output).group(1))
+    print('Wireless LAN Id =>', x*22, re.search(r'Wire\w+\sL\w+\sI\S+\s(.*)', output).group(1))
+    print('Wireless LAN Network Name (SSID) =>', x*5, re.search(r'Wire\w+\sL\w+\sNe\S+\s\w+\s\S+\s(.*)', output).group(1))
+    print('Wireless LAN Profile Name =>', x*12, re.search(r'Wire\w+\sL\w+\sPr\w+\s\S+\s(.*)', output).group(1))
+    print('Connected For =>', x*24, re.search(r'Conn\w+\sF\S+\s\S+\s(.*)', output).group(1))
+    print('BSSID =>', x*32, re.search(r'BSS\S+\s(\S+)', output).group(1))
+    print('Channel =>', x*30, re.search(r'Chan\S+\s(\S+)', output).group(1))
+    print('IP Address =>', x*27, re.search(r'IP\sAdd\S+\s(.*)', output).group(1))
+    print('Gateway Address =>', x*22, re.search(r'Gate\S+\s\S+\s(.*)', output).group(1))
+    print('Netmask =>', x*30, re.search(r'Netm\S+\s(.*)', output).group(1))
+    print('Association Id =>', x*23, re.search(r'Asso\S+\s\S+\s(.*)', output).group(1))
+    print('Authentication Algorithm =>', x*13, re.search(r'Authenticatio\S+\s\S+\s(.*)', output).group(1))
+    print('Reason Code =>', x*26, re.search(r'Reas\w+\s\S+\s(.*)', output).group(1))
+    print('==> QoS <==')
+    print('QoS Level =>', x*28, re.search(r'QoS\s\S+\s(.*)', output).group(1))
+    print('Avg data Rate =>', x*24, re.search(r'Avg\sda\S+\s\S+\s(.*)', output).group(1))
+    print('Burst data Rate =>', x*22, re.search(r'Burst\sda\S+\s\S+\s(.*)', output).group(1))
+    print('Avg Real time data Rate =>', x*14, re.search(r'Avg\sRe\S+\s\S+\s\S+\s\S+\s(.*)', output).group(1))
+    print('Burst Real Time data Rate =>', x*12, re.search(r'Burst\sda\S+\s\S+\s(.*)', output).group(1))
+    print('Avg Uplink data Rate =>', x*17, re.search(r'Avg\sUp\w+\sda\w+\s\S+\s(.*)', output).group(1))
+    print('Burst Uplink data Rate =>', x*15, re.search(r'Bur\w+\sUp\w+\sda\w+\s\S+\s(.*)', output).group(1))
+    print('Avg Uplink Real time data Rate =>', x*7, re.search(r'Avg\sUp\w+\sRe\w+\st\w+\sda\w+\sRa\S+\s(.*)', output).group(1))
+    print('Burst Uplink Real Time data Rate =>', x*5, re.search(r'Bur\w+\sUp\w+\sRe\w+\s\w+\s\w+\s\S+\s(.*)', output).group(1))
+    print('Supported Rates =>', x*22, re.search(r'Supp\w+\sRa\S+\s(.*)', output).group(1))
+    print('Mobility State =>', x*23, re.search(r'Mobi\w+\sSta\S+\s(.*)', output).group(1))
+    print('Mobility Move Count =>', x*18, re.search(r'Mobil\w+\sMo\w+\sC\S+\s(.*)', output).group(1))
+    print('Audit Session ID =>', x*21, re.search(r'Audit\sS\w+\s\S+\s(.*)', output).group(1))
+    print('Interface =>', x*28, re.search(r'Interface\S+\s(.*)', output).group(1))
+    print('VLAN =>', x*33, re.search(r'Interface.*[\r\n]+(\w+\S+\s(.*))', output).group(2))
+    print('Access VLAN =>', x*26, re.search(r'Acce\w+\sVLA\S+\s(.*)', output).group(1))
+    print('Local Bridging VLAN =>', x*18, re.search(r'Local\sBr\w+\s\S+\s(.*)', output).group(1))
+    print('==> Client Statistics <==')
+    print('Number of Bytes Received =>', x*13, re.search(r'Client Statistics.[\r\n]+(\s+\w+\s\S+\s\S+\s\S+\s(.*))', output).group(2))
+    print('Number of Bytes Sent =>', x*17, re.search(r'Number of Bytes Received.*[\r\n]+(\s+\S+\s\S+\s\S+\s\S+\s(.*))', output).group(2))
+    print('Total Number of Bytes Sent =>', x*11, re.search(r'Total\s\S+\s\S+\s\S+\sSe\S+\s(.*)', output).group(1))
+    print('Total Number of Bytes Recv =>', x*11, re.search(r'Total\s\S+\s\S+\s\S+\sRe\S+\s(.*)', output).group(1))
+    print('Number of Bytes Sent (last 90s) =>', x*6, re.search(r'Total Number of Bytes Recv.*[\r\n]+(\s+\S+\s\S+\s\S+\s\S+\s\S+\s\S+\s(.*))', output).group(2))
+    print('Number of Bytes Recv (last 90s) =>', x*6, re.search(r'Total Number of Bytes Recv.*[\r\n]+([^\r\n]+)(\s+\S+\s\S+\s\S+\s\S+\s\S+\s\S+\s(.*))', output).group(3))
+    print('Number of Packets Received =>', x*11, re.search(r'Number\s\S+\sPa\S+\sRe\S+\s(.*)', output).group(1))
+    print('Number of Packets Sent =>', x*15, re.search(r'Number\s\S+\sPa\S+\sSen\S+\s(.*)', output).group(1))
+    print('Number of Data Retries =>', x*15, re.search(r'Data\sRe\S+\s(.*)', output).group(1))
+    print('Radio Signal Strength Indicator =>', x*6, re.search(r'Radi\S+\s\S+\s\S+\s\S+\s(.*)', output).group(1))
+    print('Signal to Noise Ratio =>', x*16, re.search(r'Sig\w+\s\S+\sNo\S+\s\S+\s(.*)', output).group(1))
+    print(re.search(r'Clie\w+\sCapa\S+[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)', output).group())
+
+
+# function to get all the Client details
 def wlc_aireos_client_details(mac, net_connect):
     print('==> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
     output = net_connect.send_command("show  client detail" + " " + mac)
@@ -1091,7 +1150,7 @@ def wlc_clients_associated(ap_name, net_connect):
     print('\n')
 
     # getting output for 2.4Ghz
-    print("==> Getting 2.4Ghz clients associates with", ap_name)
+    print("==> Getting 2.4Ghz clients associated with", ap_name)
     output1 = net_connect.send_command("show client ap 802.11b" + " " + ap_name)
     print('MAC Address        AP Id   Status         WLAN Id    Authenticated')
     # filtering output for 2.4Ghz
