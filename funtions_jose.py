@@ -1134,6 +1134,18 @@ def wlc_clients_associated_ap_details(ap_name, net_connect):
     print('*---*-*---*-*---*-*---*-*---*')
 
 
+def get_ping_info_rates(ping, ip, net_connect):
+    if '!' in ping:
+        output = re.search(r'rate\s\S+\s(\S+)\s\S+\s.(\d.\d)..\s\S+\s\S+\s.\s(\d+).(\d+).(\d+)', ping)
+        print('==> Ping results to ' + ip)
+        print('=> Success rate =', output.group(1), '% ', output.group(2))
+        print('=> round-trip min time', output.group(3))
+        print('=> round-trip avg time', output.group(4))
+        print('=> round-trip max time', output.group(5))
+    else:
+        print('=> ICMP ping failed')
+
+
 def wlc_clients_associated(ap_name, net_connect):
     # date and time
     print('==> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
