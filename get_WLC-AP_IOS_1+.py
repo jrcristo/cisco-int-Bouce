@@ -26,7 +26,7 @@ if __name__ == '__main__':
             net_connect.enable()
 
             # connecting WLC
-            output = funtions_jose.get_wlc_ap_facts(ap_name, net_connect)
+            output = funtions_jose.get_ios_wlc_ap(ap_name, net_connect)
             exit(0)
 
     except AttributeError:
@@ -41,7 +41,7 @@ if __name__ == '__main__':
             net_connect.enable()
 
             # connecting WLC
-            output = funtions_jose.get_wlc_ap_facts(ap_name, net_connect)
+            output = funtions_jose.get_ios_wlc_ap(ap_name, net_connect)
             exit(0)
 
     except AttributeError:
