@@ -19,7 +19,7 @@ if __name__ == '__main__':
 
     try:
         if ex.group():
-            isIP = '10.121.71.225'
+            isIP = '10.125.71.225'
             print('==> Connecting to EX=Enchanted WLC at' + " " + isIP)
             JC = funtions_jose.connect_wlc(isIP)
             net_connect = ConnectHandler(**JC)
