@@ -1161,6 +1161,22 @@ def wlc_clients_associated(ap_name, net_connect):
     print('==> Total clients connected to ' + ap_name + " " + '=', len(five)+len(two))
 
 
+def get_ios_wlc_ap(apname, net_connect):
+    output = net_connect.send_command("sh ap summa | inc " + apname)
+    details = re.search(r'(^\S+)\s+\d+\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+\s\S+|\S+)\s+\w+\s+(\S+)\s+(\S+)', output)
+    if details:
+        print('==> AP ' + apname + " " + 'is joined WLC <==')
+        print('=> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
+        print('=> AP name =', details.group(1))
+        print('=> AP model =', details.group(2))
+        print('=> AP Ethernet mac-add =', details.group(3))
+        print('=> AP wireless mac-add =', details.group(4))
+        print('=> AP IP =', details.group(6))
+        print('=> AP status =', details.group(7))
+    else:
+        print("=> AP isn't joined WLC")
+
+
 def get_wlc_facts(net_connect):
     output = net_connect.send_command("show ver")
     if 'Incorrect usage' in output:
