@@ -1163,7 +1163,7 @@ def wlc_clients_associated(ap_name, net_connect):
 
 def get_ios_wlc_ap(apname, net_connect):
     output = net_connect.send_command("sh ap summa | inc " + apname)
-    details = re.search(r'(^\S+)\s+\d+\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+\s\S+|\S+)\s+\w+\s+(\S+)\s+(\S+)', output)
+    details = re.search(r'(^\S+)\s+\d+\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+\s\S+|\S+|\s+)\s+\w+\s+(\S+)\s+(\S+)', output)
     if details:
         print('==> AP ' + apname + " " + 'is joined WLC <==')
         print('=> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
