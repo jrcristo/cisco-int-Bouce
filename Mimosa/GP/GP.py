@@ -54,7 +54,7 @@ if __name__ == '__main__':
             pass
 
     # checking rtt time from FZ to shore ( AP Terminal)
-    print(up_ap)
+    # print(up_ap)
     if up_ap:
         print('=> Checking RTT time from ship to shore')
         # Connecting to FZ SW
@@ -87,7 +87,7 @@ if __name__ == '__main__':
         print('*---*-*---*-*---*-*---*')
 
         # Checking port
-        interface = 'Gi2/0/42'
+        interface = 'Gig5/0/48'
         funtions_jose.show_running_config(interface, net_connect)
 
     elif 'ps_aft' in antenna:
@@ -105,7 +105,7 @@ if __name__ == '__main__':
         print('*---*-*---*-*---*-*---*')
 
         # Checking port
-        interface = 'Gi2/0/48'
+        interface = 'Gig3/0/48'
         funtions_jose.show_running_config(interface, net_connect)
 
     elif 'stbd_fwd' in antenna:
@@ -123,7 +123,7 @@ if __name__ == '__main__':
         print('*---*-*---*-*---*-*---*')
 
         # Checking port
-        interface = 'Gi2/0/41'
+        interface = 'Gig5/0/47'
         funtions_jose.show_running_config(interface, net_connect)
 
     elif 'stbd_aft' in antenna:
@@ -141,5 +141,5 @@ if __name__ == '__main__':
         print('*---*-*---*-*---*-*---*')
 
         # Checking port
-        interface = 'Gi2/0/47'
+        interface = 'Gig3/0/47'
         funtions_jose.show_running_config(interface, net_connect)
