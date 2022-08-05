@@ -985,9 +985,8 @@ def check_ocean_dmvpn(net_connect):
 
 def connect_wlc(isIP):
     if isIP:
-        print('\n')
-        IP = isIP
         print('*---*-*---*-*---*-*---*-*---*')
+        IP = isIP
         print('==> Using CCL credentials')
         # USERNAME = input("What's the username: ")
         # PASS = input("What's the password: ")
@@ -1019,6 +1018,19 @@ def connect_wlc(isIP):
     }
 
     return JC
+
+
+def get_wlc_mimosa_check(mac, net_connect):
+    output = net_connect.send_command("show ap config general" + " " + mac)
+    if 'Cisco AP name is invalid' in output:
+        print("=> AP with mac-add = " + mac + " " + "isn't joined WLC")
+
+    else:
+        ap_name = re.search(r'AP\sNa\S+\s(.*)', output)
+        ipv4_bulk = re.search(r'IP\sAdd\w+\sConfiguration.*[\r\n]+([^\r\n]+)', output).group(1)
+        ipv4 = re.search(r'IP\sAddre\w+\S+\s(.*)', ipv4_bulk)
+        group_name = re.search(r'Group\sNam\S+\s(.*)', output)
+        return ap_name.group(1), ipv4.group(1), group_name.group(1)
 
 
 # function to get specific details from Wireless Client
