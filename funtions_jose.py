@@ -1151,9 +1151,9 @@ def get_ping_info_rates(ping, ip, net_connect):
         output = re.search(r'rate\s\S+\s(\S+)\s\S+\s.(\d.\d)..\s\S+\s\S+\s.\s(\d+).(\d+).(\d+)', ping)
         print('==> Ping results to ' + ip)
         print('=> Success rate =', output.group(1), '% ', output.group(2))
-        print('=> round-trip min time', output.group(3))
-        print('=> round-trip avg time', output.group(4))
-        print('=> round-trip max time', output.group(5))
+        print('=> round-trip min time', output.group(3), 'msec')
+        print('=> round-trip avg time', output.group(4), 'msec')
+        print('=> round-trip max time', output.group(5), 'msec')
     else:
         print('=> ICMP ping failed')
 
