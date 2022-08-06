@@ -2,7 +2,7 @@ from netmiko import ConnectHandler
 import funtions_jose
 from variables import *
 
-print('==> script to check MJ Mimosa <==')
+print('==> script to check GP Mimosa <==')
 
 if __name__ == '__main__':
 
