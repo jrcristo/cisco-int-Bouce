@@ -1024,6 +1024,7 @@ def get_wlc_mimosa_check(mac, net_connect):
     output = net_connect.send_command("show ap config general" + " " + mac)
     if 'Cisco AP name is invalid' in output:
         print("=> AP with mac-add = " + mac + " " + "isn't joined WLC")
+        print('*---*-*---*-*---*-*---*')
 
     else:
         ap_name = re.search(r'AP\sNa\S+\s(.*)', output)
@@ -1149,6 +1150,7 @@ def wlc_clients_associated_ap_details(ap_name, net_connect):
 def get_ping_info_rates(ping, ip, net_connect):
     if '!' in ping:
         output = re.search(r'rate\s\S+\s(\S+)\s\S+\s.(\d.\d)..\s\S+\s\S+\s.\s(\d+).(\d+).(\d+)', ping)
+        print('=> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
         print('==> Ping results to ' + ip)
         print('=> Success rate =', output.group(1), '% ', output.group(2))
         print('=> round-trip min time', output.group(3), 'msec')
