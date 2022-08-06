@@ -10,7 +10,7 @@ if __name__ == '__main__':
     no_option = ['no', 'n']
 
     # APs
-    APS = ['c4b2.39e5.a742', '4ce1.7557.76ba', '286f.7fcf.641c']
+    APS = ['c4b2.39e5.a742', 'b4de.31e2.21be', '4ce1.7557.76ba']
 
     FZ1 = '10.122.198.1'
     FZ7 = '10.122.198.193'
@@ -25,8 +25,11 @@ if __name__ == '__main__':
 
     up_ap = 0
 
+    # getting the time and date
+    print('==> Date =', funtions_jose.get_time_date()[0], '=> Time =', funtions_jose.get_time_date()[1])
+
     # Displaying info for AP
-    print('=> Total #s of APs are =', len(APS))
+    print('=> Total #s of APs inside the MobileKit =', len(APS))
 
     # Connecting to WLC
     isIP = '10.122.199.226'
@@ -62,7 +65,6 @@ if __name__ == '__main__':
         net_connect = ConnectHandler(**JC)
         net_connect.enable()
 
-        test = net_connect.send_command('sh ver')
         ping = net_connect.send_command('ping ' + up_ap + " " + 'rep 2\n')
         ping = net_connect.send_command('ping ' + up_ap)
         # calling ping function
