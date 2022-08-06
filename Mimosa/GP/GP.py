@@ -59,7 +59,7 @@ if __name__ == '__main__':
     # checking rtt time from FZ to shore ( AP Terminal)
     # print(up_ap)
     if up_ap:
-        print('=> Checking RTT time from ship to shore')
+        print('=> Checking RTT time from ship to shore (FZ to Terminal APs)')
         # Connecting to FZ SW
         JC = funtions_jose.if_credential_connection(FZ1)
         net_connect = ConnectHandler(**JC)
