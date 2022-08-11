@@ -553,6 +553,18 @@ def check_interface_status(inter, net_connect):
     return
 
 
+def get_hostname_only(net_connect):
+    name = net_connect.send_command('sh run | inc hostname')
+    hostname = re.search(r'host\w+\s(.*)', name)
+    print(hostname.group(1))
+
+
+def get_stackwise_size(net_connect):
+    stack = net_connect.send_command('sh switch')
+    stackwise = re.findall(r'(\d)\s+\bActive\b|(\d)\s+\bStandby\b|(\d)\s+\bMember\b', stack)
+    print(len(stackwise))
+
+
 def get_hostname(net_connect):
     output = net_connect.send_command('sh ver | inc Nexus')
     if output:
@@ -1041,55 +1053,65 @@ def wlc_aireos_client(mac, net_connect):
     x = ' '
     print('*---*-*---*-*---*-*---*-*---*')
     print('=> Client mac-add =', mac)
-    print('Client Username =>', x*22, re.search(r'Clie\S+\sUsern\S+\s\S+\s(.*)', output).group(1))
-    print('Client Webauth Username =>', x*14, re.search(r'Clie\S+\sWe\S+\s\S+\s\S+\s(.*)', output).group(1))
-    print('Hostname =>', x*29, re.search(r'Host\w+.\s\S+\s(.*)', output).group(1))
-    print('Device Type =>', x*26, re.search(r'Dev\S+\s\S+.\S+\s(.*)', output).group(1))
-    print('Connected to =>', x*25, re.search(r'AP\sNa\S+\s(\S+)', output).group(1))
-    print('Client State =>', x*25, re.search(r'Cli\w+\sSt\S+\s(.*)', output).group(1))
-    print('Wireless LAN Id =>', x*22, re.search(r'Wire\w+\sL\w+\sI\S+\s(.*)', output).group(1))
-    print('Wireless LAN Network Name (SSID) =>', x*5, re.search(r'Wire\w+\sL\w+\sNe\S+\s\w+\s\S+\s(.*)', output).group(1))
-    print('Wireless LAN Profile Name =>', x*12, re.search(r'Wire\w+\sL\w+\sPr\w+\s\S+\s(.*)', output).group(1))
-    print('Connected For =>', x*24, re.search(r'Conn\w+\sF\S+\s\S+\s(.*)', output).group(1))
-    print('BSSID =>', x*32, re.search(r'BSS\S+\s(\S+)', output).group(1))
-    print('Channel =>', x*30, re.search(r'Chan\S+\s(\S+)', output).group(1))
-    print('IP Address =>', x*27, re.search(r'IP\sAdd\S+\s(.*)', output).group(1))
-    print('Gateway Address =>', x*22, re.search(r'Gate\S+\s\S+\s(.*)', output).group(1))
-    print('Netmask =>', x*30, re.search(r'Netm\S+\s(.*)', output).group(1))
-    print('Association Id =>', x*23, re.search(r'Asso\S+\s\S+\s(.*)', output).group(1))
-    print('Authentication Algorithm =>', x*13, re.search(r'Authenticatio\S+\s\S+\s(.*)', output).group(1))
-    print('Reason Code =>', x*26, re.search(r'Reas\w+\s\S+\s(.*)', output).group(1))
+    print('Client Username =>', x * 22, re.search(r'Clie\S+\sUsern\S+\s\S+\s(.*)', output).group(1))
+    print('Client Webauth Username =>', x * 14, re.search(r'Clie\S+\sWe\S+\s\S+\s\S+\s(.*)', output).group(1))
+    print('Hostname =>', x * 29, re.search(r'Host\w+.\s\S+\s(.*)', output).group(1))
+    print('Device Type =>', x * 26, re.search(r'Dev\S+\s\S+.\S+\s(.*)', output).group(1))
+    print('Connected to =>', x * 25, re.search(r'AP\sNa\S+\s(\S+)', output).group(1))
+    print('Client State =>', x * 25, re.search(r'Cli\w+\sSt\S+\s(.*)', output).group(1))
+    print('Wireless LAN Id =>', x * 22, re.search(r'Wire\w+\sL\w+\sI\S+\s(.*)', output).group(1))
+    print('Wireless LAN Network Name (SSID) =>', x * 5,
+          re.search(r'Wire\w+\sL\w+\sNe\S+\s\w+\s\S+\s(.*)', output).group(1))
+    print('Wireless LAN Profile Name =>', x * 12, re.search(r'Wire\w+\sL\w+\sPr\w+\s\S+\s(.*)', output).group(1))
+    print('Connected For =>', x * 24, re.search(r'Conn\w+\sF\S+\s\S+\s(.*)', output).group(1))
+    print('BSSID =>', x * 32, re.search(r'BSS\S+\s(\S+)', output).group(1))
+    print('Channel =>', x * 30, re.search(r'Chan\S+\s(\S+)', output).group(1))
+    print('IP Address =>', x * 27, re.search(r'IP\sAdd\S+\s(.*)', output).group(1))
+    print('Gateway Address =>', x * 22, re.search(r'Gate\S+\s\S+\s(.*)', output).group(1))
+    print('Netmask =>', x * 30, re.search(r'Netm\S+\s(.*)', output).group(1))
+    print('Association Id =>', x * 23, re.search(r'Asso\S+\s\S+\s(.*)', output).group(1))
+    print('Authentication Algorithm =>', x * 13, re.search(r'Authenticatio\S+\s\S+\s(.*)', output).group(1))
+    print('Reason Code =>', x * 26, re.search(r'Reas\w+\s\S+\s(.*)', output).group(1))
     print('==> QoS <==')
-    print('QoS Level =>', x*28, re.search(r'QoS\s\S+\s(.*)', output).group(1))
-    print('Avg data Rate =>', x*24, re.search(r'Avg\sda\S+\s\S+\s(.*)', output).group(1))
-    print('Burst data Rate =>', x*22, re.search(r'Burst\sda\S+\s\S+\s(.*)', output).group(1))
-    print('Avg Real time data Rate =>', x*14, re.search(r'Avg\sRe\S+\s\S+\s\S+\s\S+\s(.*)', output).group(1))
-    print('Burst Real Time data Rate =>', x*12, re.search(r'Burst\sda\S+\s\S+\s(.*)', output).group(1))
-    print('Avg Uplink data Rate =>', x*17, re.search(r'Avg\sUp\w+\sda\w+\s\S+\s(.*)', output).group(1))
-    print('Burst Uplink data Rate =>', x*15, re.search(r'Bur\w+\sUp\w+\sda\w+\s\S+\s(.*)', output).group(1))
-    print('Avg Uplink Real time data Rate =>', x*7, re.search(r'Avg\sUp\w+\sRe\w+\st\w+\sda\w+\sRa\S+\s(.*)', output).group(1))
-    print('Burst Uplink Real Time data Rate =>', x*5, re.search(r'Bur\w+\sUp\w+\sRe\w+\s\w+\s\w+\s\S+\s(.*)', output).group(1))
-    print('Supported Rates =>', x*22, re.search(r'Supp\w+\sRa\S+\s(.*)', output).group(1))
-    print('Mobility State =>', x*23, re.search(r'Mobi\w+\sSta\S+\s(.*)', output).group(1))
-    print('Mobility Move Count =>', x*18, re.search(r'Mobil\w+\sMo\w+\sC\S+\s(.*)', output).group(1))
-    print('Audit Session ID =>', x*21, re.search(r'Audit\sS\w+\s\S+\s(.*)', output).group(1))
-    print('Interface =>', x*28, re.search(r'Interface\S+\s(.*)', output).group(1))
-    print('VLAN =>', x*33, re.search(r'Interface.*[\r\n]+(\w+\S+\s(.*))', output).group(2))
-    print('Access VLAN =>', x*26, re.search(r'Acce\w+\sVLA\S+\s(.*)', output).group(1))
-    print('Local Bridging VLAN =>', x*18, re.search(r'Local\sBr\w+\s\S+\s(.*)', output).group(1))
+    print('QoS Level =>', x * 28, re.search(r'QoS\s\S+\s(.*)', output).group(1))
+    print('Avg data Rate =>', x * 24, re.search(r'Avg\sda\S+\s\S+\s(.*)', output).group(1))
+    print('Burst data Rate =>', x * 22, re.search(r'Burst\sda\S+\s\S+\s(.*)', output).group(1))
+    print('Avg Real time data Rate =>', x * 14, re.search(r'Avg\sRe\S+\s\S+\s\S+\s\S+\s(.*)', output).group(1))
+    print('Burst Real Time data Rate =>', x * 12, re.search(r'Burst\sda\S+\s\S+\s(.*)', output).group(1))
+    print('Avg Uplink data Rate =>', x * 17, re.search(r'Avg\sUp\w+\sda\w+\s\S+\s(.*)', output).group(1))
+    print('Burst Uplink data Rate =>', x * 15, re.search(r'Bur\w+\sUp\w+\sda\w+\s\S+\s(.*)', output).group(1))
+    print('Avg Uplink Real time data Rate =>', x * 7,
+          re.search(r'Avg\sUp\w+\sRe\w+\st\w+\sda\w+\sRa\S+\s(.*)', output).group(1))
+    print('Burst Uplink Real Time data Rate =>', x * 5,
+          re.search(r'Bur\w+\sUp\w+\sRe\w+\s\w+\s\w+\s\S+\s(.*)', output).group(1))
+    print('Supported Rates =>', x * 22, re.search(r'Supp\w+\sRa\S+\s(.*)', output).group(1))
+    print('Mobility State =>', x * 23, re.search(r'Mobi\w+\sSta\S+\s(.*)', output).group(1))
+    print('Mobility Move Count =>', x * 18, re.search(r'Mobil\w+\sMo\w+\sC\S+\s(.*)', output).group(1))
+    print('Audit Session ID =>', x * 21, re.search(r'Audit\sS\w+\s\S+\s(.*)', output).group(1))
+    print('Interface =>', x * 28, re.search(r'Interface\S+\s(.*)', output).group(1))
+    print('VLAN =>', x * 33, re.search(r'Interface.*[\r\n]+(\w+\S+\s(.*))', output).group(2))
+    print('Access VLAN =>', x * 26, re.search(r'Acce\w+\sVLA\S+\s(.*)', output).group(1))
+    print('Local Bridging VLAN =>', x * 18, re.search(r'Local\sBr\w+\s\S+\s(.*)', output).group(1))
     print('==> Client Statistics <==')
-    print('Number of Bytes Received =>', x*13, re.search(r'Client Statistics.[\r\n]+(\s+\w+\s\S+\s\S+\s\S+\s(.*))', output).group(2))
-    print('Number of Bytes Sent =>', x*17, re.search(r'Number of Bytes Received.*[\r\n]+(\s+\S+\s\S+\s\S+\s\S+\s(.*))', output).group(2))
-    print('Total Number of Bytes Sent =>', x*11, re.search(r'Total\s\S+\s\S+\s\S+\sSe\S+\s(.*)', output).group(1))
-    print('Total Number of Bytes Recv =>', x*11, re.search(r'Total\s\S+\s\S+\s\S+\sRe\S+\s(.*)', output).group(1))
-    print('Number of Bytes Sent (last 90s) =>', x*6, re.search(r'Total Number of Bytes Recv.*[\r\n]+(\s+\S+\s\S+\s\S+\s\S+\s\S+\s\S+\s(.*))', output).group(2))
-    print('Number of Bytes Recv (last 90s) =>', x*6, re.search(r'Total Number of Bytes Recv.*[\r\n]+([^\r\n]+)(\s+\S+\s\S+\s\S+\s\S+\s\S+\s\S+\s(.*))', output).group(3))
-    print('Number of Packets Received =>', x*11, re.search(r'Number\s\S+\sPa\S+\sRe\S+\s(.*)', output).group(1))
-    print('Number of Packets Sent =>', x*15, re.search(r'Number\s\S+\sPa\S+\sSen\S+\s(.*)', output).group(1))
-    print('Number of Data Retries =>', x*15, re.search(r'Data\sRe\S+\s(.*)', output).group(1))
-    print('Radio Signal Strength Indicator =>', x*6, re.search(r'Radi\S+\s\S+\s\S+\s\S+\s(.*)', output).group(1))
-    print('Signal to Noise Ratio =>', x*16, re.search(r'Sig\w+\s\S+\sNo\S+\s\S+\s(.*)', output).group(1))
-    print(re.search(r'Clie\w+\sCapa\S+[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)', output).group())
+    print('Number of Bytes Received =>', x * 13,
+          re.search(r'Client Statistics.[\r\n]+(\s+\w+\s\S+\s\S+\s\S+\s(.*))', output).group(2))
+    print('Number of Bytes Sent =>', x * 17,
+          re.search(r'Number of Bytes Received.*[\r\n]+(\s+\S+\s\S+\s\S+\s\S+\s(.*))', output).group(2))
+    print('Total Number of Bytes Sent =>', x * 11, re.search(r'Total\s\S+\s\S+\s\S+\sSe\S+\s(.*)', output).group(1))
+    print('Total Number of Bytes Recv =>', x * 11, re.search(r'Total\s\S+\s\S+\s\S+\sRe\S+\s(.*)', output).group(1))
+    print('Number of Bytes Sent (last 90s) =>', x * 6,
+          re.search(r'Total Number of Bytes Recv.*[\r\n]+(\s+\S+\s\S+\s\S+\s\S+\s\S+\s\S+\s(.*))', output).group(2))
+    print('Number of Bytes Recv (last 90s) =>', x * 6,
+          re.search(r'Total Number of Bytes Recv.*[\r\n]+([^\r\n]+)(\s+\S+\s\S+\s\S+\s\S+\s\S+\s\S+\s(.*))',
+                    output).group(3))
+    print('Number of Packets Received =>', x * 11, re.search(r'Number\s\S+\sPa\S+\sRe\S+\s(.*)', output).group(1))
+    print('Number of Packets Sent =>', x * 15, re.search(r'Number\s\S+\sPa\S+\sSen\S+\s(.*)', output).group(1))
+    print('Number of Data Retries =>', x * 15, re.search(r'Data\sRe\S+\s(.*)', output).group(1))
+    print('Radio Signal Strength Indicator =>', x * 6, re.search(r'Radi\S+\s\S+\s\S+\s\S+\s(.*)', output).group(1))
+    print('Signal to Noise Ratio =>', x * 16, re.search(r'Sig\w+\s\S+\sNo\S+\s\S+\s(.*)', output).group(1))
+    print(re.search(
+        r'Clie\w+\sCapa\S+[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)',
+        output).group())
 
 
 # function to get all the Client details
@@ -1184,7 +1206,7 @@ def wlc_clients_associated(ap_name, net_connect):
     for c in two:
         print(c)
     print('=> Total 2.4GHz clients connected =', len(two))
-    print('==> Total clients connected to ' + ap_name + " " + '=', len(five)+len(two))
+    print('==> Total clients connected to ' + ap_name + " " + '=', len(five) + len(two))
 
 
 def get_ios_wlc_ap(apname, net_connect):
@@ -1287,11 +1309,13 @@ def get_wlc_wlan_qos(net_connect):
 
     print('==> Per-Client Rate Limits     Upstream             Downstream')
     # per Clients
-    per_clients = re.search(r'Per-Client Rate Limits.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)', wlan_MedNet)
+    per_clients = re.search(
+        r'Per-Client Rate Limits.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)', wlan_MedNet)
     mednet_wlc_ave_data_rate = re.search(r'Ave\w+\sD\w+\s\w+\S+\s+(\d+)\s+(\d+)', per_clients.group(1))
     mednet_wlc_real_time_data_rate = re.search(r'Ave\w+\sRe\w+\sD\w+\sR\w+\S+\s+(\d+)\s+(\d+)', per_clients.group(2))
     mednet_wlc_burst_data_rate = re.search(r'Bur\w+\sDa\w+\sR\w+\S+\s+(\d+)\s+(\d+)', per_clients.group(3))
-    mednet_wlc_burst_realtime_data_rate = re.search(r'Bur\w+\sRe\w+\sD\w+\sRa\w+\S+\s+(\d+)\s+(\d+)', per_clients.group(4))
+    mednet_wlc_burst_realtime_data_rate = re.search(r'Bur\w+\sRe\w+\sD\w+\sRa\w+\S+\s+(\d+)\s+(\d+)',
+                                                    per_clients.group(4))
 
     print('=> Average Data Rate           ', mednet_wlc_ave_data_rate.group(1) + ' kbps', x * 12,
           mednet_wlc_ave_data_rate.group(2) + ' kbps')
@@ -1322,10 +1346,11 @@ def get_wlc_wlan_qos(net_connect):
     per_wlan_ssid = re.search(
         r'Per-SSID Rate Limits.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)',
         wlan_CrewNet)
-    wlc_ssid_ave_data_rate = re.search(r'Ave\w+\sD\w+\s\w+\S+\s+(\d+)\s+(\d+)',per_wlan_ssid.group(1))
+    wlc_ssid_ave_data_rate = re.search(r'Ave\w+\sD\w+\s\w+\S+\s+(\d+)\s+(\d+)', per_wlan_ssid.group(1))
     wlc_ssid_real_time_data_rate = re.search(r'Ave\w+\sRe\w+\sD\w+\sR\w+\S+\s+(\d+)\s+(\d+)', per_wlan_ssid.group(2))
     wlc_ssid_burst_data_rate = re.search(r'Bur\w+\sDa\w+\sR\w+\S+\s+(\d+)\s+(\d+)', per_wlan_ssid.group(3))
-    wlc_ssid_burst_realtime_data_rate = re.search(r'Bur\w+\sRe\w+\sD\w+\sRa\w+\S+\s+(\d+)\s+(\d+)', per_wlan_ssid.group(4))
+    wlc_ssid_burst_realtime_data_rate = re.search(r'Bur\w+\sRe\w+\sD\w+\sRa\w+\S+\s+(\d+)\s+(\d+)',
+                                                  per_wlan_ssid.group(4))
     print('=> Average Data Rate           ', wlc_ssid_ave_data_rate.group(1) + ' kbps', x * 12,
           wlc_ssid_ave_data_rate.group(2) + ' kbps')
     print('=> Average Realtime Data Rate  ', wlc_ssid_real_time_data_rate.group(1) + ' kbps', x * 12,
