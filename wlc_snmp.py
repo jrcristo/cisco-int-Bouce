@@ -1,13 +1,13 @@
 from snmp_helper import snmp_get_oid, snmp_extract
 import funtions_jose
 
-print('==> Script to check WLC values <==')
+print('==> Script to check AIROS WLC values <==')
 
 wlc = ['10.121.199.225', '10.120.7.225', '10.120.71.225', '10.121.7.225', '10.121.71.225', '10.122.199.226', '10.122.7.225', '10.120.135.225', '10.124.154.225', '10.5.144.10', '10.5.160.10', '10.123.7.225', '10.123.71.225', '10.123.135.225', '10.125.7.225']
 
 name = None
 
-# loog to get the values
+# getting  values
 print('*---*-*---*-*---*-*---*')
 for j in wlc:
     COMMUNITY_STRING = 'msdp725'
