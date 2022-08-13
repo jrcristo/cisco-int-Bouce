@@ -1383,6 +1383,7 @@ def get_wlc_wlan_qos(net_connect):
 
 def get_wlc_wlan_qos_9800(net_connect):
     # getting MedNet or CrewNet ID
+    print('=> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
     ssid_id = net_connect.send_command("show wlan summa")
     MedNet = re.search(r'(\d+).*\bMedallionNet\b', ssid_id)
     CreNet = re.search(r'(\d+).*\bCrewNet\b', ssid_id)
