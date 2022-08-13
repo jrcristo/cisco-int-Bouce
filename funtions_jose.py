@@ -1237,6 +1237,7 @@ def get_wlc_facts(net_connect):
         wlans_total = re.search(r'WLA\w+\S+\s(\d+)', sysinfo)
         total_clients = re.search(r'Clien\w+\S+\s(\d+)', sysinfo)
         print('*---*-*---*-*---*-*---*-*---*')
+        print('=> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
         print('==> Platform AireOS =>', model.group(1))
         print('=> System Name:', name.group(1))
         print('=> OS version:', os_ver.group(1))
@@ -1256,6 +1257,7 @@ def get_wlc_facts(net_connect):
         serial2 = re.search(r'Chassis\s2".*[\r\n]+([^\r\n]+)', inv_9800)
         ser2 = re.search(r'SN.\s(\S+)', serial2.group())
         print('*---*-*---*-*---*-*---*-*---*')
+        print('=> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
         print('==> Platform IOS =>', 'Model=' + model_inv.group(1))
         print('=> System Name:', name.group(1))
         print('=> OS version:', os.group(1))
@@ -1383,7 +1385,6 @@ def get_wlc_wlan_qos(net_connect):
 
 def get_wlc_wlan_qos_9800(net_connect):
     # getting MedNet or CrewNet ID
-    print('=> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
     ssid_id = net_connect.send_command("show wlan summa")
     MedNet = re.search(r'(\d+).*\bMedallionNet\b', ssid_id)
     CreNet = re.search(r'(\d+).*\bCrewNet\b', ssid_id)
