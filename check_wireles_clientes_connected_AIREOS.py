@@ -40,7 +40,7 @@ if __name__ == '__main__':
             net_connect.enable()
 
             # sending commands to WLC
-            ap_details = input("==> do you want to check the AP details?, (Y) to continue (N) to cancel:").lower()
+            ap_details = input("==> do you want to check the AP details?, (Y) to continue (N) to cancel: ").lower()
             if ap_details in yes_option:
                 print("==> Getting AP details")
                 funtions_jose.wlc_clients_associated_ap_details(ap_name, net_connect)
@@ -52,7 +52,7 @@ if __name__ == '__main__':
 
             print('*---*-*---*-*---*-*---*-*---*')
             # asking for client details
-            client_detail = input("==> do you want to check client details?, (Y) to continue (N) to cancel:").lower()
+            client_detail = input("==> do you want to check client details?, (Y) to continue (N) to cancel: ").lower()
             if client_detail in yes_option:
                 mac_addr = str(input("==> please, copy and paste the mac-add <==: ")).lower()
                 print("==> Getting Client details")
