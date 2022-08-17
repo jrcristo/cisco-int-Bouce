@@ -1,10 +1,6 @@
 from netmiko import ConnectHandler
 import funtions_jose
 
-# getting time
-date = funtions_jose.get_time_date()
-print(date[1], '\n')
-
 print('==> Script to get PAN-OS system info <==')
 
 if __name__ == '__main__':
