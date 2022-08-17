@@ -1124,6 +1124,9 @@ def wlc_aireos_client_details(mac, net_connect):
 
 def wlc_clients_associated_ap_details(ap_name, net_connect):
     output = net_connect.send_command("show ap config general" + " " + ap_name)
+    five_radio = net_connect.send_command("show ap config 802.11a " + ap_name)
+    two_radio = net_connect.send_command("show ap config 802.11-abgn " + ap_name)
+
     print('*---*-*---*-*---*-*---*-*---*')
     ap_name = re.search(r'AP\sNa\w+\S+\s(.*)', output)
     ap_mac = re.search(r'MAC\sAd\w+\S+\s([0-9a-f].*)', output)
@@ -1146,6 +1149,16 @@ def wlc_clients_associated_ap_details(ap_name, net_connect):
     ap_lwapp_uptime = re.search(r'AP\sLW\S+\s\w+\s\S+\s(.*)', output)
     join_date_time = re.search(r'Join\sDate\s\w+\s\S+\s(.*)', output)
     join_taken_time = re.search(r'Join\sTa\w+\s\S+\s(.*)', output)
+    # Radio Section #
+    five_power_config = re.search(r'Tx\sPower\sC\S+\s\S+\s(.*)', five_radio)
+    five_tx_level = re.search(r'Current\sTx\s\S+\s\S+\s\S+\s(.*)', five_radio)
+    five_channel = re.search(r'Current\sCh\S+\s\S+\s(.*)', five_radio)
+    five_channel_width = re.search(r'Channel\sW\S+\s(.*)', five_radio)
+    #
+    two_power_config = re.search(r'Tx\sPower\sC\S+\s\S+\s(.*)', two_radio)
+    two_tx_level = re.search(r'Current\sTx\s\S+\s\S+\s\S+\s(.*)', two_radio)
+    two_channel = re.search(r'Current\sCh\S\S+\s\S+\s(.*)', two_radio)
+    two_channel_width = re.search(r'Channel\sW\S+\s(.*)', two_radio)
 
     print('=> The AP name is =', ap_name.group(1))
     print('=> The AP mac-add =', ap_mac.group(1))
@@ -1168,6 +1181,16 @@ def wlc_clients_associated_ap_details(ap_name, net_connect):
     print('=> The Join Data and Time =', join_date_time.group(1))
     print('=> The Join Taken Time =', join_taken_time.group(1))
     print('*---*-*---*-*---*-*---*-*---*')
+    print('==> 2.4Ghz info <==')
+    print('=>AP connected to channel =', two_channel.group(1))
+    print('=>AP 2.4Ghz channel width =', two_channel_width.group(1))
+    print('=>AP 2.4Ghz Tx-Power-Level =', two_tx_level.group(1))
+    print('=>AP 2.4Ghz Tx-Power-Level-Assignment=', two_power_config.group(1))
+    print('==> 5Ghz info <==')
+    print('=>AP connected to channel =', five_channel.group(1))
+    print('=>AP 5Ghz channel width =', five_channel_width.group(1))
+    print('=>AP 5Ghz Tx-Power-Level =', five_tx_level.group(1))
+    print('=>AP 5Ghz Tx-Power-Level-Assignment=', five_power_config.group(1))
 
 
 def get_ping_info_rates(ping, ip, net_connect):
