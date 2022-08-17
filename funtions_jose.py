@@ -2148,6 +2148,9 @@ def create_folder_logs():
 
 
 def panos_show_system_info(net_connect):
+
+    # print the time
+    print('=> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
     output = net_connect.send_command('show system info')
 
     if not output:
