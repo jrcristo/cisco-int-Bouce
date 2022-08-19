@@ -711,12 +711,9 @@ def panos_credentials():
 
 
 def get_ios_nxos_name(net_connect):
-    version = net_connect.send_command('sh ver | inc PCL|aws-')
-    if version:
-        dev_name = re.search(r'PCL\w+.\w+.\w+|aws-\w+.\w+.\w+', version)
-    else:
-        dev_name = 'no name'
-    print('=> Device Name:', dev_name.group())
+    version = net_connect.send_command('sh run | inc hostn')
+    dev_name = re.search(r'hos\w+\s(.*)', version).group(1)
+    print('=> Device Name:', dev_name)
 
 
 def check_bgp_network(bgp_route, net_connect):
