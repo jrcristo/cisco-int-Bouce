@@ -16,6 +16,9 @@ if __name__ == '__main__':
     net_connect = ConnectHandler(**JC)
     net_connect.enable()
 
+    # check interface status
+    funtions_jose.check_interface_status(inter, net_connect)
+
     # showing current config
     funtions_jose.show_running_config(inter, net_connect)
 
