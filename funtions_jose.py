@@ -1,9 +1,6 @@
 import datetime
 import getpass
 from snmp_helper import snmp_get_oid, snmp_extract
-import time
-from time import time
-
 from netmiko import ConnectHandler
 import re
 import os
