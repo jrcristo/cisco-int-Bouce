@@ -1241,19 +1241,84 @@ def wlc_clients_associated(ap_name, net_connect):
 
 
 def get_ios_wlc_ap(apname, net_connect):
-    output = net_connect.send_command("sh ap summa | inc " + apname)
-    details = re.search(r'(^\S+)\s+\d+\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+\s\S+|\S+|\s+)\s+\w+\s+(\S+)\s+(\S+)', output)
-    if details:
-        print('==> AP ' + apname + " " + 'is joined WLC <==')
-        print('=> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
-        print('=> AP name =', details.group(1))
-        print('=> AP model =', details.group(2))
-        print('=> AP Ethernet mac-add =', details.group(3))
-        print('=> AP wireless mac-add =', details.group(4))
-        print('=> AP IP =', details.group(6))
-        print('=> AP status =', details.group(7))
+    output = net_connect.send_command("sh ap name " + apname + " " + 'config general')
+    if 'Invalid AP Name' in output:
+        print('==> AP ' + apname + " " + "isn't joined to WLC")
     else:
-        print("=> AP isn't joined WLC")
+        x = ' '
+        lthree_info = re.search(r'802.11a\s+.\s.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)', output)
+        ap_uptime = re.search(r'Cisco\sAP\sSec.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)', output)
+        ap_name = re.search(r'AP\sN\w+\s+.\s(.*)', output).group(1)
+        # name
+        print('Cisco AP Name', x*33, ':', ap_name)
+        # country code
+        print(re.search(r'AP\sCou\S.*', output).group())
+        # mac-add
+        print(lthree_info.group(1))
+        # ip address config
+        print(lthree_info.group(2))
+        # IP address
+        print(lthree_info.group(3))
+        # netmask
+        print(lthree_info.group(4))
+        # gateway
+        print(lthree_info.group(5))
+        # capwap mtu tunnel
+        print(re.search(r'CAP\w+\sPa.*', output).group())
+        # ssh state
+        print(re.search(r'SSH.*', output).group())
+        # ap location
+        print(re.search(r'Cisco\sAP\sLo.*', output).group())
+        # site tag name
+        print(re.search(r'Site.*', output).group())
+        # RF tag name
+        print(re.search(r'RF\sT.*', output).group())
+        # policy tag name
+        print(re.search(r'Policy.*', output).group())
+        # ap join profile
+        print(re.search(r'AP\sjoi.*', output).group())
+        # flex profile
+        print(re.search(r'Fle.*', output).group())
+        # admin state
+        print(re.search(r'Admini.*', output).group())
+        #
+        print(re.search(r'Opera.*', output).group())
+        # AP mode
+        print(re.search(r'AP\sMo.*', output).group())
+        # ap vlan tagging
+        print(re.search(r'AP\sVL\w+\stagg.*', output).group())
+        # AP vlan tag
+        print(re.search(r'AP\sVL\w+\stag\s.*', output).group())
+        # soft version
+        print(re.search(r'So.*', output).group())
+        # boot version
+        print(re.search(r'Boo.*', output).group())
+        # LED state
+        print(re.search(r'LED\sS.*', output).group())
+        # AP model
+        print(re.search(r'.*Model.*', output).group())
+        # Ap serial #
+        print(re.search(r'.*Seri.*', output).group())
+        # AP username
+        print(re.search(r'AP\sUs.*', output).group())
+        # AP 802.1x user mode
+        print(re.search(r'AP\s802\S+\sU\w+\sM.*', output).group())
+        # AP uptime
+        print(ap_uptime.group(1))
+        # AP capwap uptime
+        print(ap_uptime.group(2))
+        # AP join date and time
+        print(ap_uptime.group(3))
+        # AP join taken time
+        print(ap_uptime.group(4))
+        # tcp mss adjust
+        print(re.search(r'AP\sT\w+\sM\w+\sA.*', output).group())
+        # tcp mss size
+        print(re.search(r'AP\sT\w+\sM\w+\sS.*', output).group())
+        #
+
+
+
 
 
 def get_wlc_facts(net_connect):
