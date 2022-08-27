@@ -701,8 +701,8 @@ def panos_credentials():
         'device_type': 'paloalto_panos',
         'ip': IP,
         'username': 'Read_Only',
-        'password': 'S$@!L!nG!12',
-        # 'password': 'R0-Only1',
+        # 'password': 'S$@!L!nG!12',
+        'password': 'R0-Only1',
     }
     return panos
 
@@ -1026,6 +1026,19 @@ def connect_wlc(isIP):
 
     return JC
 
+
+def set_wlc_policy_tag_9800(ap_name, net_connect):
+
+    output = net_connect.send_command("sh ap name " + ap_name + " " + 'config general')
+    tag_policy = re.search(r'Policy\sT\w+\sNa\w+\s+.\s(.*)', output).group(1)
+    mac = re.search(r'MAC\sAdd\w+\s+.\s(\d\S+|\w\S+)', output).group(1)
+
+    print('mac-add=>', mac)
+    # Changing TAG-Policy
+    config_commands = ['config t', 'ap' + " " + mac, 'policy-tag XIC']
+    output = net_connect.send_config_set(config_commands)
+    if 'Associating policy-tag will cause associated AP to reconnect' in output:
+        print('Command executed successfully')
 
 def get_wlc_mimosa_check(mac, net_connect):
     output = net_connect.send_command("show ap config general" + " " + mac)
@@ -2165,7 +2178,6 @@ def create_folder_logs():
 
 
 def panos_show_system_info(net_connect):
-
     # print the time
     print('=> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
     output = net_connect.send_command('show system info')
