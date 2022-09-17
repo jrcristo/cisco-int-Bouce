@@ -1769,6 +1769,8 @@ def get_wlc_9800_clients_connected_by_ap(ap_name, net_connect):
         r'(^EX\w+|^EX\S+|^XP\w+.\d+.\d+.\w+)\s+([\d|\w]+.[\d|\w]+.[\d|\w]+)\s+\d+\s+\w+\s+\w+\s+(\d+)\s+.(\d).\d\s(.\w+\s\w+.)\s+.(\d+).',
         five_tx)
     # printing details
+    # getting date and time
+    print('==> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
     if five_details.group(2):
         print('=> The AP mac-add is:', five_details.group(2))
     else:
@@ -1810,9 +1812,11 @@ def get_wlc_9800_clients_connected_by_ap(ap_name, net_connect):
     two_tx = net_connect.send_command("show ap dot11 24ghz summary | inc" + " " + ap_name)
     # two_details = re.search(r'^\w+\s+([\d|\w]+.[\d|\w]+.[\d|\w]+)\s+\d+\s+\w+\s+\w+\s+\d+\s+.(\d).\d\s(.\w+\s\w+.)\s+.(\d+).', two_tx)
     two_details = re.search(
-        r'(^EX\w+|^XP\w+.\d+.\d+.\w+)\s+([\d|\w]+.[\d|\w]+.[\d|\w]+)\s+\d+\s+\w+\s+\w+\s+(\d+)\s+.(\d).\d\s(.\w+\s\w+.)\s+.(\d+).',
+        r'(^EX\w+|^EX\S+|^XP\w+.\d+.\d+.\w+)\s+([\d|\w]+.[\d|\w]+.[\d|\w]+)\s+\d+\s+\w+\s+\w+\s+(\d+)\s+.(\d).\d\s(.\w+\s\w+.)\s+.(\d+).',
         two_tx)
     # printing details
+    # getting date and time
+    print('==> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
     if two_details.group(2):
         print('=> The AP mac-add is:', two_details.group(2))
     else:
