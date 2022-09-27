@@ -637,7 +637,7 @@ def get_credentials_and_interface():
     # USERNAME = input("What's the username: ")
     # PASS = getpass.getpass()
 
-    if '10.5.144' in IP or '10.126.140' in IP or '10.126.70' in IP or '10.5.160' in IP or '10.126.78.130' in IP:
+    if '10.5.144' in IP or '10.126.70' in IP or '10.5.160' in IP or '10.126.78.130' in IP:
         print('=> Using CCL Credentials')
         JC = {
             'device_type': 'cisco_ios',
@@ -1028,7 +1028,6 @@ def connect_wlc(isIP):
 
 
 def set_wlc_policy_tag_9800(ap_name, net_connect):
-
     output = net_connect.send_command("sh ap name " + ap_name + " " + 'config general')
     tag_policy = re.search(r'Policy\sT\w+\sNa\w+\s+.\s(.*)', output).group(1)
     mac = re.search(r'MAC\sAdd\w+\s+.\s(\d\S+|\w\S+)', output).group(1)
@@ -1246,11 +1245,14 @@ def get_ios_wlc_ap(apname, net_connect):
         print('==> AP ' + apname + " " + "isn't joined to WLC")
     else:
         x = ' '
-        lthree_info = re.search(r'802.11a\s+.\s.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)', output)
-        ap_uptime = re.search(r'Cisco\sAP\sSec.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)', output)
+        lthree_info = re.search(
+            r'802.11a\s+.\s.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)',
+            output)
+        ap_uptime = re.search(r'Cisco\sAP\sSec.*[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)[\r\n]+([^\r\n]+)',
+                              output)
         ap_name = re.search(r'AP\sN\w+\s+.\s(.*)', output).group(1)
         # name
-        print('Cisco AP Name', x*33, ':', ap_name)
+        print('Cisco AP Name', x * 33, ':', ap_name)
         # country code
         print(re.search(r'AP\sCou\S.*', output).group())
         # mac-add
@@ -1316,9 +1318,6 @@ def get_ios_wlc_ap(apname, net_connect):
         # tcp mss size
         print(re.search(r'AP\sT\w+\sM\w+\sS.*', output).group())
         #
-
-
-
 
 
 def get_wlc_facts(net_connect):
