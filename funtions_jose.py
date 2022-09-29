@@ -518,17 +518,30 @@ def get_lldp_neighbor(inter, net_connect):
 
 # function to reconnect to a device!!!
 def credentials_reconnect(cdp_ip1):
-    USERNAME = input("What's the user: ")
-    PASS = getpass.getpass()
 
-    JC = {
-        'device_type': 'cisco_ios',
-        'ip': cdp_ip1,
-        'username': USERNAME,
-        'password': PASS,
-    }
+    if '10.5.144' in cdp_ip1 or '10.126.70' in cdp_ip1 or '10.5.160' in cdp_ip1 or '10.126.78.130' in cdp_ip1:
+        print('=> Using CCL Credentials')
+        JC = {
+            'device_type': 'cisco_ios',
+            'ip': cdp_ip1,
+            'username': 'ccl',
+            'password': 'N@v!gaT!nG~',
+            'timeout': 29,
+            'global_delay_factor': 7,
+        }
+        return JC
+    else:
+        print('=> Using TACACS Credentials')
+        JC = {
+            'device_type': 'cisco_ios',
+            'ip': cdp_ip1,
+            'username': 'jcr8398',
+            'password': 'ISIS cce2010',
+            'timeout': 29,
+            'global_delay_factor': 6,
 
-    return JC
+        }
+        return JC
 
 
 # show if interface is up or down
@@ -988,6 +1001,84 @@ def check_ocean_dmvpn(net_connect):
         print(match.group())
 
     return
+
+
+def check_mac_add_on_port(mac, net_connect):
+    # sending command
+    output = net_connect.send_command('sh mac add ad ' + mac)
+    # capturing vlanID and int || Po
+    vlan_id = re.search(r'(\d+)\s+\S+\s+\bDYNAMIC\b\s+(.*)', output).group(1)
+    int = re.search(r'(\d+)\s+\S+\s+\bDYNAMIC\b\s+(.*)', output).group(2)
+
+    # print the vlan ID
+    print('==> The mac-add provided belongs to vlan', vlan_id)
+
+    if 'Po' in int:
+        print('=> mac-add behind', int)
+        po_search = net_connect.send_command('sh etherch summ ' + '| inc' + " " + int)
+        # checking if the int is UP
+        int_up = re.findall(r'Te\S+|Gi\S+|eth\S+', po_search)
+        for j in int_up:
+            if 'P' in j:
+                # print('=> Interface is up, checking cdp neighbor')
+                tmp = re.search(r'(Gi|Te|eth)\d.\d.\d+', j)
+                break
+
+        cdp_nei = net_connect.send_command('sh cdp ne ' + str(tmp.group()) + " " + 'de')
+        # getting CDP neighbor
+        cdp_nei_name = re.search(r'Dev\S+\s\S+\s(.*)', cdp_nei).group(1)
+        cdp_nei_ip = re.search(r'IP\sad\S+\s(.*)', cdp_nei).group(1)
+        cdp_nei_platform_all = re.search(r'Pla\S+\s\S+\s(\S+)', cdp_nei).group(1)
+        cdp_nei_platform = cdp_nei_platform_all.rstrip(',')
+        print('The neighbor name is', cdp_nei_name)
+        print('The neighbor ip is', cdp_nei_ip)
+        print('The neighbor platform is', cdp_nei_platform)
+
+        if 'WS-C3560CX-8PT-S' in cdp_nei_platform:
+            print('=> The neighbor is a TL, no more connection')
+        else:
+            print('*---*.*---*.*---*.*---*.*---*.*---*.*---*')
+            print('=> connecting to', cdp_nei_name, 'using', cdp_nei_ip)
+            # connecting to nei
+            JC = credentials_reconnect(cdp_nei_ip)
+            net_connect = ConnectHandler(**JC)
+            net_connect.enable()
+
+            # function
+            check_mac_add_on_port(mac, net_connect)
+
+    elif 'Gi' in int:
+        print('=> mac-add behind', int)
+        cdp_nei = net_connect.send_command('sh cdp ne ' + int + " " + 'de')
+
+        if 'Total cdp entries displayed : 0' in cdp_nei or 'Linux' in cdp_nei:
+            print('=> No more neighbors')
+        else:
+            # getting CDP neighbor
+            cdp_nei_name = re.search(r'Dev\S+\s\S+\s(.*)', cdp_nei).group(1)
+            cdp_nei_ip = re.search(r'IP\sad\S+\s(.*)', cdp_nei).group(1)
+            cdp_nei_platform_all = re.search(r'Pla\S+\s\S+\s(\S+)', cdp_nei).group(1)
+            cdp_nei_platform = cdp_nei_platform_all.rstrip(',')
+            print('The neighbor name is', cdp_nei_name)
+            print('The neighbor ip is', cdp_nei_ip)
+            print('The neighbor platform is', cdp_nei_platform)
+
+            if 'WS-C3560CX-8PT-S' in cdp_nei_platform:
+                print('=> The neighbor is a TL, no more connection')
+            else:
+                print('=> connecting to', cdp_nei_name, 'using', cdp_nei_ip)
+                # connecting to nei
+                JC = credentials_reconnect(cdp_nei_ip)
+                net_connect = ConnectHandler(**JC)
+                net_connect.enable()
+
+                # function
+                check_mac_add_on_port(mac, net_connect)
+
+
+
+
+
 
 
 def connect_wlc(isIP):
