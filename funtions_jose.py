@@ -518,7 +518,6 @@ def get_lldp_neighbor(inter, net_connect):
 
 # function to reconnect to a device!!!
 def credentials_reconnect(cdp_ip1):
-
     if '10.5.144' in cdp_ip1 or '10.126.70' in cdp_ip1 or '10.5.160' in cdp_ip1 or '10.126.78.130' in cdp_ip1:
         print('=> Using CCL Credentials')
         JC = {
@@ -1076,8 +1075,29 @@ def check_mac_add_on_port(mac, net_connect):
                 check_mac_add_on_port(mac, net_connect)
 
 
+def wlc_reboot_aireos_ap(ap_name, net_connect):
+    # checking AP neighbor
+    cdp = net_connect.send_command('show ap cdp neighbors ap-name ' + ap_name)
+    if 'Invalid AP name specified' in cdp:
+        print("==> AP isn't joined WLC, exiting")
+    else:
+        print('=> Showing neighbor details <==')
+        print('=> The AP name is:', ap_name)
+        print('=> The neighbor name is:', re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\s+(\S+)\s+(.*)', cdp).group(1))
+        print('=> The Neighbor Interface is:',
+              re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\s+(\S+)\s+(.*)', cdp).group(2))
+        print('=> The neighbor IP is:', re.search(r'IP\sadd\S+\s(.*)', cdp).group(1))
+        print('***-***.***-***.***-***.***-***.***-***')
 
+    # output = net_connect.send_command('config ap reset ' + ap_name)
+    reset_command = 'config ap reset ' + ap_name
+    reset = net_connect.send_command(reset_command, expect_string=r'Would you like to reset ' + ap_name + " " + '?')
+    try:
+        reset += net_connect.send_command('y', expect_string=r'>')
+    except:
+        raise
 
+    print('=> The AP was rebooted')
 
 
 
@@ -1129,6 +1149,7 @@ def set_wlc_policy_tag_9800(ap_name, net_connect):
     output = net_connect.send_config_set(config_commands)
     if 'Associating policy-tag will cause associated AP to reconnect' in output:
         print('Command executed successfully')
+
 
 def get_wlc_mimosa_check(mac, net_connect):
     output = net_connect.send_command("show ap config general" + " " + mac)
