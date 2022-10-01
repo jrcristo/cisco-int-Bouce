@@ -1049,7 +1049,6 @@ def check_mac_add_on_port(mac, net_connect):
     elif 'Gi' in int:
         print('=> mac-add behind', int)
         cdp_nei = net_connect.send_command('sh cdp ne ' + int + " " + 'de')
-
         if 'Total cdp entries displayed : 0' in cdp_nei or 'Linux' in cdp_nei:
             print('=> No more neighbors')
         else:
@@ -1078,6 +1077,7 @@ def check_mac_add_on_port(mac, net_connect):
 def wlc_reboot_aireos_ap(ap_name, net_connect):
     # checking AP neighbor
     cdp = net_connect.send_command('show ap cdp neighbors ap-name ' + ap_name)
+    inv = net_connect.send_command('show ap inventory ' + ap_name)
     if 'Invalid AP name specified' in cdp:
         print("==> AP isn't joined WLC, exiting")
     else:
@@ -1087,25 +1087,33 @@ def wlc_reboot_aireos_ap(ap_name, net_connect):
         print('=> The Neighbor Interface is:',
               re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\s+(\S+)\s+(.*)', cdp).group(2))
         print('=> The neighbor IP is:', re.search(r'IP\sadd\S+\s(.*)', cdp).group(1))
+        print('====> Inventory Info <====')
+        print('=> The AP description is:', re.search(r'DE\S+\s(.*)', inv).group(1))
+        inv_model = re.search(r'PID\S+\s(\S+)', inv).group(1).rstrip('.')
+        print('=> The AP model is:', inv_model)
+        print('=> The AP SN is:', re.search(r'SN.\s(.*)', inv).group(1))
         print('***-***.***-***.***-***.***-***.***-***')
 
-    # output = net_connect.send_command('config ap reset ' + ap_name)
-    # rebooting AP
-    print('=> Rebooting AP', ap_name)
-    reset_command = 'config ap reset ' + ap_name
-    reset = net_connect.send_command(reset_command, expect_string=r'Would you like to reset ' + ap_name + " " + '?')
-    try:
-        reset += net_connect.send_command('y', expect_string=r'>')
-    except:
-        raise
+    ap_reboot = input("==> do you want to reboot the AP=>" + ap_name + "?, (Y) to continue (N) to cancel:").lower()
+    if ap_reboot in yes_option:
+        # rebooting AP
+        print('=> Rebooting AP', ap_name)
+        reset_command = 'config ap reset ' + ap_name
+        reset = net_connect.send_command(reset_command, expect_string=r'Would you like to reset ' + ap_name + " " + '?')
+        try:
+            reset += net_connect.send_command('y', expect_string=r'>')
+        except:
+            raise
 
-    # checking if the AP went down
-    checking_ap = net_connect.send_command('show ap cdp neighbors ap-name ' + ap_name)
-    if 'Invalid AP name specified' in checking_ap:
-        print('=> AP', ap_name, 'was rebooted')
+        # checking if the AP went down
+        checking_ap = net_connect.send_command('show ap cdp neighbors ap-name ' + ap_name)
+        if 'Invalid AP name specified' in checking_ap:
+            print('=> AP', ap_name, 'was rebooted')
+        else:
+            print('=> AP still UP')
+
     else:
-        print('=> AP still UP')
-
+        print("=> No actions executed")
 
 
 def connect_wlc(isIP):
