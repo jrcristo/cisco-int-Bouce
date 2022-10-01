@@ -1090,6 +1090,8 @@ def wlc_reboot_aireos_ap(ap_name, net_connect):
         print('***-***.***-***.***-***.***-***.***-***')
 
     # output = net_connect.send_command('config ap reset ' + ap_name)
+    # rebooting AP
+    print('=> Rebooting AP', ap_name)
     reset_command = 'config ap reset ' + ap_name
     reset = net_connect.send_command(reset_command, expect_string=r'Would you like to reset ' + ap_name + " " + '?')
     try:
@@ -1097,7 +1099,12 @@ def wlc_reboot_aireos_ap(ap_name, net_connect):
     except:
         raise
 
-    print('=> The AP was rebooted')
+    # checking if the AP went down
+    checking_ap = net_connect.send_command('show ap cdp neighbors ap-name ' + ap_name)
+    if 'Invalid AP name specified' in checking_ap:
+        print('=> AP', ap_name, 'was rebooted')
+    else:
+        print('=> AP still UP')
 
 
 
