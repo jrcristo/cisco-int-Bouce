@@ -1075,10 +1075,25 @@ def check_mac_add_on_port(mac, net_connect):
 
 
 def wlc_get_time(net_connect):
-    get_time = net_connect.send_command("show time")
-    time = re.search(r'\bTime\b\S+\s(.*)', get_time).group(1)
+    version = net_connect.send_command("show version")
 
-    return time
+    if 'Incorrect usage' in version:
+        get_time_aireos = net_connect.send_command("show time")
+        time = re.search(r'\bTime\b\S+\s(.*)', get_time_aireos).group(1)
+        return time
+    elif 'Cisco IOS XE Software' in version:
+        get_time_ios = net_connect.send_command("show clock")
+        # time_ios = re.search(r'[^*].*', get_time_ios).group(1)
+        return get_time_ios
+
+
+def wlc_client_count_by_ap_9800(client_count, net_connect):
+    ap_summ = net_connect.send_command("sh ap summary sort descending client-count")
+    ap_filter = re.findall(r'(\w+\S+)\s+\S+\s+(\d+)\s+', ap_summ)
+    print('=> The local time on WLC is ==>', wlc_get_time(net_connect))
+    for item in ap_filter:
+        if int(item[1]) >= client_count:
+            print(item)
 
 
 def wlc_client_count_by_ap(client_count, net_connect):
