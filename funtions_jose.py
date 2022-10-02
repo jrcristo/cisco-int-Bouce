@@ -1085,7 +1085,7 @@ def wlc_client_count_by_ap(client_count, net_connect):
     ap_summ = net_connect.send_command("show ap summ")
     # filtering results
     ap_filter = re.findall(r'(\S+)\s+\d+\s+\S+\s+\S+\s+\w+\s\S+\s+\w+\s+\d+\S+\s+(\d+)', ap_summ)
-    #print('==> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
+    # print('==> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
     print('=> The local time on WLC is ==>', wlc_get_time(net_connect))
     ### result = [tup for tup in ap_filter if int(tup[1]) > 21]
     for item in ap_filter:
