@@ -18,6 +18,8 @@ if __name__ == '__main__':
         print("==> Checking one SHIP")
 
         try:
+            ex = re.match('^EX', ship)
+            xp = re.match('^XP', ship)
             yp = re.match('^YP', ship)
             gp = re.match('^GP', ship)
             rp = re.match('^RP', ship)
@@ -33,6 +35,38 @@ if __name__ == '__main__':
             sa = re.match('^SA', ship)
             pev2 = re.match('^PEV', ship)
             test = re.match('^TEST', ship)
+
+        except AttributeError:
+            pass
+
+        try:
+            if ex.group():
+                isIP = '10.125.71.225'
+                print('==> Connecting to EX=ENCHANTED WLC at' + " " + isIP)
+                JC = funtions_jose.connect_wlc(isIP)
+                net_connect = ConnectHandler(**JC)
+                net_connect.enable()
+
+                # executing function
+                print('==> ENCHANTED WLC <==')
+                funtions_jose.wlc_client_count_by_ap_9800(client_count, net_connect)
+                exit(0)
+
+        except AttributeError:
+            pass
+
+        try:
+            if xp.group():
+                isIP = '10.125.135.225'
+                print('==> Connecting to XP=DISCOVERY WLC at' + " " + isIP)
+                JC = funtions_jose.connect_wlc(isIP)
+                net_connect = ConnectHandler(**JC)
+                net_connect.enable()
+
+                # executing function
+                print('==> DISCOVERY WLC <==')
+                funtions_jose.wlc_client_count_by_ap_9800(client_count, net_connect)
+                exit(0)
 
         except AttributeError:
             pass
@@ -267,7 +301,7 @@ if __name__ == '__main__':
         print("==> Checking all the WLCs <==")
 
         # loop for all WLCs
-        with open("wlc-airOS.txt", 'r') as hostsfile:
+        with open("wlc.txt", 'r') as hostsfile:
             for line in hostsfile:
                 hostline = line.strip()
                 isIP = line
@@ -275,6 +309,10 @@ if __name__ == '__main__':
                 net_connect = ConnectHandler(**JC)
                 net_connect.enable()
 
+                if '10.125.71.225' in line:
+                    print('==> Enchanted WLC <==')
+                if '10.125.135.225' in line:
+                    print('==> Discovery WLC <==')
                 if '10.121.199.225' in line:
                     print('==> Grand WLC <==')
                 elif '10.120.7.225' in line:
@@ -302,5 +340,8 @@ if __name__ == '__main__':
                 elif '10.125.7.225' in line:
                     print('==> Sky WLC <==')
 
-                # executing function
-                funtions_jose.wlc_client_count_by_ap(client_count, net_connect)
+                if '10.125.71.225' in line or '10.125.135.225' in line:
+                    funtions_jose.wlc_client_count_by_ap_9800(client_count, net_connect)
+                else:
+                    # executing function
+                    funtions_jose.wlc_client_count_by_ap(client_count, net_connect)
