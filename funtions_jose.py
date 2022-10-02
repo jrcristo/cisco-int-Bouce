@@ -1075,14 +1075,16 @@ def check_mac_add_on_port(mac, net_connect):
 
 
 def wlc_client_count_by_ap(client_count, net_connect):
-    command = 'show ap summ'
     ap_summ = net_connect.send_command("show ap summ")
     # filtering results
     ap_filter = re.findall(r'(\S+)\s+\d+\s+\S+\s+\S+\s+\w+\s\S+\s+\w+\s+\d+\S+\s+(\d+)', ap_summ)
+    print('==> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
     ### result = [tup for tup in ap_filter if int(tup[1]) > 21]
     for item in ap_filter:
-        if int(item[1]) > client_count:
+        if int(item[1]) >= client_count:
             print(item)
+        # elif
+        #   print('=> There were no APs with more than ' + str(client_count) + " " + 'clients joined WLC')
 
 
 def wlc_reboot_aireos_ap(ap_name, net_connect):
@@ -1141,7 +1143,7 @@ def connect_wlc(isIP):
             'ip': IP,
             'username': 'ccl',
             'password': 'N@v!gaT!nG~',
-            "timeout": 503,
+            "timeout": 603,
         }
         return JC
 
