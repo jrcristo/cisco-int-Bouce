@@ -1110,46 +1110,168 @@ def wlc_client_count_by_ap(client_count, net_connect):
         #   print('=> There were no APs with more than ' + str(client_count) + " " + 'clients joined WLC')
 
 
-def wlc_reboot_aireos_ap(ap_name, net_connect):
-    # checking AP neighbor
-    cdp = net_connect.send_command('show ap cdp neighbors ap-name ' + ap_name)
-    inv = net_connect.send_command('show ap inventory ' + ap_name)
-    if 'Invalid AP name specified' in cdp:
-        print("==> AP isn't joined WLC, exiting")
-    else:
-        print('=> Showing neighbor details <==')
-        print('=> The AP name is:', ap_name)
-        print('=> The neighbor name is:', re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\s+(\S+)\s+(.*)', cdp).group(1))
-        print('=> The Neighbor Interface is:',
-              re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\s+(\S+)\s+(.*)', cdp).group(2))
-        print('=> The neighbor IP is:', re.search(r'IP\sadd\S+\s(.*)', cdp).group(1))
-        print('====> Inventory Info <====')
-        print('=> The AP description is:', re.search(r'DE\S+\s(.*)', inv).group(1))
-        inv_model = re.search(r'PID\S+\s(\S+)', inv).group(1).rstrip('.')
-        print('=> The AP model is:', inv_model)
-        print('=> The AP SN is:', re.search(r'SN.\s(.*)', inv).group(1))
-        print('***-***.***-***.***-***.***-***.***-***')
+def wlc_utils_ap(ap_name, net_connect):
+    version = net_connect.send_command("show version")
 
-    ap_reboot = input("==> do you want to reboot the AP=>" + ap_name + "?, (Y) to continue (N) to cancel:").lower()
-    if ap_reboot in yes_option:
-        # rebooting AP
-        print('=> Rebooting AP', ap_name)
-        reset_command = 'config ap reset ' + ap_name
-        reset = net_connect.send_command(reset_command, expect_string=r'Would you like to reset ' + ap_name + " " + '?')
-        try:
-            reset += net_connect.send_command('y', expect_string=r'>')
-        except:
-            raise
-
-        # checking if the AP went down
-        checking_ap = net_connect.send_command('show ap cdp neighbors ap-name ' + ap_name)
-        if 'Invalid AP name specified' in checking_ap:
-            print('=> AP', ap_name, 'was rebooted')
+    if 'Incorrect usage' in version:
+        print('==> Using aireOS WLC <==')
+        # checking AP neighbor
+        cdp = net_connect.send_command('show ap cdp neighbors ap-name ' + ap_name)
+        inv = net_connect.send_command('show ap inventory ' + ap_name)
+        if 'Invalid AP name specified' in cdp:
+            print("==> AP isn't joined WLC, exiting")
+            exit(0)
         else:
-            print('=> AP still UP')
+            print('=> Local WLC time is:', wlc_get_time(net_connect))
+            print('====> Showing CDP neighbor details <====')
+            print('=> The AP name is:', ap_name)
+            print('=> The neighbor name is:',
+                  re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\s+(\S+)\s+(.*)', cdp).group(1))
+            print('=> The Neighbor Interface is:',
+                  re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\s+(\S+)\s+(.*)', cdp).group(2))
+            print('=> The neighbor IP is:', re.search(r'IP\sadd\S+\s(.*)', cdp).group(1))
+            print('====> Inventory Info <====')
+            print('=> The AP description is:', re.search(r'DE\S+\s(.*)', inv).group(1))
+            inv_model = re.search(r'PID\S+\s(\S+)', inv).group(1).rstrip('.')
+            print('=> The AP model is:', inv_model)
+            print('=> The AP SN is:', re.search(r'SN.\s(.*)', inv).group(1))
+            print('***-***.***-***.***-***.***-***.***-***')
 
-    else:
-        print("=> No actions executed")
+            ap_options = input(
+                '==> Please select one of the following options:\n => Select 1 to Reboot AP\n => Select 2 to Disable AP\n => Select 3 to Enable AP\n => Select 4 AP LED Flash \n:').lower()
+
+            if '1' in ap_options:
+                print('=> Rebooting AP =>', ap_name)
+                reset_command = 'config ap reset ' + ap_name
+                reset = net_connect.send_command(reset_command,
+                                                 expect_string=r'Would you like to reset ' + ap_name + " " + '?')
+                try:
+                    reset += net_connect.send_command('y', expect_string=r'>')
+
+                except:
+                    raise
+
+                # checking if the AP went down
+                checking_ap = net_connect.send_command('show ap cdp neighbors ap-name ' + ap_name)
+                if 'Invalid AP name specified' in checking_ap:
+                    print('=> AP', ap_name, 'was rebooted')
+                else:
+                    print('=> AP still UP')
+                exit(0)
+
+            elif '2' in ap_options:
+                print('=> Disabling AP =>', ap_name)
+                disable_command = 'config ap disable ' + ap_name
+                disable = net_connect.send_command(disable_command)
+                # checking if the AP went down
+                ap_status_general = net_connect.send_command('show ap config general ' + ap_name)
+                ap_status = re.search(r'Adminis\S+\sSta\w+\s\S+\s(.*)', ap_status_general).group(1)
+                if 'ADMIN_DISABLED' in ap_status:
+                    print('=> AP has been disabled')
+                else:
+                    print('=> AP still enable')
+                exit(0)
+
+            elif '3' in ap_options:
+                print('=> Enabling AP =>', ap_name)
+                enable_command = 'config ap enable ' + ap_name
+                enable = net_connect.send_command(enable_command)
+                # checking if the AP is enabled
+                ap_status_general = net_connect.send_command('show ap config general ' + ap_name)
+                ap_status = re.search(r'Adminis\S+\sSta\w+\s\S+\s(.*)', ap_status_general).group(1)
+                if 'ADMIN_ENABLED' in ap_status:
+                    print('=> AP has been enabled')
+                else:
+                    print('=> AP still disabled')
+                exit(0)
+
+            elif '4' in ap_options:
+                print('=> Enabling AP Blinking LED =>', ap_name)
+                blink_led_input = int(input('=> Please provide the time(in seconds) to flash the LED on the AP: '))
+                blink_led = 'config ap led-state flash ' + str(blink_led_input) + " " + ap_name
+                blink_send = net_connect.send_command(blink_led)
+                print('=> LED Blink command has been sent to ' + ap_name + " " + 'for ' + str(blink_led_input) + " " + 'seconds')
+
+            else:
+                print('=> Wrong option selected')
+                exit(0)
+
+    elif 'Cisco IOS XE Software' in version:
+        print('==> Using IOS WLC (9800) <==')
+        # checking AP neighbor
+        cdp = net_connect.send_command('sh ap name ' + ap_name + " " + 'cdp neighbors')
+        inv = net_connect.send_command('sh ap name ' + ap_name + " " + 'inven')
+        if not cdp:
+            print("==> AP isn't joined WLC, exiting")
+            exit(0)
+        else:
+            print('=> Local WLC time is:', wlc_get_time(net_connect))
+            print('====> Showing CDP neighbor details <====')
+            print('=> The AP name is:', ap_name)
+            print('=> The neighbor name is:',
+                  re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\s+(\S+)\s+(\S+)\s+(.*)', cdp).group(1))
+            print('=> The Neighbor Interface is:',
+                  re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\s+(\S+)\s+(\S+)\s+(\S+)', cdp).group(3))
+            print('=> The neighbor IP is:', re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\s+(\S+)\s+(\S+)\s+(\S+)', cdp).group(2))
+            print('====> Inventory Info <====')
+            print('=> The AP description is:', re.search(r'DE\S+\s(.*)', inv).group(1))
+            inv_model = re.search(r'PID\S+\s(\S+)', inv).group(1).rstrip(',')
+            print('=> The AP model is:', inv_model)
+            print('=> The AP SN is:', re.search(r'SN.\s(.*)', inv).group(1))
+            print('***-***.***-***.***-***.***-***.***-***')
+
+            ap_options = input(
+                '==> Please select one of the following options:\n => Select 1 to Reboot AP\n => Select 2 to Disable AP\n => Select 3 to Enable AP\n => Select 4 AP LED Flash \n:').lower()
+
+            if '1' in ap_options:
+                print('=> Rebooting AP =>', ap_name)
+                reset_command = 'ap name ' + ap_name + " " + 'reset'
+                reset = net_connect.send_command(reset_command)
+
+                # checking if the AP went down
+                checking_ap = net_connect.send_command('sh ap name ' + ap_name + " " + 'cdp neighbors')
+                if not checking_ap:
+                    print('=> AP', ap_name, 'was rebooted')
+                else:
+                    print('=> AP still UP')
+                exit(0)
+
+            elif '2' in ap_options:
+                print('=> Disabling AP =>', ap_name)
+                disable_command = 'ap name ' + ap_name + " " + 'shutdown'
+                disable = net_connect.send_command(disable_command)
+                # checking if the AP went down
+                ap_status_general = net_connect.send_command('show ap name ' + ap_name + " " + 'config general')
+                ap_status = re.search(r'Admi\S+\sSt\S+\s+.\s(.*)', ap_status_general).group(1)
+                if 'Disabled' in ap_status:
+                    print('=> AP has been disabled')
+                else:
+                    print('=> AP still enable')
+                exit(0)
+
+            elif '3' in ap_options:
+                print('=> Enabling AP =>', ap_name)
+                enable_command = 'ap name ' + ap_name + " " + 'no shutdown'
+                enable = net_connect.send_command(enable_command)
+                # checking if the AP is enabled
+                ap_status_general = net_connect.send_command('show ap name ' + ap_name + " " + 'config general')
+                ap_status = re.search(r'Admi\S+\sSt\S+\s+.\s(.*)', ap_status_general).group(1)
+                if 'Enabled' in ap_status:
+                    print('=> AP has been enabled')
+                else:
+                    print('=> AP still disabled')
+                exit(0)
+
+            elif '4' in ap_options:
+                print('=> Enabling AP Blinking LED =>', ap_name)
+                blink_led_input = int(input('=> Please provide the time(in seconds) to flash the LED on the AP: '))
+                blink_led = 'ap name ' + ap_name + " " + 'led flash start duration' + str(blink_led_input)
+                blink_send = net_connect.send_command(blink_led)
+                print('=> LED Blink command has been sent to ' + ap_name + " " + 'for ' + str(blink_led_input) + " " + 'seconds')
+
+            else:
+                print('=> Wrong option selected')
+                exit(0)
 
 
 def connect_wlc(isIP):
