@@ -1097,7 +1097,7 @@ def wlc_client_count_by_ap_9800(client_count, net_connect):
 
 
 def wlc_client_count_by_ap(client_count, net_connect):
-    ap_summ = net_connect.send_command("show ap summ")
+    ap_summ = net_connect.send_command("show ap summ", read_timeout=603)
     # filtering results
     ap_filter = re.findall(r'(\S+)\s+\d+\s+\S+\s+\S+\s+\w+\s\S+\s+\w+\s+\d+\S+\s+(\d+)', ap_summ)
     # print('==> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
