@@ -535,7 +535,7 @@ def credentials_reconnect(cdp_ip1):
             'device_type': 'cisco_ios',
             'ip': cdp_ip1,
             'username': 'jcr8398',
-            'password': 'ISIS cce2010',
+            'password': 'NTP cce2010',
             'timeout': 29,
             'global_delay_factor': 6,
 
@@ -666,7 +666,7 @@ def get_credentials_and_interface():
             'device_type': 'cisco_ios',
             'ip': IP,
             'username': 'jcr8398',
-            'password': 'ISIS cce2010',
+            'password': 'NTP cce2010',
             'timeout': 29,
             'global_delay_factor': 6,
 
@@ -699,7 +699,7 @@ def if_credential_connection(ip):
         'device_type': 'cisco_ios',
         'ip': ip,
         'username': 'jcr8398',
-        'password': 'ISIS cce2010',
+        'password': 'NTP cce2010',
     }
     return JC
 
