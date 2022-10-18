@@ -1089,15 +1089,32 @@ def wlc_get_time(net_connect):
 
 def get_wlan_id_wlc(net_connect):
     # getting the SSID
+    print('*---.---*.*---.---*.*---.---*')
     ssid = input("What's the SSID ?: ")
     get_wlan_id = net_connect.send_command("sh wlan summa")
-    wlan_id = re.search(rf"(\d+).*\b{ssid}\b", get_wlan_id).group(1)
-    # print(wlan_id)
-    return wlan_id
+    wlan_id = re.search(rf"(\d+).*\b{ssid}\b", get_wlan_id)
+    if not wlan_id:
+        print("=> SSID provided wasn't found on WLC, exiting")
+        exit(0)
+    else:
+        return wlan_id.group(1)
 
 
-def get_total_clients_ssid(wlan_id, net_connect):
-    pass
+def get_total_clients_ssid_9800(wlan_id, net_connect):
+    print('*---.---*.*---.---*.*---.---*')
+    # Getting wlan info
+    ssid_id = net_connect.send_command("sh wlan id " + wlan_id)
+    # profile_name
+    print('=> The SSID name is:=>', re.search(r"ile\sName\s+.\s(.*)", ssid_id).group(1))
+    # Status
+    status = re.search(r'Net\w+\sNa\S+\s\S+\s+.\s.*[\r\n]+\S+\s+.\s(.*)', ssid_id).group(1)
+    print('=> The SSID status is:=>', status)
+    # Broadcast Status
+    print('=> The Broadcast status is:=>', re.search(r'Broad\w+\sSS\w+\s+.\s(.*)', ssid_id).group(1))
+    # Total Clients on SSID
+    print('=> Total Clients on SSID:=>', re.search(r'Number\s\S+\s\S+\s\S+\s+.\s(.*)', ssid_id).group(1))
+    # SSID security
+    print('=> SSID Authentication is:=>', re.search(r'802.11\sAu\S+\s+.\s(.*)', ssid_id).group(1))
 
 
 def wlc_client_count_by_ap_9800(client_count, net_connect):
