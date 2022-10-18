@@ -1087,6 +1087,19 @@ def wlc_get_time(net_connect):
         return get_time_ios
 
 
+def get_wlan_id_wlc(net_connect):
+    # getting the SSID
+    ssid = input("What's the SSID ?: ")
+    get_wlan_id = net_connect.send_command("sh wlan summa")
+    wlan_id = re.search(rf"(\d+).*\b{ssid}\b", get_wlan_id).group(1)
+    # print(wlan_id)
+    return wlan_id
+
+
+def get_total_clients_ssid(wlan_id, net_connect):
+    pass
+
+
 def wlc_client_count_by_ap_9800(client_count, net_connect):
     ap_summ = net_connect.send_command("sh ap summary sort descending client-count")
     ap_filter = re.findall(r'(\w+\S+)\s+\S+\s+(\d+)\s+', ap_summ)
