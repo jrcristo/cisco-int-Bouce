@@ -1094,7 +1094,7 @@ def get_wlan_id_wlc(net_connect):
     get_wlan_id = net_connect.send_command("sh wlan summa")
     wlan_id = re.search(rf"(\d+).*\b{ssid}\b", get_wlan_id)
     if not wlan_id:
-        print("=> SSID provided wasn't found on WLC, exiting")
+        print("=> SSID provided wasn't found in WLC, exiting")
         exit(0)
     else:
         return wlan_id.group(1)
