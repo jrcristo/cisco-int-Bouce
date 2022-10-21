@@ -649,7 +649,7 @@ def get_credentials_and_interface():
     # USERNAME = input("What's the username: ")
     # PASS = getpass.getpass()
 
-    if '10.5.144' in IP or '10.126.70' in IP or '10.5.160' in IP or '10.126.78.130' in IP:
+    if '10.5.144' in IP or '10.126.78.130' in IP or '10.5.160' in IP:
         print('=> Using CCL Credentials')
         JC = {
             'device_type': 'cisco_ios',
@@ -715,6 +715,8 @@ def panos_credentials():
         'username': 'Read_Only',
         # 'password': 'S$@!L!nG!12',
         'password': 'R0-Only1',
+        'timeout': 29,
+        'global_delay_factor': 7,
     }
     return panos
 
@@ -1088,16 +1090,116 @@ def wlc_get_time(net_connect):
 
 
 def get_wlan_id_wlc(net_connect):
-    # getting the SSID
-    print('*---.---*.*---.---*.*---.---*')
-    ssid = input("What's the SSID ?: ")
-    get_wlan_id = net_connect.send_command("sh wlan summa")
-    wlan_id = re.search(rf"(\d+).*\b{ssid}\b", get_wlan_id)
-    if not wlan_id:
-        print("=> SSID provided wasn't found in WLC, exiting")
-        exit(0)
+    # checking WLC hardware
+    wlc_type = net_connect.send_command('show version')
+    if 'Incorrect usage' in wlc_type:
+        print('*---.---*.*---.---*.*---.---*')
+        print('==> aireOS WLC <==')
+        ssid = input("=> If you know the SSID type it. if not, do you want to check all the SSIDs? , (Y) to ONE (N) to all:")
+        if ssid in yes_option:
+            wlan_summ = net_connect.send_command('show wlan summary')
+            wlan_summ_filter = re.findall(r'\/\s(\S+)', wlan_summ)
+            # Removing Profile noise in the list
+            j = 'SSID'
+            while j in wlan_summ_filter:
+                wlan_summ_filter.remove(j)
+            for item in wlan_summ_filter:
+                print(item)
+
+            # asking for SSID
+            new_ssid = input('=> Please copy and paste the SSID you want to check:')
+            get_wlan_id = net_connect.send_command("show wlan summary")
+            wlan_id = re.search(rf"(\d+).*\b{new_ssid}\b", get_wlan_id)
+            if not wlan_id:
+                print("=> SSID provided wasn't found in WLC, exiting")
+                exit(0)
+            else:
+                return wlan_id.group(1)
+
+        elif ssid != 'n':
+            get_wlan_id_ = net_connect.send_command("show wlan summary")
+            wlan_id = re.search(rf"(\d+).*\b{ssid}\b", get_wlan_id_)
+            if not wlan_id:
+                print("=> SSID provided wasn't found in WLC, exiting")
+                exit(0)
+            else:
+                return wlan_id.group(1)
+
+        elif ssid in no_option:
+            print("==> Exiting <==")
+
     else:
-        return wlan_id.group(1)
+        # getting the SSID
+        print('*---.---*.*---.---*.*---.---*')
+        print('==> IOS WLC <==')
+        ssid = input("=> If you know the SSID type it. if not, do you want to check all the SSIDs? , (Y) to ONE (N) to all:")
+        if ssid in yes_option:
+            wlan_summ = net_connect.send_command('sh wlan summa')
+            wlan_summ_filter = re.findall(r'\d+\s+\S+\s+(\S+)', wlan_summ)
+            print('==> Printing all the SSIDs')
+            # Removing Profile noise in the list
+            j = 'Profile'
+            while j in wlan_summ_filter:
+                wlan_summ_filter.remove(j)
+            for item in wlan_summ_filter:
+                print(item)
+
+            # asking for SSID
+            new_ssid = input('=> Please copy and paste the SSID you want to check:')
+            get_wlan_id = net_connect.send_command("sh wlan summa")
+            wlan_id = re.search(rf"(\d+).*\b{new_ssid}\b", get_wlan_id)
+            if not wlan_id:
+                print("=> SSID provided wasn't found in WLC, exiting")
+                exit(0)
+            else:
+                return wlan_id.group(1)
+
+        elif ssid != 'n':
+            get_wlan_id_ = net_connect.send_command("sh wlan summa")
+            wlan_id = re.search(rf"(\d+).*\b{ssid}\b", get_wlan_id_)
+            if not wlan_id:
+                print("=> SSID provided wasn't found in WLC, exiting")
+                exit(0)
+            else:
+                return wlan_id.group(1)
+
+        elif ssid in no_option:
+            print("==> Exiting <==")
+
+
+def get_total_clients_ssid_aireos(wlan_id, net_connect):
+    print('*---.---*.*---.---*.*---.---*')
+    # Getting wlan info
+    ssid_id = net_connect.send_command("show wlan " + wlan_id, read_timeout=603)
+    # profile_name
+    print('=> The SSID name is:=>', re.search(r"Nam\w+\s.SSI\S+\s(.*)", ssid_id).group(1))
+    # Status
+    status = re.search(r'Name\s.SS\S+.*[\r\n]+\S+\s(.*)', ssid_id).group(1)
+    print('=> The SSID status is:=>', status)
+    # MAC Filtering
+    print('=> The MAC Filtering status:=>', re.search(r'Name\s.SS\S+.*[\r\n]+([^\r\n]+)[\r\n]+\S+\s\S+\s(.*)', ssid_id).group(2))
+    # MAC Random Filtering
+    print('=> The MAC Random Filtering status:=>', re.search(r'Ran\w+\sMA\S+\s\S+\s(.*)', ssid_id).group(1))
+    # Broadcast Status
+    print('=> The Broadcast status is:=>', re.search(r'Broad\w+\sSS\S+\s(.*)', ssid_id).group(1))
+    # Total Clients on SSID
+    print('=> Total Number of Active Clients:=>', re.search(r'Numb\w+\s+\S+\sAc\S+\sCl\S+\s(.*)', ssid_id).group(1))
+    # Total Random Clients on SSID
+    print('=> Total Number of Random Active Clients:=>', re.search(r'Numb\w+\s+\S+\sAc\S+\sRa\S+\S+\s\S+\s(.*)', ssid_id).group(1))
+    # SSID security
+    print('=> SSID Authentication is:=>', re.search(r'802.11\sA\S+\s(.*)', ssid_id).group(1))
+
+    ssid_clients = input(
+        "==> do you want to see all the clients connected to this SSID?, (Y) to ONE (N) to all:").lower()
+    if ssid_clients in yes_option:
+        # Getting all the clients
+        ssid_clients = net_connect.send_command('show client wlan ' + wlan_id, read_timeout=603)
+        print('=> The local time on WLC is ==>', wlc_get_time(net_connect))
+        print('*---.---*.*---.---*.*---.---*')
+        print(ssid_clients)
+
+    elif ssid_clients in no_option:
+        print('=> Exiting')
 
 
 def get_total_clients_ssid_9800(wlan_id, net_connect):
@@ -1115,6 +1217,22 @@ def get_total_clients_ssid_9800(wlan_id, net_connect):
     print('=> Total Clients on SSID:=>', re.search(r'Number\s\S+\s\S+\s\S+\s+.\s(.*)', ssid_id).group(1))
     # SSID security
     print('=> SSID Authentication is:=>', re.search(r'802.11\sAu\S+\s+.\s(.*)', ssid_id).group(1))
+
+    ssid_clients = input(
+        "==> do you want to see all the clients connected to this SSID?, (Y) to ONE (N) to all:").lower()
+    if ssid_clients in yes_option:
+        # Getting all the clients
+        ssid_clients = net_connect.send_command('sho wireless client summary | inc ' + '_' + wlan_id + '_',
+                                                read_timeout=603)
+        # filtering by mac-add,AP and ID
+        print('=> The local time on WLC is ==>', wlc_get_time(net_connect))
+        print('*---.---*.*---.---*.*---.---*')
+        print(
+            'MAC Address    AP Name                                        Type ID   State             Protocol Method     Role')
+        print(ssid_clients)
+
+    elif ssid_clients in no_option:
+        print('=> Exiting')
 
 
 def wlc_client_count_by_ap_9800(client_count, net_connect):
@@ -1220,7 +1338,8 @@ def wlc_utils_ap(ap_name, net_connect):
                 blink_led_input = int(input('=> Please provide the time(in seconds) to flash the LED on the AP: '))
                 blink_led = 'config ap led-state flash ' + str(blink_led_input) + " " + ap_name
                 blink_send = net_connect.send_command(blink_led)
-                print('=> LED Blink command has been sent to ' + ap_name + " " + 'for ' + str(blink_led_input) + " " + 'seconds')
+                print('=> LED Blink command has been sent to ' + ap_name + " " + 'for ' + str(
+                    blink_led_input) + " " + 'seconds')
 
             else:
                 print('=> Wrong option selected')
@@ -1242,7 +1361,8 @@ def wlc_utils_ap(ap_name, net_connect):
                   re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\s+(\S+)\s+(\S+)\s+(.*)', cdp).group(1))
             print('=> The Neighbor Interface is:',
                   re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\s+(\S+)\s+(\S+)\s+(\S+)', cdp).group(3))
-            print('=> The neighbor IP is:', re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\s+(\S+)\s+(\S+)\s+(\S+)', cdp).group(2))
+            print('=> The neighbor IP is:',
+                  re.search(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\s+(\S+)\s+(\S+)\s+(\S+)', cdp).group(2))
             print('====> Inventory Info <====')
             print('=> The AP description is:', re.search(r'DE\S+\s(.*)', inv).group(1))
             inv_model = re.search(r'PID\S+\s(\S+)', inv).group(1).rstrip(',')
@@ -1297,7 +1417,8 @@ def wlc_utils_ap(ap_name, net_connect):
                 blink_led_input = int(input('=> Please provide the time(in seconds) to flash the LED on the AP: '))
                 blink_led = 'ap name ' + ap_name + " " + 'led flash start duration' + str(blink_led_input)
                 blink_send = net_connect.send_command(blink_led)
-                print('=> LED Blink command has been sent to ' + ap_name + " " + 'for ' + str(blink_led_input) + " " + 'seconds')
+                print('=> LED Blink command has been sent to ' + ap_name + " " + 'for ' + str(
+                    blink_led_input) + " " + 'seconds')
 
             else:
                 print('=> Wrong option selected')
@@ -2078,7 +2199,7 @@ def get_wlc_9800_clients_connected_by_ap(ap_name, net_connect):
     # getting output for 5Ghz
     print('*---*-*---*-*---*-*---*-*---*-*---*')
     # Getting tx_power for AP
-    five_tx = net_connect.send_command("show ap dot11 5ghz summary | inc" + " " + ap_name)
+    five_tx = net_connect.send_command("show ap dot11 5ghz summary | inc" + " " + ap_name, read_timeout=603)
     # five_details = re.search(r'^\w+\s+([\d|\w]+.[\d|\w]+.[\d|\w]+)\s+\d+\s+\w+\s+\w+\s+\d+\s+.(\d).\d\s(.\w+\s\w+.)\s+(.\d+.\d+.)', five_tx)
     five_details = re.search(
         r'(^EX\w+|^EX\S+|^XP\w+.\d+.\d+.\w+)\s+([\d|\w]+.[\d|\w]+.[\d|\w]+)\s+\d+\s+\w+\s+\w+\s+(\d+)\s+.(\d).\d\s(.\w+\s\w+.)\s+.(\d+).',
@@ -2109,7 +2230,8 @@ def get_wlc_9800_clients_connected_by_ap(ap_name, net_connect):
     print('*---*-*---*-*---*-*---*-*---*-*---*')
 
     print("==> Getting 5Ghz clients associates with", ap_name)
-    output = net_connect.send_command("sh wireless client ap dot11 5ghz chassis active r0 | inc" + " " + ap_name)
+    output = net_connect.send_command("sh wireless client ap dot11 5ghz chassis active r0 | inc" + " " + ap_name,
+                                      read_timeout=603)
     # filtering output for 5Ghz
     five = re.findall(r'.*', output)
     # five_new = [x.rstrip() for x in five] removing right trailing  spaces
@@ -2124,7 +2246,7 @@ def get_wlc_9800_clients_connected_by_ap(ap_name, net_connect):
     # getting output for 2.4Ghz
     print('*---*-*---*-*---*-*---*-*---*-*---*')
     # Getting tx_power for AP
-    two_tx = net_connect.send_command("show ap dot11 24ghz summary | inc" + " " + ap_name)
+    two_tx = net_connect.send_command("show ap dot11 24ghz summary | inc" + " " + ap_name, read_timeout=603)
     # two_details = re.search(r'^\w+\s+([\d|\w]+.[\d|\w]+.[\d|\w]+)\s+\d+\s+\w+\s+\w+\s+\d+\s+.(\d).\d\s(.\w+\s\w+.)\s+.(\d+).', two_tx)
     two_details = re.search(
         r'(^EX\w+|^EX\S+|^XP\w+.\d+.\d+.\w+)\s+([\d|\w]+.[\d|\w]+.[\d|\w]+)\s+\d+\s+\w+\s+\w+\s+(\d+)\s+.(\d).\d\s(.\w+\s\w+.)\s+.(\d+).',
@@ -2154,7 +2276,8 @@ def get_wlc_9800_clients_connected_by_ap(ap_name, net_connect):
         pass
     print('*---*-*---*-*---*-*---*-*---*-*---*')
     print("==> Getting 2.4Ghz clients associates with", ap_name)
-    output1 = net_connect.send_command("sh wireless client ap dot11 24ghz chassis active r0 | inc" + " " + ap_name)
+    output1 = net_connect.send_command("sh wireless client ap dot11 24ghz chassis active r0 | inc" + " " + ap_name,
+                                       read_timeout=603)
     print('MAC Address        AP Id             Status          WLAN Id  Authenticated')
     # filtering output for 2.4Ghz
     two = re.findall(r'.*', output1)
