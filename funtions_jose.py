@@ -566,7 +566,8 @@ def check_interface_status(inter, net_connect):
 def get_hostname_only(net_connect):
     name = net_connect.send_command('sh run | inc hostname')
     hostname = re.search(r'host\w+\s(.*)', name)
-    print(hostname.group(1))
+    # print(hostname.group(1))
+    return hostname.group(1)
 
 
 def get_stackwise_size(net_connect):
