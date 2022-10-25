@@ -1095,7 +1095,8 @@ def get_wlan_id_wlc(net_connect):
     if 'Incorrect usage' in wlc_type:
         print('*---.---*.*---.---*.*---.---*')
         print('==> aireOS WLC <==')
-        ssid = input("=> If you know the SSID type it. if not, do you want to check all the SSIDs? , (Y) to ONE (N) to all:")
+        ssid = input(
+            "=> If you know the SSID type it. if not, do you want to check all the SSIDs? , (Y) to ONE (N) to all:")
         if ssid in yes_option:
             wlan_summ = net_connect.send_command('show wlan summary')
             wlan_summ_filter = re.findall(r'\/\s(\S+)', wlan_summ)
@@ -1132,7 +1133,8 @@ def get_wlan_id_wlc(net_connect):
         # getting the SSID
         print('*---.---*.*---.---*.*---.---*')
         print('==> IOS WLC <==')
-        ssid = input("=> If you know the SSID type it. if not, do you want to check all the SSIDs? , (Y) to ONE (N) to all:")
+        ssid = input(
+            "=> If you know the SSID type it. if not, do you want to check all the SSIDs? , (Y) to ONE (N) to all:")
         if ssid in yes_option:
             wlan_summ = net_connect.send_command('sh wlan summa')
             wlan_summ_filter = re.findall(r'\d+\s+\S+\s+(\S+)', wlan_summ)
@@ -1177,7 +1179,8 @@ def get_total_clients_ssid_aireos(wlan_id, net_connect):
     status = re.search(r'Name\s.SS\S+.*[\r\n]+\S+\s(.*)', ssid_id).group(1)
     print('=> The SSID status is:=>', status)
     # MAC Filtering
-    print('=> The MAC Filtering status:=>', re.search(r'Name\s.SS\S+.*[\r\n]+([^\r\n]+)[\r\n]+\S+\s\S+\s(.*)', ssid_id).group(2))
+    print('=> The MAC Filtering status:=>',
+          re.search(r'Name\s.SS\S+.*[\r\n]+([^\r\n]+)[\r\n]+\S+\s\S+\s(.*)', ssid_id).group(2))
     # MAC Random Filtering
     print('=> The MAC Random Filtering status:=>', re.search(r'Ran\w+\sMA\S+\s\S+\s(.*)', ssid_id).group(1))
     # Broadcast Status
@@ -1185,7 +1188,8 @@ def get_total_clients_ssid_aireos(wlan_id, net_connect):
     # Total Clients on SSID
     print('=> Total Number of Active Clients:=>', re.search(r'Numb\w+\s+\S+\sAc\S+\sCl\S+\s(.*)', ssid_id).group(1))
     # Total Random Clients on SSID
-    print('=> Total Number of Random Active Clients:=>', re.search(r'Numb\w+\s+\S+\sAc\S+\sRa\S+\S+\s\S+\s(.*)', ssid_id).group(1))
+    print('=> Total Number of Random Active Clients:=>',
+          re.search(r'Numb\w+\s+\S+\sAc\S+\sRa\S+\S+\s\S+\s(.*)', ssid_id).group(1))
     # SSID security
     print('=> SSID Authentication is:=>', re.search(r'802.11\sA\S+\s(.*)', ssid_id).group(1))
 
@@ -1423,6 +1427,14 @@ def wlc_utils_ap(ap_name, net_connect):
             else:
                 print('=> Wrong option selected')
                 exit(0)
+
+
+def getting_model():
+    dev_model = net_connect.send_command('show version | inc Model')
+    # dev_model = cli('show version | inc Model')
+    mod_detail = re.search(r'Mo\S+\s[N|n]um\S+\s+.\s(.*)', dev_model).group(1)
+    print('=> Model = ' + mod_detail)
+    return mod_detail
 
 
 def connect_wlc(isIP):
