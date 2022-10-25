@@ -689,7 +689,6 @@ def if_credential_connection(ip):
     #    inter = 0
     #    if isInterfaceNeeded:
     #        inter = str(input("==> Enter the interface(s), more than one use ,space (Gi1/0/1, Gi3/0/33) <==: "))
-    print('==> Using hardcoded JC credentials, if_credentials <==')
 
     JC = {
         'device_type': 'cisco_ios',
