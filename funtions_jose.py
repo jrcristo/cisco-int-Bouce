@@ -691,10 +691,6 @@ def if_credential_connection(ip):
     #        inter = str(input("==> Enter the interface(s), more than one use ,space (Gi1/0/1, Gi3/0/33) <==: "))
     print('==> Using hardcoded JC credentials, if_credentials <==')
 
-    # IP = input("Give me the device IP: ")
-    ### USERNAME = input("What's the username: ")
-    ### PASS = getpass.getpass()
-
     JC = {
         'device_type': 'cisco_ios',
         'ip': ip,
@@ -1429,7 +1425,7 @@ def wlc_utils_ap(ap_name, net_connect):
                 exit(0)
 
 
-def getting_model():
+def getting_model(net_connect):
     dev_model = net_connect.send_command('show version | inc Model')
     # dev_model = cli('show version | inc Model')
     mod_detail = re.search(r'Mo\S+\s[N|n]um\S+\s+.\s(.*)', dev_model).group(1)
