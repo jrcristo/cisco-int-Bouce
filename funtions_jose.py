@@ -1426,7 +1426,7 @@ def wlc_utils_ap(ap_name, net_connect):
 
 
 def getting_model(net_connect):
-    dev_model = net_connect.send_command('show version | inc Model')
+    dev_model = net_connect.send_command('show version | inc Model', read_timeout=603)
     # dev_model = cli('show version | inc Model')
     mod_detail = re.search(r'Mo\S+\s[N|n]um\S+\s+.\s(.*)', dev_model).group(1)
     # print('=> Model = ' + mod_detail)
