@@ -717,15 +717,46 @@ def panos_credentials():
     return panos
 
 
-def get_ios_nxos_version(net_connect):
+def get_potential_for_disaster(net_connect):
+    # getting CDP neighbor
+    cdp = net_connect.send_command('sh cdp ne', read_timeout=603)
+    # filtering TL
+    tl_s = re.findall(r'WS-C3560C', cdp)
+    # Filtering Phones
+    phone = re.findall(r'Mitel', cdp)
+    # Filtering APs
+    ap_s = re.findall(r'C9120AXI|C9130AXI|AP380', cdp)
+    # Filtering Readers
+    readers = re.findall(r'Linux', cdp)
+    # Printing
+    print('*...*.*...*.*...*.*...*')
+    # Getting the time
+    print('==> Local time & Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
+    # Getting device name
+    print('=> Hostname:', get_hostname_only(net_connect))
+    # Printing the Model and OS
+    print('=> Model:', get_ios_nxos_version_model(net_connect)[0])
+    print('=> OS or Code:', get_ios_nxos_version_model(net_connect)[1])
+    # print total of cabin affected
+    print('=> Total of potentially Cabins affected', len(tl_s) * 2)
+    # print total of phones
+    print('=> Total of potentially Phones affected', len(phone))
+    # print total APs
+    print('=> Total of potentially APs affected', len(ap_s))
+    # print total readers
+    print('=> Total of potentially Readers affected', len(readers))
+
+
+def get_ios_nxos_version_model(net_connect):
     show_ver = net_connect.send_command('sh ver', read_timeout=603)
     if 'NXOS' in show_ver:
         nxos_version = re.search(r'NXOS.\sver\S+\s(.*)', show_ver)
-        return nxos_version.group(1)
+        nxos_model = re.search(r'Hardware[\r\n]\s+\S+\s(\S+\s\S+)', show_ver)
+        return nxos_model.group(1), nxos_version.group(1)
 
     elif 'IOS' in show_ver:
         model = re.search(r'SW\sIma\S+\s+Mo\w+\s+[\r\n]+([^\r\n]+)[\r\n]\S+\s+\S\s\S+\s+(\S+)\s+(\S+)', show_ver).group(2)
-        os_ver = re.search(r'SW\sIma\S+\s+Mo\w+\s+[\r\n]+([^\r\n]+)[\r\n]\S+\s+\S\s\S+\s+(\S+)\s+(\S+)', show_ver).group(1)
+        os_ver = re.search(r'SW\sIma\S+\s+Mo\w+\s+[\r\n]+([^\r\n]+)[\r\n]\S+\s+\S\s\S+\s+(\S+)\s+(\S+)', show_ver).group(3)
         return model, os_ver
 
 
