@@ -764,8 +764,10 @@ def get_ios_nxos_version_model(net_connect):
         return nxos_model.group(1), nxos_version.group(1)
 
     elif 'IOS' in show_ver:
-        model = re.search(r'SW\sIma\S+\s+Mo\w+\s+[\r\n]+([^\r\n]+)[\r\n]\S+\s+\S\s\S+\s+(\S+)\s+(\S+)', show_ver).group(2)
-        os_ver = re.search(r'SW\sIma\S+\s+Mo\w+\s+[\r\n]+([^\r\n]+)[\r\n]\S+\s+\S\s\S+\s+(\S+)\s+(\S+)', show_ver).group(3)
+        model = re.search(r'SW\sIma\S+\s+Mo\w+\s+[\r\n]+([^\r\n]+)[\r\n]\S+\s+\S\s\S+\s+(\S+)\s+(\S+)', show_ver).group(
+            2)
+        os_ver = re.search(r'SW\sIma\S+\s+Mo\w+\s+[\r\n]+([^\r\n]+)[\r\n]\S+\s+\S\s\S+\s+(\S+)\s+(\S+)',
+                           show_ver).group(3)
         return model, os_ver
 
 
@@ -1338,7 +1340,7 @@ def wlc_utils_ap(ap_name, net_connect):
             print('***-***.***-***.***-***.***-***.***-***')
 
             ap_options = input(
-                '==> Please select one of the following options:\n => Select 1 to Reboot AP\n => Select 2 to Disable AP\n => Select 3 to Enable AP\n => Select 4 AP LED Flash \n:').lower()
+                '==> Please select one of the following options:\n => Select 1 to Reboot AP\n => Select 2 to Disable AP\n => Select 3 to Enable AP\n => Select 4 AP LED Flash \n => Select 5 to Rename AP \n:').lower()
 
             if '1' in ap_options:
                 print('=> Rebooting AP =>', ap_name)
@@ -1393,6 +1395,16 @@ def wlc_utils_ap(ap_name, net_connect):
                 print('=> LED Blink command has been sent to ' + ap_name + " " + 'for ' + str(
                     blink_led_input) + " " + 'seconds')
 
+            elif '5' in ap_options:
+                print('=> Renaming =>', ap_name)
+                new_ap_name = (input('=> Please provide the new AP name: '))
+                rename_ap = 'config ap name ' + new_ap_name + " " + ap_name
+                rename_ap_sent = net_connect.send_command(rename_ap)
+                if not 'invalid' in rename_ap_sent:
+                    print('=> AP has been renamed')
+                else:
+                    print('=> AP rename fail')
+
             else:
                 print('=> Wrong option selected')
                 exit(0)
@@ -1423,7 +1435,7 @@ def wlc_utils_ap(ap_name, net_connect):
             print('***-***.***-***.***-***.***-***.***-***')
 
             ap_options = input(
-                '==> Please select one of the following options:\n => Select 1 to Reboot AP\n => Select 2 to Disable AP\n => Select 3 to Enable AP\n => Select 4 AP LED Flash \n:').lower()
+                '==> Please select one of the following options:\n => Select 1 to Reboot AP\n => Select 2 to Disable AP\n => Select 3 to Enable AP\n => Select 4 AP LED Flash \n => Select 5 to Rename AP \n:').lower()
 
             if '1' in ap_options:
                 print('=> Rebooting AP =>', ap_name)
@@ -1471,6 +1483,16 @@ def wlc_utils_ap(ap_name, net_connect):
                 blink_send = net_connect.send_command(blink_led)
                 print('=> LED Blink command has been sent to ' + ap_name + " " + 'for ' + str(
                     blink_led_input) + " " + 'seconds')
+
+            elif '5' in ap_options:
+                print('=> Renaming =>', ap_name)
+                new_ap_name = (input('=> Please provide the new AP name: '))
+                rename_ap = 'ap name ' + ap_name + " " + 'name ' + new_ap_name
+                rename_ap_sent = net_connect.send_command(rename_ap)
+                if not 'invalid' in rename_ap_sent:
+                    print('=> AP has been renamed')
+                else:
+                    print('=> AP rename fail')
 
             else:
                 print('=> Wrong option selected')
