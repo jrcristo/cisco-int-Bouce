@@ -742,7 +742,10 @@ def get_potential_for_disaster(net_connect):
     # checking the sack size
     stack = net_connect.send_command('sh switch')
     stack_size = re.findall(r'.*Ready', stack)
-    print('=> There are', len(stack_size), 'switches on the stack')
+    if len(stack_size) == 1:
+        print('=> There is', len(stack_size), 'switch on the stack')
+    elif len(stack_size) > 1:
+        print('=> There are', len(stack_size), 'switches on the stack')
     # print total of cabin affected
     print('=> Total of potentially Cabins affected', len(tl_s) * 2)
     # print total of phones
