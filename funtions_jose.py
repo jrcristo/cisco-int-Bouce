@@ -719,7 +719,7 @@ def panos_credentials():
     return panos
 
 
-def get_potential_for_disaster(net_connect):
+def get_potential_for_disaster(isIP, net_connect):
     # getting CDP neighbor
     cdp = net_connect.send_command('sh cdp ne', read_timeout=603)
     # filtering TL
@@ -735,7 +735,7 @@ def get_potential_for_disaster(net_connect):
     # Getting the time
     print('==> Local time & Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
     # Getting device name
-    print('=> Hostname:', get_hostname_only(net_connect))
+    print('=> Hostname:', get_hostname_only(net_connect), '=>', isIP.rstrip())
     # Printing the Model and OS
     print('=> Model:', get_ios_nxos_version_model(net_connect)[0])
     print('=> OS or Code:', get_ios_nxos_version_model(net_connect)[1])
