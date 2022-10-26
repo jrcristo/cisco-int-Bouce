@@ -739,6 +739,10 @@ def get_potential_for_disaster(net_connect):
     # Printing the Model and OS
     print('=> Model:', get_ios_nxos_version_model(net_connect)[0])
     print('=> OS or Code:', get_ios_nxos_version_model(net_connect)[1])
+    # checking the sack size
+    stack = net_connect.send_command('sh switch')
+    stack_size = re.findall(r'.*Ready', stack)
+    print('=> There are', len(stack_size), 'switches on the stack')
     # print total of cabin affected
     print('=> Total of potentially Cabins affected', len(tl_s) * 2)
     # print total of phones
