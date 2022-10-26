@@ -696,6 +696,8 @@ def if_credential_connection(ip):
         'ip': ip,
         'username': 'jcr8398',
         'password': 'NTP cce2010',
+        'timeout': 29,
+        'global_delay_factor': 6,
     }
     return JC
 
