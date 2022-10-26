@@ -717,6 +717,18 @@ def panos_credentials():
     return panos
 
 
+def get_ios_nxos_version(net_connect):
+    show_ver = net_connect.send_command('sh ver', read_timeout=603)
+    if 'NXOS' in show_ver:
+        nxos_version = re.search(r'NXOS.\sver\S+\s(.*)', show_ver)
+        return nxos_version.group(1)
+
+    elif 'IOS' in show_ver:
+        model = re.search(r'SW\sIma\S+\s+Mo\w+\s+[\r\n]+([^\r\n]+)[\r\n]\S+\s+\S\s\S+\s+(\S+)\s+(\S+)', show_ver).group(2)
+        os_ver = re.search(r'SW\sIma\S+\s+Mo\w+\s+[\r\n]+([^\r\n]+)[\r\n]\S+\s+\S\s\S+\s+(\S+)\s+(\S+)', show_ver).group(1)
+        return model, os_ver
+
+
 def get_ios_nxos_name(net_connect):
     version = net_connect.send_command('sh run | inc hostn')
     dev_name = re.search(r'hos\w+\s(.*)', version).group(1)
