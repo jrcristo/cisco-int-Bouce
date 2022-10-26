@@ -98,7 +98,7 @@ if __name__ == '__main__':
                         net_connect.enable()
 
                         # calling function
-                        funtions_jose.get_potential_for_disaster(net_connect)
+                        funtions_jose.get_potential_for_disaster(isIP, net_connect)
 
         except AttributeError:
             pass
@@ -115,7 +115,7 @@ if __name__ == '__main__':
                         net_connect.enable()
 
                         # calling function
-                        funtions_jose.get_potential_for_disaster(net_connect)
+                        funtions_jose.get_potential_for_disaster(isIP, net_connect)
 
         except AttributeError:
             pass
@@ -132,7 +132,7 @@ if __name__ == '__main__':
                         net_connect.enable()
 
                         # calling function
-                        funtions_jose.get_potential_for_disaster(net_connect)
+                        funtions_jose.get_potential_for_disaster(isIP, net_connect)
 
         except AttributeError:
             pass
@@ -149,7 +149,7 @@ if __name__ == '__main__':
                         net_connect.enable()
 
                         # calling function
-                        funtions_jose.get_potential_for_disaster(net_connect)
+                        funtions_jose.get_potential_for_disaster(isIP, net_connect)
 
         except AttributeError:
             pass
@@ -166,7 +166,7 @@ if __name__ == '__main__':
                         net_connect.enable()
 
                         # calling function
-                        funtions_jose.get_potential_for_disaster(net_connect)
+                        funtions_jose.get_potential_for_disaster(isIP, net_connect)
 
         except AttributeError:
             pass
@@ -183,7 +183,7 @@ if __name__ == '__main__':
                         net_connect.enable()
 
                         # calling function
-                        funtions_jose.get_potential_for_disaster(net_connect)
+                        funtions_jose.get_potential_for_disaster(isIP, net_connect)
 
         except AttributeError:
             pass
@@ -200,7 +200,7 @@ if __name__ == '__main__':
                         net_connect.enable()
 
                         # calling function
-                        funtions_jose.get_potential_for_disaster(net_connect)
+                        funtions_jose.get_potential_for_disaster(isIP, net_connect)
 
         except AttributeError:
             pass
@@ -217,7 +217,7 @@ if __name__ == '__main__':
                         net_connect.enable()
 
                         # calling function
-                        funtions_jose.get_potential_for_disaster(net_connect)
+                        funtions_jose.get_potential_for_disaster(isIP, net_connect)
                 exit(0)
 
         except AttributeError:
@@ -235,7 +235,7 @@ if __name__ == '__main__':
                         net_connect.enable()
 
                         # calling function
-                        funtions_jose.get_potential_for_disaster(net_connect)
+                        funtions_jose.get_potential_for_disaster(isIP, net_connect)
 
         except AttributeError:
             pass
@@ -252,7 +252,7 @@ if __name__ == '__main__':
                         net_connect.enable()
 
                         # calling function
-                        funtions_jose.get_potential_for_disaster(net_connect)
+                        funtions_jose.get_potential_for_disaster(isIP, net_connect)
 
         except AttributeError:
             pass
@@ -269,7 +269,7 @@ if __name__ == '__main__':
                         net_connect.enable()
 
                         # calling function
-                        funtions_jose.get_potential_for_disaster(net_connect)
+                        funtions_jose.get_potential_for_disaster(isIP, net_connect)
 
         except AttributeError:
             pass
@@ -286,7 +286,7 @@ if __name__ == '__main__':
                         net_connect.enable()
 
                         # calling function
-                        funtions_jose.get_potential_for_disaster(net_connect)
+                        funtions_jose.get_potential_for_disaster(isIP, net_connect)
                 exit(0)
 
         except AttributeError:
@@ -304,7 +304,7 @@ if __name__ == '__main__':
                         net_connect.enable()
 
                         # calling function
-                        funtions_jose.get_potential_for_disaster(net_connect)
+                        funtions_jose.get_potential_for_disaster(isIP, net_connect)
                 exit(0)
 
         except AttributeError:
@@ -322,7 +322,7 @@ if __name__ == '__main__':
                         net_connect.enable()
 
                         # calling function
-                        funtions_jose.get_potential_for_disaster(net_connect)
+                        funtions_jose.get_potential_for_disaster(isIP, net_connect)
                 exit(0)
 
         except AttributeError:
@@ -340,15 +340,8 @@ if __name__ == '__main__':
                         net_connect.enable()
 
                         # calling function
-                        funtions_jose.get_potential_for_disaster(net_connect)
+                        funtions_jose.get_potential_for_disaster(isIP, net_connect)
                 exit(0)
 
         except AttributeError:
             pass
-
-
-
-
-
-
-
