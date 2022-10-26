@@ -7,6 +7,8 @@ print('==> script to check Potential for disaster <==')
 
 if __name__ == '__main__':
 
+    EX_IDF = r'c:\Dell\IDF_EX_Campus.txt'
+
     yes_option = ['yes', 'y']
     no_option = ['no', 'n']
 
@@ -45,6 +47,10 @@ if __name__ == '__main__':
         # Printing the Model and OS
         print('=> Model:', funtions_jose.get_ios_nxos_version_model(net_connect)[0])
         print('=> OS or Code:', funtions_jose.get_ios_nxos_version_model(net_connect)[1])
+        # checking the sack size
+        stack = net_connect.send_command('sh switch')
+        stack_size = re.findall(r'.*Ready', stack)
+        print('=> There are', len(stack_size), 'switches on the stack')
         # print total of cabin affected
         print('=> Total of potentially Cabins affected', len(tl_s) * 2)
         # print total of phones
@@ -56,7 +62,7 @@ if __name__ == '__main__':
 
     elif all_device in no_option:
         ship = input("What's the SHIP || Location code: ").upper()
-        print("==> Checking one SHIP")
+        print("==> Checking all the IDFs")
 
         try:
             ex = re.match('^EX', ship)
@@ -83,7 +89,7 @@ if __name__ == '__main__':
         try:
             if ex.group():
                 # loop for all devices
-                with open('IDF_EX_Campus.txt', 'r') as hostsfile:
+                with open("IDF_EX_Campus.txt", 'r') as hostsfile:
                     for line in hostsfile:
                         hostline = line.strip()
                         isIP = line
