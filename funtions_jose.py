@@ -233,7 +233,7 @@ def set_readers_interface(inter, net_connect):
         config_commands = ['int' + " " + inter, 'desc [RDR] MED-READER', 'spanning-tree portfast',
                            'spanning-tree bpduguard en', 'sw mod acc', 'sw acc vlan 1310',
                            'power inline static max 30000']
-        output = net_connect.send_config_set(config_commands)
+        output = net_connect.send_config_set(config_commands,  read_timeout=603)
         if 'sw acc vlan' in output:
             print('Commands successfully executed')
             # macros option
@@ -254,7 +254,7 @@ def set_readers_interface(inter, net_connect):
         config_commands = ['int' + " " + inter, 'desc [RDR] MED-READER', 'spanning-tree portfast',
                            'spanning-tree bpduguard en', 'sw mod acc', 'sw acc vlan 1310',
                            'power inline static max 30000']
-        not_continuous = net_connect.send_config_set(config_commands)
+        not_continuous = net_connect.send_config_set(config_commands,  read_timeout=603)
         if 'int rang' + " " + inter.lower() in not_continuous:
             print('==> Commands successfully executed')
             # macros option
