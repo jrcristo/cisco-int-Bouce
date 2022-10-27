@@ -370,7 +370,7 @@ def check_arp_from_ip_or_mac(mac, net_connect, vlan_id):
 
 def save_config(net_connect):
     print("==> saving config")
-    output = net_connect.send_command('wr mem')
+    output = net_connect.send_command('wr mem', read_timeout=603)
     print(output)
 
 
