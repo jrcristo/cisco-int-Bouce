@@ -89,7 +89,7 @@ if __name__ == '__main__':
         try:
             if ex.group():
                 # loop for all devices
-                with open("IDF_EX_Campus.txt", 'r') as hostsfile:
+                with open("Inventory/Campus/IDF_EX_Campus.txt", 'r') as hostsfile:
                     for line in hostsfile:
                         hostline = line.strip()
                         isIP = line
@@ -106,7 +106,7 @@ if __name__ == '__main__':
         try:
             if xp.group():
                 # loop for all devices
-                with open("IDF_XP_Campus", 'r') as hostsfile:
+                with open("Inventory/Campus/IDF_XP_Campus", 'r') as hostsfile:
                     for line in hostsfile:
                         hostline = line.strip()
                         isIP = line
@@ -123,7 +123,7 @@ if __name__ == '__main__':
         try:
             if yp.group():
                 # loop for all devices
-                with open("IDF_YP_Campus.txt", 'r') as hostsfile:
+                with open("Inventory/Campus/IDF_YP_Campus.txt", 'r') as hostsfile:
                     for line in hostsfile:
                         hostline = line.strip()
                         isIP = line
@@ -140,7 +140,7 @@ if __name__ == '__main__':
         try:
             if gp.group():
                 # loop for all devices
-                with open("IDF_GP_Campus.txt", 'r') as hostsfile:
+                with open("Inventory/Campus/IDF_GP_Campus.txt", 'r') as hostsfile:
                     for line in hostsfile:
                         hostline = line.strip()
                         isIP = line
@@ -157,7 +157,7 @@ if __name__ == '__main__':
         try:
             if rp.group():
                 # loop for all devices
-                with open("IDF_RP_Campus.txt", 'r') as hostsfile:
+                with open("Inventory/Campus/IDF_RP_Campus.txt", 'r') as hostsfile:
                     for line in hostsfile:
                         hostline = line.strip()
                         isIP = line
@@ -174,7 +174,7 @@ if __name__ == '__main__':
         try:
             if mj.group():
                 # loop for all devices
-                with open("IDF_MJ_Campus.txt", 'r') as hostsfile:
+                with open("Inventory/Campus/IDF_MJ_Campus.txt", 'r') as hostsfile:
                     for line in hostsfile:
                         hostline = line.strip()
                         isIP = line
@@ -191,7 +191,7 @@ if __name__ == '__main__':
         try:
             if ap.group():
                 # loop for all devices
-                with open("IDF_AP_Campus.txt", 'r') as hostsfile:
+                with open("Inventory/Campus/IDF_AP_Campus.txt", 'r') as hostsfile:
                     for line in hostsfile:
                         hostline = line.strip()
                         isIP = line
@@ -208,7 +208,7 @@ if __name__ == '__main__':
         try:
             if cb.group():
                 # loop for all devices
-                with open("IDF_CB_Campus.txt", 'r') as hostsfile:
+                with open("Inventory/Campus/IDF_CB_Campus.txt", 'r') as hostsfile:
                     for line in hostsfile:
                         hostline = line.strip()
                         isIP = line
@@ -226,7 +226,7 @@ if __name__ == '__main__':
         try:
             if co.group():
                 # loop for all devices
-                with open("IDF_CO_Campus.txt", 'r') as hostsfile:
+                with open("Inventory/Campus/IDF_CO_Campus.txt", 'r') as hostsfile:
                     for line in hostsfile:
                         hostline = line.strip()
                         isIP = line
@@ -243,7 +243,7 @@ if __name__ == '__main__':
         try:
             if di.group():
                 # loop for all devices
-                with open("IDF_DI_Campus.txt", 'r') as hostsfile:
+                with open("Inventory/Campus/IDF_DI_Campus.txt", 'r') as hostsfile:
                     for line in hostsfile:
                         hostline = line.strip()
                         isIP = line
@@ -260,7 +260,7 @@ if __name__ == '__main__':
         try:
             if ep.group():
                 # loop for all devices
-                with open("IDF_EP_Campus.txt", 'r') as hostsfile:
+                with open("Inventory/Campus/IDF_EP_Campus.txt", 'r') as hostsfile:
                     for line in hostsfile:
                         hostline = line.strip()
                         isIP = line
@@ -277,7 +277,7 @@ if __name__ == '__main__':
         try:
             if kp.group():
                 # loop for all devices
-                with open("IDF_KP_Campus.txt", 'r') as hostsfile:
+                with open("Inventory/Campus/IDF_KP_Campus.txt", 'r') as hostsfile:
                     for line in hostsfile:
                         hostline = line.strip()
                         isIP = line
@@ -295,7 +295,7 @@ if __name__ == '__main__':
         try:
             if ip.group():
                 # loop for all devices
-                with open("IDF_IP_Campus.txt", 'r') as hostsfile:
+                with open("Inventory/Campus/IDF_IP_Campus.txt", 'r') as hostsfile:
                     for line in hostsfile:
                         hostline = line.strip()
                         isIP = line
@@ -313,7 +313,7 @@ if __name__ == '__main__':
         try:
             if ru.group():
                 # loop for all devices
-                with open("IDF_RU_Campus.txt", 'r') as hostsfile:
+                with open("Inventory/Campus/IDF_RU_Campus.txt", 'r') as hostsfile:
                     for line in hostsfile:
                         hostline = line.strip()
                         isIP = line
@@ -331,7 +331,7 @@ if __name__ == '__main__':
         try:
             if sa.group():
                 # loop for all devices
-                with open("IDF_SA_Campus.txt", 'r') as hostsfile:
+                with open("Inventory/Campus/IDF_SA_Campus.txt", 'r') as hostsfile:
                     for line in hostsfile:
                         hostline = line.strip()
                         isIP = line
