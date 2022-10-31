@@ -2095,7 +2095,7 @@ def get_wlc_wlan_qos_9800(net_connect):
 
 
 def get_wlc_ap_facts(ap_name, net_connect):
-    output = net_connect.send_command("show ap config general" + " " + ap_name)
+    output = net_connect.send_command("show ap config general" + " " + ap_name, read_timeout=603)
     #    print(ch.send_command("show ap config general" + " " + ap_name))
 
     if "invalid" in output:
