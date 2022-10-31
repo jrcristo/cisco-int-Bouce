@@ -59,6 +59,9 @@ if __name__ == '__main__':
                             # Printing the Model
                             print('=> Model:', model)
 
+                            # getting code version
+                            print('=> OS or Code:', funtions_jose.get_ios_nxos_version_model(net_connect)[1])
+
                             # looking for LocalSoft in sh ver
                             sh_ver = net_connect.send_command('sh ver | inc reload', read_timeout=603)
                             if 'LocalSoft' in sh_ver:
@@ -113,6 +116,9 @@ if __name__ == '__main__':
 
                             # Printing the Model
                             print('=> Model:', model)
+
+                            # getting code version
+                            print('=> OS or Code:', funtions_jose.get_ios_nxos_version_model(net_connect)[1])
 
                             # looking for LocalSoft in sh ver
                             sh_ver = net_connect.send_command('sh ver | inc reload', read_timeout=603)
@@ -173,6 +179,9 @@ if __name__ == '__main__':
 
                             # Printing the Model
                             print('=> Model:', model)
+
+                            # getting code version
+                            print('=> OS or Code:', funtions_jose.get_ios_nxos_version_model(net_connect)[1])
 
                             # Getting OS version or Code
                             sh_version_os = net_connect.send_command('sh ver | inc Vers', read_timeout=603)
@@ -239,6 +248,9 @@ if __name__ == '__main__':
 
                             # Printing the Model
                             print('=> Model:', model)
+
+                            # getting code version
+                            print('=> OS or Code:', funtions_jose.get_ios_nxos_version_model(net_connect)[1])
 
                             # Getting OS version or Code
                             sh_version_os = net_connect.send_command('sh ver | inc Vers', read_timeout=603)
