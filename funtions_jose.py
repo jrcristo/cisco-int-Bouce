@@ -1291,7 +1291,7 @@ def get_total_clients_ssid_9800(wlan_id, net_connect):
         print('=> Exiting')
 
 
-def set_wlc_ap_tx_power(ap, net_connect):
+def check_wlc_five_two_ghz_ap_status(ap, net_connect):
     # checking is AP is join WLC.
     two_ghz = net_connect.send_command("show ap config 802.11-abgn " + ap, read_timeout=803)
     if 'invalid' in two_ghz:
@@ -1307,7 +1307,6 @@ def set_wlc_ap_tx_power(ap, net_connect):
         print('=> There is no info for 5Ghz radio')
     else:
         pass
-
     # filtering 5ghz
     five_ghz_tx_level = re.search(r'Curr\w+\sTx\s\w+\s\S+\s\S+\s(.*)', five_ghz).group(1)
     five_ghz_current_channel = re.search(r'Curre\w+\sChan\w+\s\S+\s(.*)', five_ghz).group(1)
@@ -1328,6 +1327,11 @@ def set_wlc_ap_tx_power(ap, net_connect):
     print('=> AP TX_Level is:', five_ghz_tx_level)
     print('=> AP Current Channel is:', five_ghz_current_channel)
     print('*---*.*---*.*---*.*---*.*---*.*---*.')
+
+
+def set_wlc_ap_tx_power(ap, net_connect):
+    # checking AP 2.4 and 5Ghz radio status
+    check_wlc_five_two_ghz_ap_status(ap, net_connect)
 
     tx_power_change = input(
         "==> after checking the results, do you want to change TX_POWER?, (Y) to ONE (N) to all:").lower()
@@ -1370,7 +1374,7 @@ def set_wlc_ap_tx_power(ap, net_connect):
             print('=> TX_POWER command failed')
             exit(0)
         else:
-            print('=> 2.5Ghz Radio TX_POWER changed successfully')
+            print('=> 2.4Ghz Radio TX_POWER changed successfully')
 
         # enabling radios after the change
         enable_five_tx_power_modification_command = 'config 802.11a enable ' + ap
@@ -1392,6 +1396,11 @@ def set_wlc_ap_tx_power(ap, net_connect):
         else:
             pass
             # print('=> 2.5Ghz Radios enabled successfully')
+
+        # showing results after the change
+        # checking AP 2.4 and 5Ghz radio status
+        print('=> Showing results after the change')
+        check_wlc_five_two_ghz_ap_status(ap, net_connect)
 
     elif tx_power_change in no_option:
         print("==> No TX_POWER commands executed <==")
@@ -1460,6 +1469,11 @@ def set_wlc_ap_tx_power(ap, net_connect):
         else:
             pass
             # print('=> 2.5Ghz Radios enabled successfully')
+
+        # showing results after the change
+        # checking AP 2.4 and 5Ghz radio status
+        print('=> Showing results after the change')
+        check_wlc_five_two_ghz_ap_status(ap, net_connect)
 
     elif tx_power_default in no_option:
         print("==> No Default TX_POWER applied <==")
