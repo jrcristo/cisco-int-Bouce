@@ -1,5 +1,7 @@
 import datetime
 import getpass
+from builtins import print
+
 from snmp_helper import snmp_get_oid, snmp_extract
 from netmiko import ConnectHandler
 import re
@@ -233,7 +235,7 @@ def set_readers_interface(inter, net_connect):
         config_commands = ['int' + " " + inter, 'desc [RDR] MED-READER', 'spanning-tree portfast',
                            'spanning-tree bpduguard en', 'sw mod acc', 'sw acc vlan 1310',
                            'power inline static max 30000']
-        output = net_connect.send_config_set(config_commands,  read_timeout=603)
+        output = net_connect.send_config_set(config_commands, read_timeout=603)
         if 'sw acc vlan' in output:
             print('Commands successfully executed')
             # macros option
@@ -254,7 +256,7 @@ def set_readers_interface(inter, net_connect):
         config_commands = ['int' + " " + inter, 'desc [RDR] MED-READER', 'spanning-tree portfast',
                            'spanning-tree bpduguard en', 'sw mod acc', 'sw acc vlan 1310',
                            'power inline static max 30000']
-        not_continuous = net_connect.send_config_set(config_commands,  read_timeout=603)
+        not_continuous = net_connect.send_config_set(config_commands, read_timeout=603)
         if 'int rang' + " " + inter.lower() in not_continuous:
             print('==> Commands successfully executed')
             # macros option
@@ -1289,6 +1291,181 @@ def get_total_clients_ssid_9800(wlan_id, net_connect):
         print('=> Exiting')
 
 
+def set_wlc_ap_tx_power(ap, net_connect):
+    # checking is AP is join WLC.
+    two_ghz = net_connect.send_command("show ap config 802.11-abgn " + ap, read_timeout=803)
+    if 'invalid' in two_ghz:
+        print('=> The AP ' + ap + " " + "isn't joined WLC")
+        exit(0)
+    else:
+        print('===> AP is joined WLC, continuing with the process')
+        pass
+
+    # getting 5GHZ info
+    five_ghz = net_connect.send_command("show ap config 802.11a " + ap, read_timeout=803)
+    if 'invalid' in five_ghz:
+        print('=> There is no info for 5Ghz radio')
+    else:
+        pass
+
+    # filtering 5ghz
+    five_ghz_tx_level = re.search(r'Curr\w+\sTx\s\w+\s\S+\s\S+\s(.*)', five_ghz).group(1)
+    five_ghz_current_channel = re.search(r'Curre\w+\sChan\w+\s\S+\s(.*)', five_ghz).group(1)
+    five_ghz_power_config = re.search(r'Tx\sPo\w+\sConf\w+\s+\S+\s(.*)', five_ghz).group(1)
+    # filtering 2Ghz
+    two_ghz_ghz_tx_level = re.search(r'Curr\w+\sTx\s\w+\s\S+\s\S+\s(.*)', two_ghz).group(1)
+    two_ghz_ghz_current_channel = re.search(r'Curre\w+\sChan\w+\s\S+\s(.*)', two_ghz).group(1)
+    two_ghz_ghz_power_config = re.search(r'Tx\sPo\w+\sConf\w+\s+\S+\s(.*)', two_ghz).group(1)
+
+    # printing the 2.5 and 5Ghz
+    print('==> Getting 2.4Ghz info for ' + ap)
+    print('=> AP TX_Level config is:', two_ghz_ghz_power_config)
+    print('=> AP TX_Level is:', two_ghz_ghz_tx_level)
+    print('=> AP Current Channel is:', two_ghz_ghz_current_channel)
+    print('*---*.*---*.*---*.*---*.*---*.*---*.')
+    print('==> Getting 5Ghz info for ' + ap)
+    print('=> AP TX_Level config is:', five_ghz_power_config)
+    print('=> AP TX_Level is:', five_ghz_tx_level)
+    print('=> AP Current Channel is:', five_ghz_current_channel)
+    print('*---*.*---*.*---*.*---*.*---*.*---*.')
+
+    tx_power_change = input(
+        "==> after checking the results, do you want to change TX_POWER?, (Y) to ONE (N) to all:").lower()
+    if tx_power_change in yes_option:
+        tx_power_value = input("What's the TX value? being 1 the highest and 7 the lowest: ").upper()
+        # disabling 5Ghz radio before the tx_power change
+        five_tx_power_modification_command = 'config 802.11a disable ' + ap
+        five_tx_power_modification_command_send = net_connect.send_command(five_tx_power_modification_command,
+                                                                           read_timeout=803)
+        if 'invalid' in five_tx_power_modification_command_send:
+            print('=> Disabled radios command failed')
+            exit(0)
+        else:
+            pass
+            # print('=> 5Ghz Radios disabled successfully')
+
+        # disabling 2.5Ghz radio before the tx_power change
+        two_tx_power_modification_command = 'config 802.11-abgn disable ' + ap
+        two_tx_power_modification_command_send = net_connect.send_command(two_tx_power_modification_command,
+                                                                          read_timeout=803)
+        if 'invalid' in two_tx_power_modification_command_send:
+            print('=> Disabled radios command failed')
+            exit(0)
+        else:
+            pass
+            # print('=> 2.5Ghz Radios disabled successfully')
+
+        # Changing TX_POWER value 5Ghz
+        five_tx_power_value_command = 'config 802.11a txPower ap ' + ap + " " + tx_power_value
+        five_tx_power_value_command_send = net_connect.send_command(five_tx_power_value_command, read_timeout=803)
+        if 'invalid' in five_tx_power_value_command_send:
+            print('=> TX_POWER command failed')
+            exit(0)
+        else:
+            print('=> 5Ghz Radio TX_POWER changed successfully')
+        # Changing TX_POWER value 2.4Ghz
+        two_tx_power_value_command = 'config 802.11-abgn txPower ap ' + ap + " " + tx_power_value
+        two_tx_power_value_command_send = net_connect.send_command(two_tx_power_value_command, read_timeout=803)
+        if 'invalid' in two_tx_power_value_command_send:
+            print('=> TX_POWER command failed')
+            exit(0)
+        else:
+            print('=> 2.5Ghz Radio TX_POWER changed successfully')
+
+        # enabling radios after the change
+        enable_five_tx_power_modification_command = 'config 802.11a enable ' + ap
+        enable_five_tx_power_modification_command_send = net_connect.send_command(
+            enable_five_tx_power_modification_command, read_timeout=803)
+        if 'invalid' in enable_five_tx_power_modification_command_send:
+            print('=> Enabling radios command failed')
+            exit(0)
+        else:
+            pass
+            # print('=> 5Ghz Radios enabled successfully')
+        # enabling 2.5Ghz radio before the tx_power change
+        enable_two_tx_power_modification_command = 'config 802.11-abgn enable ' + ap
+        enable_two_tx_power_modification_command_send = net_connect.send_command(
+            enable_two_tx_power_modification_command, read_timeout=803)
+        if 'invalid' in enable_two_tx_power_modification_command_send:
+            print('=> Enabling radios command failed')
+            exit(0)
+        else:
+            pass
+            # print('=> 2.5Ghz Radios enabled successfully')
+
+    elif tx_power_change in no_option:
+        print("==> No TX_POWER commands executed <==")
+        pass
+
+    ### setting default values to AP TX_POWER ###
+    tx_power_default = input("==> Do you want to default the TX_POWER value?, (Y) to ONE (N) to all:").lower()
+    if tx_power_default in yes_option:
+        # disabling 5Ghz radio before the tx_power change
+        five_tx_power_modification_command = 'config 802.11a disable ' + ap
+        five_tx_power_modification_command_send = net_connect.send_command(five_tx_power_modification_command,
+                                                                           read_timeout=803)
+        if 'invalid' in five_tx_power_modification_command_send:
+            print('=> Disabled radios command failed')
+            exit(0)
+        else:
+            pass
+            # print('=> 5Ghz Radios disabled successfully')
+        # disabling 2.5Ghz radio before the tx_power change
+        two_tx_power_modification_command = 'config 802.11-abgn disable ' + ap
+        two_tx_power_modification_command_send = net_connect.send_command(two_tx_power_modification_command,
+                                                                          read_timeout=803)
+        if 'invalid' in two_tx_power_modification_command_send:
+            print('=> Disabled radios command failed')
+            exit(0)
+        else:
+            pass
+            # print('=> 2.5Ghz Radios disabled successfully')
+
+        # executing default values
+        # Changing TX_POWER value 5Ghz
+        five_tx_power_value_command = 'config 802.11a txPower ap ' + ap + " " + 'global'
+        five_tx_power_value_command_send = net_connect.send_command(five_tx_power_value_command,
+                                                                    read_timeout=803)
+        if 'invalid' in five_tx_power_value_command_send:
+            print('=> TX_POWER default command failed')
+            exit(0)
+        else:
+            print('=> 5Ghz default Radio TX_POWER changed successfully')
+        # Changing TX_POWER value 2.4Ghz
+        two_tx_power_value_command = 'config 802.11-abgn txPower ap ' + ap + " " + 'global'
+        two_tx_power_value_command_send = net_connect.send_command(two_tx_power_value_command, read_timeout=803)
+        if 'invalid' in two_tx_power_value_command_send:
+            print('=> TX_POWER default command failed')
+            exit(0)
+        else:
+            print('=> 2.4Ghz Default Radio TX_POWER changed successfully')
+
+        # enabling 2.5Ghz radio before the tx_power change
+        enable_five_tx_power_modification_command = 'config 802.11a enable ' + ap
+        enable_five_tx_power_modification_command_send = net_connect.send_command(
+            enable_five_tx_power_modification_command, read_timeout=803)
+        if 'invalid' in enable_five_tx_power_modification_command_send:
+            print('=> Enabling radios command failed')
+            exit(0)
+        else:
+            pass
+            # print('=> 5Ghz Radios enabled successfully')
+        # enabling 2.5Ghz radio before the tx_power change
+        enable_two_tx_power_modification_command = 'config 802.11-abgn enable ' + ap
+        enable_two_tx_power_modification_command_send = net_connect.send_command(
+            enable_two_tx_power_modification_command, read_timeout=803)
+        if 'invalid' in enable_two_tx_power_modification_command_send:
+            print('=> Enabling radios command failed')
+            exit(0)
+        else:
+            pass
+            # print('=> 2.5Ghz Radios enabled successfully')
+
+    elif tx_power_default in no_option:
+        print("==> No Default TX_POWER applied <==")
+        exit(0)
+
+
 def wlc_client_count_by_ap_9800(client_count, net_connect):
     ap_summ = net_connect.send_command("sh ap summary sort descending client-count")
     ap_filter = re.findall(r'(\w+\S+)\s+\S+\s+(\d+)\s+', ap_summ)
@@ -1340,7 +1517,7 @@ def wlc_utils_ap(ap_name, net_connect):
             print('***-***.***-***.***-***.***-***.***-***')
 
             ap_options = input(
-                '==> Please select one of the following options:\n => Select 1 to Reboot AP\n => Select 2 to Disable AP\n => Select 3 to Enable AP\n => Select 4 AP LED Flash \n => Select 5 to Rename AP \n:').lower()
+                '==> Please select one of the following options:\n => Select 1 to Reboot AP\n => Select 2 to Disable AP\n => Select 3 to Enable AP\n => Select 4 AP LED Flash \n => Select 5 to Rename AP \n => Select 6 to Change TX_POWER \n:').lower()
 
             if '1' in ap_options:
                 print('=> Rebooting AP =>', ap_name)
@@ -1404,6 +1581,11 @@ def wlc_utils_ap(ap_name, net_connect):
                     print('=> AP has been renamed')
                 else:
                     print('=> AP rename fail')
+
+            elif '6' in ap_options:
+                print('=> Changing TX_LEVEL', ap_name)
+                # calling function
+                set_wlc_ap_tx_power(ap_name, net_connect)
 
             else:
                 print('=> Wrong option selected')
