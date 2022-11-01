@@ -1359,6 +1359,16 @@ def set_wlc_ap_tx_power(ap, net_connect):
             pass
             # print('=> 2.5Ghz Radios disabled successfully')
 
+        # enabling manual mode client-serving for 2.4Ghz
+        two_tx_manualMode_modification_command = 'config 802.11-abgn role ' + ap + " " + 'manual client-serving'
+        two_tx_manualMode_modification_command_send = net_connect.send_command(two_tx_manualMode_modification_command, read_timeout=803)
+        if 'invalid' in two_tx_manualMode_modification_command_send:
+            print('=> Manual Mode radios command failed')
+            exit(0)
+        else:
+            pass
+            # print('=> 2.5Ghz Radios disabled successfully')
+
         # Changing TX_POWER value 5Ghz
         five_tx_power_value_command = 'config 802.11a txPower ap ' + ap + " " + tx_power_value
         five_tx_power_value_command_send = net_connect.send_command(five_tx_power_value_command, read_timeout=803)
@@ -1396,11 +1406,16 @@ def set_wlc_ap_tx_power(ap, net_connect):
         else:
             pass
             # print('=> 2.5Ghz Radios enabled successfully')
+        print('*---*.*---*.*---*.*---*.*---*.*---*.')
+        print('*---*.*---*.*---*.*---*.*---*.*---*.')
 
         # showing results after the change
         # checking AP 2.4 and 5Ghz radio status
         print('=> Showing results after the change')
         check_wlc_five_two_ghz_ap_status(ap, net_connect)
+
+        print('=> Exiting <=')
+        exit(0)
 
     elif tx_power_change in no_option:
         print("==> No TX_POWER commands executed <==")
@@ -1419,7 +1434,7 @@ def set_wlc_ap_tx_power(ap, net_connect):
         else:
             pass
             # print('=> 5Ghz Radios disabled successfully')
-        # disabling 2.5Ghz radio before the tx_power change
+        # disabling 2.4Ghz radio before the tx_power change
         two_tx_power_modification_command = 'config 802.11-abgn disable ' + ap
         two_tx_power_modification_command_send = net_connect.send_command(two_tx_power_modification_command,
                                                                           read_timeout=803)
@@ -1429,6 +1444,18 @@ def set_wlc_ap_tx_power(ap, net_connect):
         else:
             pass
             # print('=> 2.5Ghz Radios disabled successfully')
+
+        # enabling manual mode client-serving for 2.4Ghz
+        two_tx_manualMode_modification_command = 'config 802.11-abgn role ' + ap + " " + 'manual client-serving'
+        two_tx_manualMode_modification_command_send = net_connect.send_command(
+            two_tx_manualMode_modification_command, read_timeout=803)
+        if 'invalid' in two_tx_manualMode_modification_command_send:
+            print('=> Manual Mode radios command failed')
+            exit(0)
+        else:
+            pass
+            # print('=> 2.5Ghz Radios disabled successfully')
+
 
         # executing default values
         # Changing TX_POWER value 5Ghz
@@ -1469,6 +1496,18 @@ def set_wlc_ap_tx_power(ap, net_connect):
         else:
             pass
             # print('=> 2.5Ghz Radios enabled successfully')
+
+        # enabling auto mode for 2.4Ghz
+        two_tx_manualMode_modification_command = 'config 802.11-abgn role ' + ap + " " + 'auto'
+        two_tx_manualMode_modification_command_send = net_connect.send_command(
+            two_tx_manualMode_modification_command, read_timeout=803)
+        if 'invalid' in two_tx_manualMode_modification_command_send:
+            print('=> Manual Mode radios command failed')
+            exit(0)
+        elif 'Channel and/or radio role selection may be sub-optimal' in two_tx_manualMode_modification_command_send:
+            print('Auto mode command was selected')
+        print('*---*.*---*.*---*.*---*.*---*.*---*.')
+        print('*---*.*---*.*---*.*---*.*---*.*---*.')
 
         # showing results after the change
         # checking AP 2.4 and 5Ghz radio status
