@@ -1570,7 +1570,7 @@ def wlc_utils_ap(ap_name, net_connect):
             print('***-***.***-***.***-***.***-***.***-***')
 
             ap_options = input(
-                '==> Please select one of the following options:\n => Select 1 to Reboot AP\n => Select 2 to Disable AP\n => Select 3 to Enable AP\n => Select 4 AP LED Flash \n => Select 5 to Rename AP \n => Select 6 to Change TX_POWER \n:').lower()
+                '==> Please select one of the following options:\n => Select 1 to Reboot AP\n => Select 2 to Disable AP\n => Select 3 to Enable AP\n => Select 4 AP LED Flash \n => Select 5 to Rename AP \n => Select 6 to Change TX_POWER \n => Select 7 to Check if the AP is joined WLC \n:').lower()
 
             if '1' in ap_options:
                 print('=> Rebooting AP =>', ap_name)
@@ -1639,6 +1639,11 @@ def wlc_utils_ap(ap_name, net_connect):
                 print('=> Changing TX_LEVEL', ap_name)
                 # calling function
                 set_wlc_ap_tx_power(ap_name, net_connect)
+
+            elif '7' in ap_name:
+                print('=> Checking if the AP is joined WLC', ap_name)
+                # calling function
+                get_ios_wlc_ap(ap_name, net_connect)
 
             else:
                 print('=> Wrong option selected')
@@ -1994,7 +1999,7 @@ def wlc_clients_associated(ap_name, net_connect):
 
 
 def get_ios_wlc_ap(apname, net_connect):
-    output = net_connect.send_command("sh ap name " + apname + " " + 'config general')
+    output = net_connect.send_command("sh ap name " + apname + " " + 'config general', read_timeout=603)
     if 'Invalid AP Name' in output:
         print('==> AP ' + apname + " " + "isn't joined to WLC")
     else:
@@ -2519,7 +2524,7 @@ def get_wlc_9800_clients_connected_by_ap(ap_name, net_connect):
     five_tx = net_connect.send_command("show ap dot11 5ghz summary | inc" + " " + ap_name, read_timeout=603)
     # five_details = re.search(r'^\w+\s+([\d|\w]+.[\d|\w]+.[\d|\w]+)\s+\d+\s+\w+\s+\w+\s+\d+\s+.(\d).\d\s(.\w+\s\w+.)\s+(.\d+.\d+.)', five_tx)
     five_details = re.search(
-        r'(^EX\w+|^EX\S+|^XP\w+.\d+.\d+.\w+)\s+([\d|\w]+.[\d|\w]+.[\d|\w]+)\s+\d+\s+\w+\s+\w+\s+(\d+)\s+.(\d).\d\s(.\w+\s\w+.)\s+.(\d+).',
+        r'(^NYC\w+|^EX\w+|^EX\S+|^XP\w+.\d+.\d+.\w+)\s+([\d|\w]+.[\d|\w]+.[\d|\w]+)\s+\d+\s+\w+\s+\w+\s+(\d+)\s+.(\d).\d\s(.\w+\s\w+.)\s+.(\d+).',
         five_tx)
     # printing details
     # getting date and time
@@ -2566,7 +2571,7 @@ def get_wlc_9800_clients_connected_by_ap(ap_name, net_connect):
     two_tx = net_connect.send_command("show ap dot11 24ghz summary | inc" + " " + ap_name, read_timeout=603)
     # two_details = re.search(r'^\w+\s+([\d|\w]+.[\d|\w]+.[\d|\w]+)\s+\d+\s+\w+\s+\w+\s+\d+\s+.(\d).\d\s(.\w+\s\w+.)\s+.(\d+).', two_tx)
     two_details = re.search(
-        r'(^EX\w+|^EX\S+|^XP\w+.\d+.\d+.\w+)\s+([\d|\w]+.[\d|\w]+.[\d|\w]+)\s+\d+\s+\w+\s+\w+\s+(\d+)\s+.(\d).\d\s(.\w+\s\w+.)\s+.(\d+).',
+        r'(^NYC\w+|^EX\w+|^EX\S+|^XP\w+.\d+.\d+.\w+)\s+([\d|\w]+.[\d|\w]+.[\d|\w]+)\s+\d+\s+\w+\s+\w+\s+(\d+)\s+.(\d).\d\s(.\w+\s\w+.)\s+.(\d+).',
         two_tx)
     # printing details
     # getting date and time
