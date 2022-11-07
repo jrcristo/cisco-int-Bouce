@@ -29,7 +29,7 @@ tag_policy = re.search(r'Policy\sT\w+\sNa\w+\s+.\s(.*)', output).group(1)
 mac = re.search(r'MAC\sAdd\w+\s+.\s(\d\S+|\w\S+)', output).group(1)
 
 if 'XIC' in tag_policy:
-    print('=> already on the right TAG')
+    print('=> already on the right TAG, no changes committed')
 
 else:
     print('mac-add=>', mac)

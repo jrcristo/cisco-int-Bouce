@@ -48,12 +48,38 @@ if __name__ == '__main__':
             print('=> file upload fail')
 
 
+    def stackwise_reorder():
+        # getting stack size
+        stack = net_connect.send_command('sh switch')
+        stack_size = re.findall(r'.*Ready', stack)
+        print('=> There are', len(stack_size), 'switches on the stack')
+        # all the ports on the stack
+        output = net_connect.send_command('sh switch stack-ports summary')
+        # '''
+        if len(stack_size) >= 2:
+            for c in range(len(stack_size)):
+                stack_number = c+1
+                reorder = re.search(f"({stack_number}+\/1)\s+\w+\s+(\d)", output)
+                values = [reorder.group(1), reorder.group(2)]
+                if reorder.group(1) in values[0] and reorder.group(2) in values[1]:
+                    print('SII')
+                else:
+                    print('Noo---')
+
+                # print('=> position es', stack_size.index(c))
+        # '''
+
+
     JC = funtions_jose.get_credentials_and_interface()
     net_connect = ConnectHandler(**JC)
     net_connect.enable()
 
     print('###### STARTING ZTP SCRIPT ######')
     print('\n*** Obtaining serial number of device.. ***')
+
+    # stackwise testing
+    stackwise_reorder()
+
     serial = get_serial()
     # checking what's the SN.cfg on file
     for m in serial:
