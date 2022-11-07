@@ -582,6 +582,7 @@ def get_hostname(net_connect):
     output = net_connect.send_command('sh ver | inc Nexus')
     if output:
         print('==> Nexus Device Detected <==')
+        print('=> Local time & Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
         nexus = net_connect.send_command('sh system uptime')
         # getting hostname
         nexus_hostname = net_connect.send_command('sh run | inc hostname')
@@ -590,6 +591,7 @@ def get_hostname(net_connect):
 
     else:
         print('==> IOS Device Detected <==')
+        print('=> Local time & Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
         output = net_connect.send_command('sh ver | inc uptime|Uptime|Last')
         print(output)
 
