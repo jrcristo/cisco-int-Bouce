@@ -582,7 +582,7 @@ def get_hostname(net_connect):
     output = net_connect.send_command('sh ver | inc Nexus')
     if output:
         print('==> Nexus Device Detected <==')
-        print('=> Local time & Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
+        get_device_date_time(net_connect)
         nexus = net_connect.send_command('sh system uptime')
         # getting hostname
         nexus_hostname = net_connect.send_command('sh run | inc hostname')
@@ -591,7 +591,7 @@ def get_hostname(net_connect):
 
     else:
         print('==> IOS Device Detected <==')
-        print('=> Local time & Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
+        get_device_date_time(net_connect)
         output = net_connect.send_command('sh ver | inc uptime|Uptime|Last')
         print(output)
 
@@ -2991,6 +2991,17 @@ def get_time_date():
     # print('Current time = %s' % time)
 
     return date, date_time
+
+
+def get_device_date_time(net_connect):
+    get_time = net_connect.send_command('show clock')
+
+    # filtering results
+    filtered_time = re.search(r'(\S+)\s(\w+)\s(.*)', get_time).group(1)
+    time_new = filtered_time.lstrip('*')
+    filtered_timezone = re.search(r'(\S+)\s(\w+)\s(.*)', get_time).group(2)
+    filtered_date = re.search(r'(\S+)\s(\w+)\s(.*)', get_time).group(3)
+    print('=> Local time is:', time_new + " " + filtered_timezone + " " + '=> Date is:', filtered_date)
 
 
 def create_folder_logs():
