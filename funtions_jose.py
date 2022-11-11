@@ -587,7 +587,7 @@ def get_hostname(net_connect):
         # getting hostname
         nexus_hostname = net_connect.send_command('sh run | inc hostname')
         hostname = re.search(r'host\w+\s(.*)', nexus_hostname)
-        print(nexus, hostname.group(1))
+        print(nexus, 'Hostname =>', hostname.group(1))
 
     else:
         print('==> IOS Device Detected <==')
@@ -715,8 +715,8 @@ def panos_credentials():
         'device_type': 'paloalto_panos',
         'ip': IP,
         'username': 'Read_Only',
-        # 'password': 'S$@!L!nG!12',
-        'password': 'R0-Only1',
+        'password': 'S$@!L!nG!12',
+        # 'password': 'R0-Only1',
         'timeout': 29,
         'global_delay_factor': 7,
     }
@@ -2126,7 +2126,7 @@ def get_wlc_facts(net_connect):
 
 def get_wlc_wlan_qos(net_connect):
     # getting MedNet or CrewNet ID
-    ssid_id = net_connect.send_command("show wlan summa")
+    ssid_id = net_connect.send_command("show wlan summa", read_timeout=603)
     MedNet = re.search(r'(\d+).*\bMedallionNet\b', ssid_id)
     CreNet = re.search(r'(\d+).*\bCrewNet\b', ssid_id)
     print('=> MedNet ID =', MedNet.group(1))
@@ -2135,7 +2135,7 @@ def get_wlc_wlan_qos(net_connect):
 
     # getting wlan info MedNet
     print('==> Medallion Info <==')
-    wlan_MedNet = net_connect.send_command("show wlan" + " " + MedNet.group(1))
+    wlan_MedNet = net_connect.send_command("show wlan" + " " + MedNet.group(1), read_timeout=603)
     ssid = re.search(r'Name\s\(SSID\)\S+\s(\w+)', wlan_MedNet)
     ssid_status = re.search(r'Status\S+\s(\w+)', wlan_MedNet)
     broadcast = re.search(r'Broad\w+\sS\w+\S+\s(\w+)', wlan_MedNet)
@@ -2187,7 +2187,7 @@ def get_wlc_wlan_qos(net_connect):
     # getting wlan info CrewNet
     print('*---*-*---*-*---*-*---*-*---*')
     print('==> CrewNet Info <==')
-    wlan_CrewNet = net_connect.send_command("show wlan" + " " + CreNet.group(1))
+    wlan_CrewNet = net_connect.send_command("show wlan" + " " + CreNet.group(1), read_timeout=603)
     crewnet_ssid = re.search(r'Name\s\(SSID\)\S+\s(\w+)', wlan_CrewNet)
     crewnet_ssid_status = re.search(r'Status\S+\s(\w+)', wlan_CrewNet)
     crewnet_broadcast = re.search(r'Broad\w+\sS\w+\S+\s(\w+)', wlan_CrewNet)
@@ -2994,7 +2994,7 @@ def get_time_date():
 
 
 def get_device_date_time(net_connect):
-    get_time = net_connect.send_command('show clock')
+    get_time = net_connect.send_command('show clock | exc NTP')
 
     # filtering results
     filtered_time = re.search(r'(\S+)\s(\w+)\s(.*)', get_time).group(1)
