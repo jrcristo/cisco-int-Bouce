@@ -14,7 +14,7 @@ if __name__ == '__main__':
     net_connect.enable()
 
     # running the tracert from XIC-Core
-    tracert = net_connect.send_command('traceroute ' + ip_addr + " " + 'num pro 1 source vlan 610 ttl 1 12',
+    tracert = net_connect.send_command('traceroute ' + ip_addr + " " + 'num pro 1 source vlan 610 ttl 1 12 timeout 1',
                                        read_timeout=703)
 
     if '172.30.124.34' in tracert or '172.30.124.35' in tracert or '172.30.120.34.34' in tracert or '172.30.120.34.35' in tracert:
