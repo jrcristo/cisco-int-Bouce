@@ -7,6 +7,10 @@ print('==> Script to check the DST network (SHIP || OFFICE) <==')
 if __name__ == '__main__':
     ip_addr = input('Whats the DST IP?: ')
 
+    if '10.24' in ip_addr or '10.25' in ip_addr or '10.28' in ip_addr or '10.30' in ip_addr:
+        print('=> IP provided is used locally, no routing available. exiting')
+        exit(0)
+
     print('=> Running the test from XIC')
     isIP = '10.126.140.3'
     JC = funtions_jose.if_credential_connection(isIP)
@@ -14,7 +18,7 @@ if __name__ == '__main__':
     net_connect.enable()
 
     # running the tracert from XIC-Core
-    tracert = net_connect.send_command('traceroute ' + ip_addr + " " + 'num pro 1 source vlan 610 ttl 1 12 timeout 1',
+    tracert = net_connect.send_command('traceroute ' + ip_addr + " " + 'num pro 1 source vlan 610 ttl 1 12 timeout 2',
                                        read_timeout=703)
 
     if '172.30.124.34' in tracert or '172.30.124.35' in tracert or '172.30.120.34.34' in tracert or '172.30.120.34.35' in tracert:
