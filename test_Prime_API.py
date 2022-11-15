@@ -33,10 +33,13 @@ if acdResp['queryResponse']['@count'] == 1:
     url_dev = base_uri + device
     dev_details = requests.get(url_dev, headers=headers, auth=(user, password), verify=False)
     cdpData = json.loads(dev_details.text)
-    print("This is CDP Neighbor name: ", cdpData['queryResponse']['entity'][0]['accessPointDetailsDTO']['cdpNeighbors']['cdpNeighbor'][0]['neighborName'])
-    print("This is CDP Neighbor port: ",
-          cdpData['queryResponse']['entity'][0]['accessPointDetailsDTO']['cdpNeighbors']['cdpNeighbor'][0][
-              'neighborPort'])
+    cdpNeighList = cdpData['queryResponse']['entity'][0]['accessPointDetailsDTO']['cdpNeighbors']['cdpNeighbor']
+    i = 0
+    for neigh in cdpNeighList:
+        i += 1
+        print("Neigbor: ", i)
+        print("This is CDP Neighbor name: ", neigh['neighborName'])
+        print("This is CDP Neighbor port: ", neigh['neighborPort'])
 
 
 
