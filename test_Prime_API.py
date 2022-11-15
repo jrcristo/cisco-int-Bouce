@@ -13,26 +13,31 @@ password = 'Xops@123'
 rest_path = 'data/AccessPoints?name=eq("Cabana_11")'
 url = base_uri + rest_path
 
-headr = {'Accept': 'application/json'}
-response = requests.request('GET', url, auth=(user, password), verify=False)
+headers = {'Accept': 'application/json'}
+response = requests.get(url, headers=headers, auth=(user, password), verify=False)
 # print(response.text)
 # print(response.status_code)
+acdResp = json.loads(response.text)
+print(acdResp)
 
-if 'count="1"' in response.text:
+if acdResp['queryResponse']['@count'] == 1:
     print('=> Device Found it, getting details')
 
     # capturing device ID
-    dev_id = re.search(r'(\w+).\/entityId', response.text).group(1)
+    dev_id=acdResp['queryResponse']['entityId'][0]['$']
     print('id =', dev_id)
 
     # showing device details
     # device = 'data/Devices/' + dev_id
     device = 'data/AccessPointDetails/' + dev_id
     url_dev = base_uri + device
-    dev_details = requests.request('GET', url_dev, auth=(user, password), verify=False)
-    json_data = json.load(dev_details.text)
-    print("This is response data: ", json_data)
-    print(dev_details.text)
+    dev_details = requests.get(url_dev, headers=headers, auth=(user, password), verify=False)
+    cdpData = json.loads(dev_details.text)
+    print("This is CDP Neighbor name: ", cdpData['queryResponse']['entity'][0]['accessPointDetailsDTO']['cdpNeighbors']['cdpNeighbor'][0]['neighborName'])
+    print("This is CDP Neighbor port: ",
+          cdpData['queryResponse']['entity'][0]['accessPointDetailsDTO']['cdpNeighbors']['cdpNeighbor'][0][
+              'neighborPort'])
+
 
 
 else:
