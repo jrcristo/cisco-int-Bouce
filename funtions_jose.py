@@ -654,14 +654,14 @@ def get_credentials_and_interface():
     # USERNAME = input("What's the username: ")
     # PASS = getpass.getpass()
 
-    if '10.5.144' in IP or '10.126.78.130' in IP or '10.5.160' in IP:
+    if '10.5.144' in IP or '10.126.78.130' in IP or '10.5.160' in IP or '10.126.140.125' in IP:
         print('=> Using CCL Credentials')
         JC = {
             'device_type': 'cisco_ios',
             'ip': IP,
             'username': 'ccl',
             'password': 'N@v!gaT!nG~',
-            'timeout': 29,
+            'timeout': 41,
             'global_delay_factor': 7,
         }
         return JC
@@ -672,8 +672,8 @@ def get_credentials_and_interface():
             'ip': IP,
             'username': 'jcr8398',
             'password': 'NTP cce2010',
-            'timeout': 29,
-            'global_delay_factor': 6,
+            'timeout': 41,
+            'global_delay_factor': 9,
 
         }
         return JC
@@ -1522,9 +1522,12 @@ def set_wlc_ap_tx_power(ap, net_connect):
 
 
 def wlc_client_count_by_ap_9800(client_count, net_connect):
-    ap_summ = net_connect.send_command("sh ap summary sort descending client-count")
+    ap_summ = net_connect.send_command("sh ap summary sort descending client-count", read_timeout=603)
+    ap_total_summ = net_connect.send_command("sh ap summary | inc Number", read_timeout=603)
     ap_filter = re.findall(r'(\w+\S+)\s+\S+\s+(\d+)\s+', ap_summ)
+    ap_total = re.search(r'Num\w+\s\S+\s\S+\s(\w+)', ap_total_summ)
     print('=> The local time on WLC is ==>', wlc_get_time(net_connect))
+    print('=> Total Numbers of APs joined WLC =', ap_total.group(1))
     for item in ap_filter:
         if int(item[1]) >= client_count:
             print(item)
