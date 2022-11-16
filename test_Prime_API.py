@@ -16,16 +16,16 @@ url = base_uri + rest_path
 headers = {'Accept': 'application/json'}
 response = requests.get(url, headers=headers, auth=(user, password), verify=False)
 # print(response.text)
-# print(response.status_code)
+# print(response.status_code)98745
 acdResp = json.loads(response.text)
-print(acdResp)
+# print(acdResp)
 
 if acdResp['queryResponse']['@count'] == 1:
     print('=> Device Found it, getting details')
 
     # capturing device ID
-    dev_id=acdResp['queryResponse']['entityId'][0]['$']
-    print('id =', dev_id)
+    dev_id = acdResp['queryResponse']['entityId'][0]['$']
+    # print('id =', dev_id)
 
     # showing device details
     # device = 'data/Devices/' + dev_id
@@ -37,11 +37,11 @@ if acdResp['queryResponse']['@count'] == 1:
     i = 0
     for neigh in cdpNeighList:
         i += 1
-        print("Neigbor: ", i)
-        print("This is CDP Neighbor name: ", neigh['neighborName'])
-        print("This is CDP Neighbor port: ", neigh['neighborPort'])
-
-
+        # print("Neighbor: ", i)
+        print("=> The last known CDP Neighbor name was:", neigh['neighborName'])
+        print("=> The last known CDP Neighbor port was:", neigh['neighborPort'])
+        print('=> The Last known IP neighbor address was:', neigh['neighborIpAddress']['address'])
+        print('=> Switch type is:', neigh['platform'])
 
 else:
     print('=> Device not found it, exiting')
