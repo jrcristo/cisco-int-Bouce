@@ -1,7 +1,9 @@
+from __future__ import print_function
+import requests
+import json
 import datetime
 import getpass
 from builtins import print
-
 from snmp_helper import snmp_get_oid, snmp_extract
 from netmiko import ConnectHandler
 import re
@@ -9,6 +11,53 @@ import os
 
 yes_option = ['yes', 'y']
 no_option = ['no', 'n']
+
+
+def cisco_prime_api_results(ap_name, pi_ip):
+    requests.packages.urllib3.disable_warnings()
+
+    base_uri = 'https://' + pi_ip + '/webacs/api/v4/'
+    user = 'xopsapi'
+    password = 'Xops@123'
+    # rest_path = '/data/InventoryDetails'
+    # rest_path = 'data/AccessPoints?name=eq("Cabana_11")'
+    rest_path = 'data/AccessPoints?name=eq("'+ap_name+'")'
+    url = base_uri + rest_path
+
+    headers = {'Accept': 'application/json'}
+    response = requests.get(url, headers=headers, auth=(user, password), verify=False)
+    # print(response.text)
+    # print(response.status_code)98745
+    acdResp = json.loads(response.text)
+    # print(acdResp)
+
+    if acdResp['queryResponse']['@count'] == 1:
+        print('=> Device Found it, getting details')
+
+        # capturing device ID
+        dev_id = acdResp['queryResponse']['entityId'][0]['$']
+        # print('id =', dev_id)
+
+        # showing device details
+        # device = 'data/Devices/' + dev_id
+        device = 'data/AccessPointDetails/' + dev_id
+        url_dev = base_uri + device
+        dev_details = requests.get(url_dev, headers=headers, auth=(user, password), verify=False)
+        cdpData = json.loads(dev_details.text)
+        cdpNeighList = cdpData['queryResponse']['entity'][0]['accessPointDetailsDTO']['cdpNeighbors']['cdpNeighbor']
+        i = 0
+        for neigh in cdpNeighList:
+            i += 1
+            # print("Neighbor: ", i)
+            print('*-----*.*-----*.*-----*.*-----*.*-----*.')
+            print("=> The last known CDP Neighbor name was:", neigh['neighborName'])
+            print("=> The last known CDP Neighbor port was:", neigh['neighborPort'])
+            print('=> The Last known IP neighbor address was:', neigh['neighborIpAddress']['address'])
+            print('=> Switch type is:', neigh['platform'])
+
+    else:
+        print('=> Device not found it, exiting')
+        exit(0)
 
 
 def factory_default_interface(inter, net_connect):
@@ -1363,7 +1412,8 @@ def set_wlc_ap_tx_power(ap, net_connect):
 
         # enabling manual mode client-serving for 2.4Ghz
         two_tx_manualMode_modification_command = 'config 802.11-abgn role ' + ap + " " + 'manual client-serving'
-        two_tx_manualMode_modification_command_send = net_connect.send_command(two_tx_manualMode_modification_command, read_timeout=803)
+        two_tx_manualMode_modification_command_send = net_connect.send_command(two_tx_manualMode_modification_command,
+                                                                               read_timeout=803)
         if 'invalid' in two_tx_manualMode_modification_command_send:
             print('=> Manual Mode radios command failed')
             exit(0)
@@ -1457,7 +1507,6 @@ def set_wlc_ap_tx_power(ap, net_connect):
         else:
             pass
             # print('=> 2.5Ghz Radios disabled successfully')
-
 
         # executing default values
         # Changing TX_POWER value 5Ghz
@@ -2341,12 +2390,244 @@ def get_wlc_wlan_qos_9800(net_connect):
         print('=> Egress  =', egress_client_crew.group(1))
 
 
+def wlc_get_api_cisco_prime_aireOS(ap_name):
+    print("==> AP is not joined WLC")
+    # checking with prime for details
+    try:
+        yp = re.match('^YP', ap_name)
+        gp = re.match('^GP', ap_name)
+        rp = re.match('^RP', ap_name)
+        mj = re.match('^MJ', ap_name)
+        ap = re.match('^AP', ap_name)
+        cb = re.match('^CB', ap_name)
+        co = re.match('^CO', ap_name)
+        di = re.match('^DI', ap_name)
+        ep = re.match('^EP', ap_name)
+        kp = re.match('^KP', ap_name)
+        ip = re.match('^IP', ap_name)
+        ru = re.match('^RU', ap_name)
+        sa = re.match('^SA', ap_name)
+        pev2 = re.match('^PEV', ap_name)
+
+    except AttributeError:
+        pass
+
+    try:
+        if yp.group():
+            pi_ip = '10.125.36.196'
+            print('=> Trying to get info from Sky Prime')
+            # connecting PI
+            cisco_prime_api_results(ap_name, pi_ip)
+            exit(0)
+
+    except AttributeError:
+        pass
+
+    try:
+        if gp.group():
+            pi_ip = '10.122.227.196'
+            print('=> Trying to get info from Regal Prime')
+            # connecting PI
+            cisco_prime_api_results(ap_name, pi_ip)
+            exit(0)
+
+    except AttributeError:
+        pass
+
+    try:
+        if rp.group():
+            pi_ip = '10.123.36.196'
+            print('=> Trying to get info from Royal Prime')
+            # connecting PI
+            cisco_prime_api_results(ap_name, pi_ip)
+            exit(0)
+
+    except AttributeError:
+        pass
+
+    try:
+        if mj.group():
+            pi_ip = '10.124.164.196'
+            print('=> Trying to get info from Majestic Prime')
+            # connecting PI
+            cisco_prime_api_results(ap_name, pi_ip)
+            exit(0)
+
+    except AttributeError:
+        pass
+
+    try:
+        if ap.group():
+            pi_ip = '10.121.228.196'
+            print('=> Trying to get info from Grand Prime')
+            # connecting PI
+            cisco_prime_api_results(ap_name, pi_ip)
+            exit(0)
+
+    except AttributeError:
+        pass
+
+    try:
+        if cb.group():
+            pi_ip = '10.120.36.196'
+            print('=> Trying to get info from Caribbean Prime')
+            # connecting PI
+            cisco_prime_api_results(ap_name, pi_ip)
+            exit(0)
+
+    except AttributeError:
+        pass
+
+    try:
+        if co.group():
+            pi_ip = '10.120.100.196'
+            print('=> Trying to get info from Coral Prime')
+            # connecting PI
+            cisco_prime_api_results(ap_name, pi_ip)
+            exit(0)
+
+    except AttributeError:
+        pass
+
+    try:
+        if di.group():
+            pi_ip = '10.121.36.196'
+            print('=> Trying to get info from Diamond Prime')
+            # connecting PI
+            cisco_prime_api_results(ap_name, pi_ip)
+            exit(0)
+
+    except AttributeError:
+        pass
+
+    try:
+        if ep.group():
+            pi_ip = '10.121.100.196'
+            print('=> Trying to get info from Emerald Prime')
+            # connecting PI
+            cisco_prime_api_results(ap_name, pi_ip)
+            exit(0)
+
+    except AttributeError:
+        pass
+
+    try:
+        if kp.group():
+            pi_ip = '10.120.164.196'
+            print('=> Trying to get info from Crown Prime at ' + pi_ip)
+            # connecting PI
+            cisco_prime_api_results(ap_name, pi_ip)
+            exit(0)
+
+    except AttributeError:
+        pass
+
+    try:
+        if ip.group():
+            pi_ip = '10.122.36.196'
+            print('=> Trying to get info from Island Prime at ' + pi_ip)
+            # connecting PI
+            cisco_prime_api_results(ap_name, pi_ip)
+            exit(0)
+
+    except AttributeError:
+        pass
+
+    try:
+        if ru.group():
+            pi_ip = '10.123.100.196'
+            print('=> Trying to get info from Ruby Prime at ' + pi_ip)
+            # connecting PI
+            cisco_prime_api_results(ap_name, pi_ip)
+            exit(0)
+
+    except AttributeError:
+        pass
+
+    try:
+        if sa.group():
+            pi_ip = '10.123.164.196'
+            print('=> Trying to get info from Sapphire Prime at ' + pi_ip)
+            # connecting PI
+            cisco_prime_api_results(ap_name, pi_ip)
+            exit(0)
+
+    except AttributeError:
+        pass
+
+    try:
+        if pev2.group():
+            print('=> There is no Prime for PEv2')
+            exit(0)
+
+    except AttributeError:
+        pass
+
+
+def wlc_get_api_cisco_prime_ios(ap_name):
+        print("==> AP is not joined WLC")
+        # checking with prime for details
+        try:
+            ex = re.match('^EX', ap_name)
+            xp = re.match('^XP', ap_name)
+            xic = re.match('^XIC', ap_name)
+            xic = re.match('^XIC2.5', ap_name)
+
+        except AttributeError:
+            pass
+
+        try:
+            if ex.group():
+                pi_ip = '10.125.100.196'
+                print('=> Trying to get info from Enchanted Prime at ' + pi_ip)
+                # connecting PI
+                cisco_prime_api_results(ap_name, pi_ip)
+                exit(0)
+
+        except AttributeError:
+            pass
+
+        try:
+            if xp.group():
+                pi_ip = '10.125.164.196'
+                print('=> Trying to get info from Discovery Prime at ' + pi_ip)
+                # connecting PI
+                cisco_prime_api_results(ap_name, pi_ip)
+                exit(0)
+
+        except AttributeError:
+            pass
+
+        try:
+            if xic.group():
+                pi_ip = '10.126.100.196'
+                print('=> Trying to get info from XIC Prime at ' + pi_ip)
+                # connecting PI
+                cisco_prime_api_results(ap_name, pi_ip)
+                exit(0)
+
+        except AttributeError:
+            pass
+
+        try:
+            if xic.group():
+                pi_ip = '10.126.100.196'
+                print('=> Trying to get info from XIC2.5 Prime at ' + pi_ip)
+                # connecting PI
+                cisco_prime_api_results(ap_name, pi_ip)
+                exit(0)
+
+        except AttributeError:
+            pass
+
+
+
 def get_wlc_ap_facts(ap_name, net_connect):
     output = net_connect.send_command("show ap config general" + " " + ap_name, read_timeout=603)
     #    print(ch.send_command("show ap config general" + " " + ap_name))
 
     if "invalid" in output:
-        print("==> AP is not joined WLC, exiting\n")
+        wlc_get_api_cisco_prime_aireOS(ap_name)
         exit(0)
 
     else:
