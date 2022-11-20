@@ -1944,9 +1944,9 @@ def wlc_aireos_client_details(mac, net_connect):
 
 
 def wlc_clients_associated_ap_details(ap_name, net_connect):
-    output = net_connect.send_command("show ap config general" + " " + ap_name)
-    five_radio = net_connect.send_command("show ap config 802.11a " + ap_name)
-    two_radio = net_connect.send_command("show ap config 802.11-abgn " + ap_name)
+    output = net_connect.send_command("show ap config general" + " " + ap_name, read_timeout=703)
+    five_radio = net_connect.send_command("show ap config 802.11a " + ap_name, read_timeout=703)
+    two_radio = net_connect.send_command("show ap config 802.11-abgn " + ap_name, read_timeout=703)
 
     print('*---*-*---*-*---*-*---*-*---*')
     ap_name = re.search(r'AP\sNa\w+\S+\s(.*)', output)
