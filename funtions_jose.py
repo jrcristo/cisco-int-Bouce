@@ -4,6 +4,9 @@ import json
 import datetime
 import getpass
 from builtins import print
+
+from tenacity import sleep
+
 from snmp_helper import snmp_get_oid, snmp_extract
 from netmiko import ConnectHandler
 import re
@@ -21,7 +24,7 @@ def cisco_prime_api_results(ap_name, pi_ip):
     password = 'Xops@123'
     # rest_path = '/data/InventoryDetails'
     # rest_path = 'data/AccessPoints?name=eq("Cabana_11")'
-    rest_path = 'data/AccessPoints?name=eq("'+ap_name+'")'
+    rest_path = 'data/AccessPoints?name=eq("' + ap_name + '")'
     url = base_uri + rest_path
 
     headers = {'Accept': 'application/json'}
@@ -58,6 +61,158 @@ def cisco_prime_api_results(ap_name, pi_ip):
     else:
         print('=> Device not found it, exiting')
         exit(0)
+
+
+def cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect):
+    requests.packages.urllib3.disable_warnings()
+
+    base_uri = 'https://' + pi_ip + '/webacs/api/v4/'
+    user = 'xopsapi'
+    password = 'Xops@123'
+    # rest_path = '/data/InventoryDetails'
+    # rest_path = 'data/AccessPoints?name=eq("Cabana_11")'
+    rest_path = 'data/Devices?deviceName=eq("' + tl_name + '")'
+    url = base_uri + rest_path
+    # print(url)
+
+    headers = {'Accept': 'application/json'}
+    response = requests.get(url, headers=headers, auth=(user, password), verify=False)
+    # print(response.text)
+    # print(response.status_code)98745
+    acdResp = json.loads(response.text)
+    # print(acdResp)
+
+    if acdResp['queryResponse']['@count'] == 1:
+        print('=> Device Found it, getting details')
+
+        # capturing device ID
+        dev_id = acdResp['queryResponse']['entityId'][0]['$']
+        # print('id =', dev_id)
+
+        # showing device details
+        # device = 'data/Devices/' + dev_id
+        device = 'data/InventoryDetails/' + dev_id
+        url_dev = base_uri + device
+        dev_details = requests.get(url_dev, headers=headers, auth=(user, password), verify=False)
+        cdpData = json.loads(dev_details.text)
+        # printing device Info
+        print("This TL name is:", cdpData['queryResponse']['entity'][0]['inventoryDetailsDTO']['summary']['deviceName'])
+        print("This TL last IP was:",
+              cdpData['queryResponse']['entity'][0]['inventoryDetailsDTO']['summary']['ipAddress'])
+        print("This TL model is:",
+              cdpData['queryResponse']['entity'][0]['inventoryDetailsDTO']['summary']['deviceType'])
+        print("This TL location is:",
+              cdpData['queryResponse']['entity'][0]['inventoryDetailsDTO']['summary']['location'])
+        print('*-----*.*-----*.*-----*.*-----*.*-----*.')
+        print('==> CDP NEIGHBOR INFO <==')
+        cdpNeighList = cdpData['queryResponse']['entity'][0]['inventoryDetailsDTO']['cdpNeighbors']['cdpNeighbor']
+        i = 0
+        for neigh in cdpNeighList:
+            i += 1
+            if 'GigabitEthernet0/9' in neigh['nearEndInterface']:
+                print('*-----*.*-----*.*-----*.*-----*.*-----*.')
+                # removing long tail or domain from the name, just keeping the name
+                name = neigh['neighborDeviceName']
+                new_name = re.search(r'(^[^.]+)', name)
+                print(" -> The last known CDP Neighbor name was:", new_name.group() + domain)
+                print(" -> The last known CDP Neighbor port was:", neigh['farEndInterface'])
+                # print('=> The Last known IP neighbor address was:', neigh['neighborIpAddress']['address'])
+                print(' -> The CDP device type is:', neigh['neighborDevicePlatformType'])
+
+                # getting CDP neighbor IP
+                neig_ip = cisco_prime_api_results_devices_IP(new_name.group() + domain, pi_ip)
+                print(' -> The CDP Neigh IP is:', neig_ip)
+                # connecting to IDF and checking port status
+                print(
+                    '==> Connecting to IDF ' + new_name.group() + ' and checking the port ' + neigh['farEndInterface'])
+                JC = if_credential_connection(neig_ip)
+                net_connect = ConnectHandler(**JC)
+                net_connect.enable()
+
+                # checking cdp neigh
+                output = net_connect.send_command('sh cdp ne ' + neigh['farEndInterface'], read_timeout=603)
+                if 'Total cdp entries displayed : 0' in output:
+                    print(' -> No CDP neighbor detected, checking power inline')
+                    power_inline = net_connect.send_command('sh power inline ' + neigh['farEndInterface'],
+                                                            read_timeout=603)
+                    power_details = re.search(r'Gi\S+\s+\S+\s+(\w+)\s+(\S+)\s+(\S+)', power_inline)
+                    print(' -> Operational PoE status is:', power_details.group(1))
+                    print(' -> Max Power assigned on port ' + neigh['farEndInterface'] + ' is: ' + power_details.group(2))
+                    print(' -> Device id:', power_details.group(3))
+                    if 'n/a' in power_details.group(3) and 'off' in power_details.group(1):
+                        print('==> Please, create a ticket and call the ITO. Port ' + neigh['farEndInterface'] + " " + 'is down <==')
+                        exit(0)
+                    else:
+                        restart_int = input("==> do you want to reboot the interface facing the TL?, (Y) to continue (N) to cancel:").lower()
+                        if restart_int in yes_option:
+                            config_commands = ['int ' + neigh['farEndInterface'], 'sh', 'no sh']
+                            output = net_connect.send_config_set(config_commands)
+                            # activating shell on SW
+                            shell = net_connect.send_command('terminal shell', read_timeout=603)
+                            # Checking the logs for confirmation
+                            sleep(7)
+                            logs = net_connect.send_command('sh log | tail 7', read_timeout=603)
+                            if 'Interface ' + neigh['farEndInterface'] + ', ' + 'changed state to down' in logs:
+                                print('-> Interface shutdown command executed successfully')
+                            elif 'Interface ' + neigh['farEndInterface'] + ', ' + 'changed state to up' in logs:
+                                print('-> Interface is UP')
+
+                            if 'no sh' in output:
+                                print('interface rebooted')
+                        elif restart_int in no_option:
+                            print("=> No restart command was sent")
+
+                else:
+                    cdp = net_connect.send_command('sh cdp ne ' + neigh['farEndInterface'] + " " + 'de',
+                                                   read_timeout=603)
+                    print('=> Neighbor name is:', re.search(r'Devi\w+\s\S+\s(.*)', cdp).group(1))
+                    print('=> Neighbor name IP is:', re.search(r'IP\sadd\S+\s(.*)', cdp).group(1))
+                    platform_nei = re.search(r'Pla\S+\s(\w+\sWS-\S+|\w+)', cdp).group(1)
+                    print('=> Neighbor Platform is:', platform_nei.rstrip(','))
+                    local_interface = re.search(r'Inter\w+.\s(\S+)\s+\S+\s\S+\s\S+\s\S+\s(\S+)', cdp).group(1)
+                    remote_interface = re.search(r'Inter\w+.\s(\S+)\s+\S+\s\S+\s\S+\s\S+\s(\S+)', cdp).group(2)
+                    print('=> Local Interface is:', local_interface.rstrip(','))
+                    print('=> Remote Interface is:', remote_interface)
+                exit(0)
+
+    else:
+        print('=> Device not found it, exiting')
+        exit(0)
+
+
+def cisco_prime_api_results_devices_IP(device_name, pi_ip):
+    requests.packages.urllib3.disable_warnings()
+
+    base_uri = 'https://' + pi_ip + '/webacs/api/v4/'
+    user = 'xopsapi'
+    password = 'Xops@123'
+    # rest_path = '/data/InventoryDetails'
+    # rest_path = 'data/AccessPoints?name=eq("Cabana_11")'
+    rest_path = 'data/Devices?deviceName=eq("' + device_name + '")'
+    url = base_uri + rest_path
+    # print(url)
+
+    headers = {'Accept': 'application/json'}
+    response = requests.get(url, headers=headers, auth=(user, password), verify=False)
+    # print(response.text)
+    # print(response.status_code)98745
+    acdResp = json.loads(response.text)
+    # print(acdResp)
+
+    if acdResp['queryResponse']['@count'] == 1:
+        ## print('=> Device Found it, getting details')
+
+        # capturing device ID
+        dev_id = acdResp['queryResponse']['entityId'][0]['$']
+        # print('id =', dev_id)
+
+        # showing device details
+        # device = 'data/Devices/' + dev_id
+        device = 'data/Devices/' + dev_id
+        url_dev = base_uri + device
+        dev_details = requests.get(url_dev, headers=headers, auth=(user, password), verify=False)
+        cdpData = json.loads(dev_details.text)
+        return cdpData['queryResponse']['entity'][0]['devicesDTO']['ipAddress']
 
 
 def factory_default_interface(inter, net_connect):
@@ -2680,61 +2835,60 @@ def wlc_get_api_cisco_prime_aireOS(ap_name):
 
 
 def wlc_get_api_cisco_prime_ios(ap_name):
-        print("==> AP is not joined WLC")
-        # checking with prime for details
-        try:
-            ex = re.match('^EX', ap_name)
-            xp = re.match('^XP', ap_name)
-            xic = re.match('^XIC', ap_name)
-            xic = re.match('^XIC2.5', ap_name)
+    print("==> AP is not joined WLC")
+    # checking with prime for details
+    try:
+        ex = re.match('^EX', ap_name)
+        xp = re.match('^XP', ap_name)
+        xic = re.match('^XIC', ap_name)
+        xic = re.match('^XIC2.5', ap_name)
 
-        except AttributeError:
-            pass
+    except AttributeError:
+        pass
 
-        try:
-            if ex.group():
-                pi_ip = '10.125.100.196'
-                print('=> Trying to get info from Enchanted Prime at ' + pi_ip)
-                # connecting PI
-                cisco_prime_api_results(ap_name, pi_ip)
-                exit(0)
+    try:
+        if ex.group():
+            pi_ip = '10.125.100.196'
+            print('=> Trying to get info from Enchanted Prime at ' + pi_ip)
+            # connecting PI
+            cisco_prime_api_results(ap_name, pi_ip)
+            exit(0)
 
-        except AttributeError:
-            pass
+    except AttributeError:
+        pass
 
-        try:
-            if xp.group():
-                pi_ip = '10.125.164.196'
-                print('=> Trying to get info from Discovery Prime at ' + pi_ip)
-                # connecting PI
-                cisco_prime_api_results(ap_name, pi_ip)
-                exit(0)
+    try:
+        if xp.group():
+            pi_ip = '10.125.164.196'
+            print('=> Trying to get info from Discovery Prime at ' + pi_ip)
+            # connecting PI
+            cisco_prime_api_results(ap_name, pi_ip)
+            exit(0)
 
-        except AttributeError:
-            pass
+    except AttributeError:
+        pass
 
-        try:
-            if xic.group():
-                pi_ip = '10.126.100.196'
-                print('=> Trying to get info from XIC Prime at ' + pi_ip)
-                # connecting PI
-                cisco_prime_api_results(ap_name, pi_ip)
-                exit(0)
+    try:
+        if xic.group():
+            pi_ip = '10.126.100.196'
+            print('=> Trying to get info from XIC Prime at ' + pi_ip)
+            # connecting PI
+            cisco_prime_api_results(ap_name, pi_ip)
+            exit(0)
 
-        except AttributeError:
-            pass
+    except AttributeError:
+        pass
 
-        try:
-            if xic.group():
-                pi_ip = '10.126.100.196'
-                print('=> Trying to get info from XIC2.5 Prime at ' + pi_ip)
-                # connecting PI
-                cisco_prime_api_results(ap_name, pi_ip)
-                exit(0)
+    try:
+        if xic.group():
+            pi_ip = '10.126.100.196'
+            print('=> Trying to get info from XIC2.5 Prime at ' + pi_ip)
+            # connecting PI
+            cisco_prime_api_results(ap_name, pi_ip)
+            exit(0)
 
-        except AttributeError:
-            pass
-
+    except AttributeError:
+        pass
 
 
 def get_wlc_ap_facts(ap_name, net_connect):
