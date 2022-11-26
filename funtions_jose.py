@@ -137,13 +137,16 @@ def cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect):
                                                             read_timeout=603)
                     power_details = re.search(r'Gi\S+\s+\S+\s+(\w+)\s+(\S+)\s+(\S+)', power_inline)
                     print(' -> Operational PoE status is:', power_details.group(1))
-                    print(' -> Max Power assigned on port ' + neigh['farEndInterface'] + ' is: ' + power_details.group(2))
+                    print(
+                        ' -> Max Power assigned on port ' + neigh['farEndInterface'] + ' is: ' + power_details.group(2))
                     print(' -> Device id:', power_details.group(3))
                     if 'n/a' in power_details.group(3) and 'off' in power_details.group(1):
-                        print('==> Please, create a ticket and call the ITO. Port ' + neigh['farEndInterface'] + " " + 'is down <==')
+                        print('==> Please, create a ticket and call the ITO. Port ' + neigh[
+                            'farEndInterface'] + " " + 'is down <==')
                         exit(0)
                     else:
-                        restart_int = input("==> do you want to reboot the interface facing the TL?, (Y) to continue (N) to cancel:").lower()
+                        restart_int = input(
+                            "==> do you want to reboot the interface facing the TL?, (Y) to continue (N) to cancel:").lower()
                         if restart_int in yes_option:
                             config_commands = ['int ' + neigh['farEndInterface'], 'sh', 'no sh']
                             output = net_connect.send_config_set(config_commands)
@@ -165,14 +168,20 @@ def cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect):
                 else:
                     cdp = net_connect.send_command('sh cdp ne ' + neigh['farEndInterface'] + " " + 'de',
                                                    read_timeout=603)
-                    print('=> Neighbor name is:', re.search(r'Devi\w+\s\S+\s(.*)', cdp).group(1))
-                    print('=> Neighbor name IP is:', re.search(r'IP\sadd\S+\s(.*)', cdp).group(1))
-                    platform_nei = re.search(r'Pla\S+\s(\w+\sWS-\S+|\w+)', cdp).group(1)
-                    print('=> Neighbor Platform is:', platform_nei.rstrip(','))
-                    local_interface = re.search(r'Inter\w+.\s(\S+)\s+\S+\s\S+\s\S+\s\S+\s(\S+)', cdp).group(1)
-                    remote_interface = re.search(r'Inter\w+.\s(\S+)\s+\S+\s\S+\s\S+\s\S+\s(\S+)', cdp).group(2)
-                    print('=> Local Interface is:', local_interface.rstrip(','))
-                    print('=> Remote Interface is:', remote_interface)
+                    neigbor_tl_name = re.search(r'Devi\w+\s\S+\s(.*)', cdp).group(1)
+                    if tl_name == neigbor_tl_name:
+                        print('==> Input TL and Neighbor TL name match, moving forward <==')
+                        print(' -> Neighbor name is:', neigbor_tl_name)
+                        print(' -> Neighbor name IP is:', re.search(r'IP\sadd\S+\s(.*)', cdp).group(1))
+                        platform_nei = re.search(r'Pla\S+\s(\w+\sWS-\S+|\w+)', cdp).group(1)
+                        print(' -> Neighbor Platform is:', platform_nei.rstrip(','))
+                        local_interface = re.search(r'Inter\w+.\s(\S+)\s+\S+\s\S+\s\S+\s\S+\s(\S+)', cdp).group(1)
+                        remote_interface = re.search(r'Inter\w+.\s(\S+)\s+\S+\s\S+\s\S+\s\S+\s(\S+)', cdp).group(2)
+                        print(' -> Local Interface is:', local_interface.rstrip(','))
+                        print(' -> Remote Interface is:', remote_interface)
+                    else:
+                        print("=> Input TL and Neighbor TL did not match, please make sure the TL wasn't replaced")
+
                 exit(0)
 
     else:
