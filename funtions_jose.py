@@ -4,13 +4,14 @@ import json
 import datetime
 import getpass
 from builtins import print
-
 from tenacity import sleep
-
 from snmp_helper import snmp_get_oid, snmp_extract
 from netmiko import ConnectHandler
 import re
 import os
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 yes_option = ['yes', 'y']
 no_option = ['no', 'n']
@@ -170,7 +171,7 @@ def cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect):
                                                    read_timeout=603)
                     neigbor_tl_name = re.search(r'Devi\w+\s\S+\s(.*)', cdp).group(1)
                     if tl_name == neigbor_tl_name:
-                        print('==> Input TL and Neighbor TL name match, moving forward <==')
+                        print('==>*** Input TL and Neighbor TL name match, moving forward ***<==')
                         print(' -> Neighbor name is:', neigbor_tl_name)
                         print(' -> Neighbor name IP is:', re.search(r'IP\sadd\S+\s(.*)', cdp).group(1))
                         platform_nei = re.search(r'Pla\S+\s(\w+\sWS-\S+|\w+)', cdp).group(1)
@@ -179,14 +180,68 @@ def cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect):
                         remote_interface = re.search(r'Inter\w+.\s(\S+)\s+\S+\s\S+\s\S+\s\S+\s(\S+)', cdp).group(2)
                         print(' -> Local Interface is:', local_interface.rstrip(','))
                         print(' -> Remote Interface is:', remote_interface)
+                        print('*-----*.*-----*.*-----*.*-----*.*-----*.')
+                        # Validating if the TL got a New IP
+                        # getting ship CODE
+                        new_TL_ip = re.search(r'IP\sadd\S+\s(.*)', cdp).group(1)
+                        ship_code = re.search(r'PCL(\w{2})', tl_name).group(1)
+                        if cdpData['queryResponse']['entity'][0]['inventoryDetailsDTO']['summary'][
+                            'ipAddress'] != new_TL_ip:
+                            print(
+                                ' -> Tech Locker ' + tl_name + " " + 'is up and reachable, please take into account this device got a NEW IP.'
+                                                                     '\n -> Go ahead and ssh into ANY device in ' + ship_code + ',' + ' Instructions here:\n'
+                                                                                                                                      '1 -> ssh -l ccl ' + new_TL_ip + '\n'
+                                                                                                                                                                       '2 -> sh ver | inc uptime|returned|reload\n'
+                                                                                                                                                                       '3 -> Copy and paste the results into the case')
                     else:
                         print("=> Input TL and Neighbor TL did not match, please make sure the TL wasn't replaced")
+                        print(' -> Neighbor name is:', neigbor_tl_name)
+                        print(' -> Neighbor name IP is:', re.search(r'IP\sadd\S+\s(.*)', cdp).group(1))
+                        platform_nei = re.search(r'Pla\S+\s(\w+\sWS-\S+|\w+)', cdp).group(1)
+                        print(' -> Neighbor Platform is:', platform_nei.rstrip(','))
+                        local_interface = re.search(r'Inter\w+.\s(\S+)\s+\S+\s\S+\s\S+\s\S+\s(\S+)', cdp).group(1)
+                        remote_interface = re.search(r'Inter\w+.\s(\S+)\s+\S+\s\S+\s\S+\s\S+\s(\S+)', cdp).group(2)
+                        print(' -> Local Interface is:', local_interface.rstrip(','))
+                        print(' -> Remote Interface is:', remote_interface)
+                        print('*-----*.*-----*.*-----*.*-----*.*-----*.')
+                        # Validating if the TL got a New IP
+                        # getting ship CODE
+                        new_TL_ip = re.search(r'IP\sadd\S+\s(.*)', cdp).group(1)
+                        ship_code = re.search(r'PCL(\w{2})', tl_name).group(1)
+                        if cdpData['queryResponse']['entity'][0]['inventoryDetailsDTO']['summary'][
+                            'ipAddress'] != new_TL_ip:
+                            print(
+                                ' -> Tech Locker ' + tl_name + " " + 'is up and reachable, please take into account this device got a NEW IP.'
+                                                                     '\n -> Go ahead and ssh into ANY device in ' + ship_code + ',' + ' Instructions here:\n'
+                                                                                                                                      '1 -> ssh -l ccl ' + new_TL_ip + '\n'
+                                                                                                                                                                       '2 -> sh ver | inc uptime|returned|reload\n'
+                                                                                                                                                                       '3 -> Copy and paste the results into the case')
 
                 exit(0)
 
     else:
-        print('=> Device not found it, exiting')
+        print('=> Device ' + tl_name + ' not found it, exiting')
         exit(0)
+
+
+def send_email():
+    username = "jose.cristo@carniva.com"
+    password = "NTP cce2010"
+    mail_from = "jose.cristo@carnival.com"
+    mail_to = "jrcristo@gmail.com"
+    mail_subject = "Test Subject"
+    mail_body = "This is a test message"
+
+    mimemsg = MIMEMultipart()
+    mimemsg['From'] = mail_from
+    mimemsg['To'] = mail_to
+    mimemsg['Subject'] = mail_subject
+    mimemsg.attach(MIMEText(mail_body, 'plain'))
+    connection = smtplib.SMTP(host='smtp.office365.com', port=587)
+    connection.starttls()
+    connection.login(username, password)
+    connection.send_message(mimemsg)
+    connection.quit()
 
 
 def cisco_prime_api_results_devices_IP(device_name, pi_ip):
