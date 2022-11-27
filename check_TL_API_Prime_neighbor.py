@@ -12,6 +12,40 @@ if __name__ == '__main__':
 
     tl_name = input("What's the TL name: ")
 
+    # validation and addition of domain
+    if re.match(r'PCLXP', tl_name):
+        tl_name = tl_name + '.xp.cruises.princess.com'
+    elif re.match(r'PCLEX', tl_name):
+        tl_name = tl_name + '.ex.cruises.princess.com'
+    elif re.match(r'PCLYP', tl_name):
+        tl_name = tl_name + '.yp.cruises.princess.com'
+    elif re.match(r'PCLGP', tl_name):
+        tl_name = tl_name + '.gp.cruises.princess.com'
+    elif re.match(r'PCLRP', tl_name):
+        tl_name = tl_name + '.rp.cruises.princess.com'
+    elif re.match(r'PCLMJ', tl_name):
+        tl_name = tl_name + '.mj.cruises.princess.com'
+    elif re.match(r'PCLAP', tl_name):
+        tl_name = tl_name + '.ap.cruises.princess.com'
+    elif re.match(r'PCLCB', tl_name):
+        tl_name = tl_name + '.cb.cruises.princess.com'
+    elif re.match(r'PCLCO', tl_name):
+        tl_name = tl_name + '.co.cruises.princess.com'
+    elif re.match(r'PCLDI', tl_name):
+        tl_name = tl_name + '.di.cruises.princess.com'
+    elif re.match(r'PCLEP', tl_name):
+        tl_name = tl_name + '.ep.cruises.princess.com'
+    elif re.match(r'PCLKP', tl_name):
+        tl_name = tl_name + '.kp.cruises.princess.com'
+    elif re.match(r'PCLIP', tl_name):
+        tl_name = tl_name + '.ip.cruises.princess.com'
+    elif re.match(r'PCLRU', tl_name):
+        tl_name = tl_name + '.ru.cruises.princess.com'
+    elif re.match(r'PCLSA', tl_name):
+        tl_name = tl_name + '.SA.cruises.princess.com'
+
+    # I don't need domain anymore, but I won't change the code. LAZY day. I'm sorry.
+
     # checking with prime for details
     try:
         xp = re.match('^PCLXP', tl_name)
