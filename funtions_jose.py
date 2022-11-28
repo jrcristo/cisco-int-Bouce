@@ -17,6 +17,12 @@ yes_option = ['yes', 'y']
 no_option = ['no', 'n']
 
 
+def get_ios_logs_by_interface(interface, net_connect):
+    print('*-----*.*-----*.*-----*.*-----*.*-----*.')
+    logs = net_connect.send_command('sh log | inc ' + interface, read_timeout=603)
+    print(logs)
+
+
 def cisco_prime_api_results(ap_name, pi_ip):
     requests.packages.urllib3.disable_warnings()
 
@@ -122,7 +128,13 @@ def cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect):
 
                 # getting CDP neighbor IP
                 neig_ip = cisco_prime_api_results_devices_IP(new_name.group() + domain, pi_ip)
+
                 print(' -> The CDP Neigh IP is:', neig_ip)
+                if '10.28' in neig_ip:
+                    print("==>*** Neighbor is a Tech Locker, exiting ***<==")
+                    exit(0)
+                else:
+                    pass
                 # connecting to IDF and checking port status
                 print(
                     '==> Connecting to IDF ' + new_name.group() + ' and checking the port ' + neigh['farEndInterface'])
