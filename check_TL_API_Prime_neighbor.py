@@ -72,7 +72,7 @@ if __name__ == '__main__':
         if xp.group():
             pi_ip = '10.125.164.196'
             domain = '.xp.cruises.princess.com'
-            print('=> Trying to get info from Discovery Prime')
+            print('=> Trying to get info from Discovery Prime ' + pi_ip)
             # connecting PI
             funtions_jose.cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect=False)
             exit(0)
@@ -84,7 +84,7 @@ if __name__ == '__main__':
         if ex.group():
             pi_ip = '10.125.100.196'
             domain = '.ex.cruises.princess.com'
-            print('=> Trying to get info from Enchanted Prime')
+            print('=> Trying to get info from Enchanted Prime ' + pi_ip)
             # connecting PI
             funtions_jose.cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect=False)
             exit(0)
@@ -96,7 +96,7 @@ if __name__ == '__main__':
         if yp.group():
             pi_ip = '10.125.36.196'
             domain = '.yp.cruises.princess.com'
-            print('=> Trying to get info from Sky Prime')
+            print('=> Trying to get info from Sky Prime ' + pi_ip)
             # connecting PI
             funtions_jose.cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect=False)
             exit(0)
@@ -108,7 +108,7 @@ if __name__ == '__main__':
         if gp.group():
             pi_ip = '10.122.227.196'
             domain = '.gp.cruises.princess.com'
-            print('=> Trying to get info from Regal Prime')
+            print('=> Trying to get info from Regal Prime ' + pi_ip)
             # connecting PI
             funtions_jose.cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect=False)
             exit(0)
@@ -120,7 +120,7 @@ if __name__ == '__main__':
         if rp.group():
             pi_ip = '10.123.36.196'
             domain = '.rp.cruises.princess.com'
-            print('=> Trying to get info from Royal Prime')
+            print('=> Trying to get info from Royal Prime ' + pi_ip)
             # connecting PI
             funtions_jose.cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect=False)
             exit(0)
@@ -132,7 +132,7 @@ if __name__ == '__main__':
         if mj.group():
             pi_ip = '10.124.164.196'
             domain = '.mj.cruises.princess.com'
-            print('=> Trying to get info from Majestic Prime')
+            print('=> Trying to get info from Majestic Prime ' + pi_ip)
             # connecting PI
             funtions_jose.cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect=False)
             exit(0)
@@ -144,7 +144,7 @@ if __name__ == '__main__':
         if ap.group():
             pi_ip = '10.121.228.196'
             domain = '.ap.cruises.princess.com'
-            print('=> Trying to get info from Grand Prime')
+            print('=> Trying to get info from Grand Prime ' + pi_ip)
             # connecting PI
             funtions_jose.cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect=False)
             exit(0)
@@ -156,7 +156,7 @@ if __name__ == '__main__':
         if cb.group():
             pi_ip = '10.120.36.196'
             domain = '.cb.cruises.princess.com'
-            print('=> Trying to get info from Caribbean Prime')
+            print('=> Trying to get info from Caribbean Prime ' + pi_ip)
             # connecting PI
             funtions_jose.cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect=False)
             exit(0)
@@ -168,7 +168,7 @@ if __name__ == '__main__':
         if co.group():
             pi_ip = '10.120.100.196'
             domain = '.co.cruises.princess.com'
-            print('=> Trying to get info from Coral Prime')
+            print('=> Trying to get info from Coral Prime ' + pi_ip)
             # connecting PI
             funtions_jose.cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect=False)
             exit(0)
@@ -180,7 +180,7 @@ if __name__ == '__main__':
         if di.group():
             pi_ip = '10.121.36.196'
             domain = '.di.cruises.princess.com'
-            print('=> Trying to get info from Diamond Prime')
+            print('=> Trying to get info from Diamond Prime ' + pi_ip)
             # connecting PI
             funtions_jose.cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect=False)
             exit(0)
@@ -191,7 +191,7 @@ if __name__ == '__main__':
     try:
         if ep.group():
             pi_ip = '10.121.100.196'
-            domain = '.ep.cruises.princess.com'
+            domain = '.ep.cruises.princess.com ' + pi_ip
             print('=> Trying to get info from Emerald Prime')
             # connecting PI
             funtions_jose.cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect=False)
