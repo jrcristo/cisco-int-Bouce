@@ -126,6 +126,9 @@ def cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect):
                 # print('=> The Last known IP neighbor address was:', neigh['neighborIpAddress']['address'])
                 print(' -> The CDP device type is:', neigh['neighborDevicePlatformType'])
 
+                # Validation for CB, IDF name does not contain cb in the FQDN
+                if 'PCLCB' in new_name.group() and 'ID' in new_name.group():
+                    domain = '.cruises.princess.com'
                 # getting CDP neighbor IP
                 neig_ip = cisco_prime_api_results_devices_IP(new_name.group() + domain, pi_ip)
 
@@ -1081,7 +1084,11 @@ def check_bgp_network(bgp_route, net_connect):
                     print('=> The neighbor ' + " " + bgp_route + " " + 'is Administratively shut down <==\n')
                 else:
                     bgp_ip = re.search(r'\d[1-9]{1,3}\.\d+\.\d+\.\d+', output_filter[j])
-                    print('=> The neighbor' + " " + bgp_route + " " + 'is down <==\n')
+                    print('=> The neighbor' + " " + bgp_route + " " + 'is down <==')
+                    # checking if the provided network belong to VRF guest_internet
+                    guest_internet_vrf = net_connect.send_command("sh run | sec Guest_Internet")
+                    if bgp_route in guest_internet_vrf:
+                        print('=> The provided neighbor ' + bgp_route + " Belongs to guest_internet VRF and isn't in use anymore")
 
             else:
                 # testing with vrf details #
@@ -1146,7 +1153,11 @@ def check_bgp_network(bgp_route, net_connect):
 
             if 'Active' in not_up1.group() or 'never' in not_up1.group() or 'Idle' in not_up1.group() or 'Admin' in not_up1.group():
                 bgp_ip = re.search(r'\d[1-9]{1,3}\.\d+\.\d+\.\d+', output_filter[j])
-                print('=> The neighbor' + " " + bgp_route + " " + 'is down <==\n')
+                print('=> The neighbor' + " " + bgp_route + " " + 'is down <==')
+                # checking if the provided network belong to VRF guest_internet
+                guest_internet_vrf = net_connect.send_command("sh run | sec Guest_Internet")
+                if bgp_route in guest_internet_vrf:
+                    print('=> The provided neighbor ' + bgp_route + " Belongs to guest_internet VRF and isn't in use anymore")
 
             else:
                 result_first = re.search(r'(\d+\.\d+\.\d+\.\d+\s+\d\s+\d+.\d+)', output)
@@ -1154,7 +1165,6 @@ def check_bgp_network(bgp_route, net_connect):
                 result_3rd = re.search(r'\d+$', output)
                 print('Neighbor        V        AS   Up/Down PfxRcd')
                 print(result_first.group() + " " + result_2nd.group(), result_3rd.group())
-
 
 def check_ap_cdp_neighbor(ap_name, net_connect):
     print("==> Getting CDP neighbor for: ", ap_name)
