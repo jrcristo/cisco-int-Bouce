@@ -3661,13 +3661,27 @@ def create_folder_logs():
 
 
 def panos_show_system_info(net_connect):
-    # print the time
-    print('=> Date =', get_time_date()[0], '=> Time =', get_time_date()[1])
     output = net_connect.send_command('show system info')
+    device_time = net_connect.send_command('show clock')
+    device_time_filteres = re.search(r'\w.*', device_time)
 
     if not output:
         print("No values to show")
     else:
+        # filtering the timne day + hours
+        detail_time = re.search(r'upti\w+.\s*(\d+)\s\S+\s(.*)', output)
+        name_detail = re.search(r'host\S+\s(.*)', output).group(1)
+        print('\n')
+        print('=====>*** HSC, Copy and paste the following output into the ticket <=====***\n')
+
+        print('==> Getting the time and date<==')
+        print('=> (EST) Date =', get_time_date()[0], '=> (EST) Time =', get_time_date()[1])
+        print('=> Device local time and date is: ' + device_time_filteres.group() + '\n')
+
+        print(
+            name_detail + ' has been up and rechable since ' + detail_time.group(1) + ' days and ' + detail_time.group(
+                2) + ' hours')
+
         # hostname
         hostname = re.search(r'host.*', output)
         print(hostname.group())
@@ -3709,8 +3723,8 @@ def panos_show_system_info(net_connect):
         print(model.group())
 
         # serial
-        serial = re.search(r'ser.*', output)
-        print(serial.group())
+        serial = re.search(r'ser\S+\s\d{8}(\d+)', output)
+        print('serial: XXXXXXXX' + serial.group(1) + ' # Printed the last 4 numbers')
 
         # software_version
         sw_version = re.search(r'sw-v.*', output)
