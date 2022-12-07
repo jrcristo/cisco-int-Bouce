@@ -129,6 +129,13 @@ def cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect):
                 # Validation for CB, IDF name does not contain cb in the FQDN
                 if 'PCLCB' in new_name.group() and 'ID' in new_name.group():
                     domain = '.cruises.princess.com'
+                # Validation for DI, IDF name does not contain cb in the FQDN
+                if 'PCLDI' in new_name.group() and 'ID' in new_name.group() or 'LIDF' in new_name.group():
+                    # Validation for IP, IDF name does not contain cb in the FQDN
+                    domain = '.cruises.princess.com'
+                if 'PCLIP' in new_name.group() and 'ID' in new_name.group() or 'LIDF' in new_name.group():
+                    domain = '.cruises.princess.com'
+
                 # getting CDP neighbor IP
                 neig_ip = cisco_prime_api_results_devices_IP(new_name.group() + domain, pi_ip)
 
