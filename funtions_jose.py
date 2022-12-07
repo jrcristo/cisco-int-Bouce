@@ -1628,6 +1628,93 @@ def check_wlc_five_two_ghz_ap_status(ap, net_connect):
     print('*---*.*---*.*---*.*---*.*---*.*---*.')
 
 
+def set_wlc_qos(wlan_id, net_connect):
+    print('==>*** Changing WLAN parameters while it is enabled will cause the WLAN to be momentarily disabled and radio reset thus may result in loss of connection ***<==\n')
+
+    # asking for rate vlue and validating input of 3,4 integers or 0
+    try:
+        rate = int(input("Please enter the QoS value(kbps), it will need to be 1, 3 or 4 Integers values starting from 0 to 6, 0 disable QoS: "))
+    except ValueError:
+        print("Sorry, I didn't understand that.")
+        exit(0)
+
+    if re.match('^[0-6]{1}[0-9]{3}$|^[0-6]{1}[0-9]{2}$|^0{1}', str(rate)):
+        pass
+        # print("Entry is valid")
+
+    else:
+        print("Sorry, your entry is not correct, we need 4 integers from 0 to 6.")
+        exit(0)
+
+    # Getting WLAN info
+    wlan_info = net_connect.send_command("show wlan " + wlan_id)
+    wlan_name = re.search(r'Profi\w+\s\S+\s(.*)', wlan_info).group(1)
+
+    # commands for QoS
+    # Average Data Rate
+    override_rate_limit_down_cmd = 'config wlan override-rate-limit ' + wlan_id + ' average-data-rate per-client downstream ' + str(rate)
+    override_rate_limit_up_cmd = 'config wlan override-rate-limit ' + wlan_id + ' average-data-rate per-client upstream ' + str(rate)
+    # Average Real-Time Rate
+    average_realtime_rate_down_cmd = 'config wlan override-rate-limit ' + wlan_id + ' average-realtime-rate per-client downstream ' + str(rate)
+    average_realtime_rate_up_cmd = 'config wlan override-rate-limit ' + wlan_id + ' average-realtime-rate per-client upstream ' + str(rate)
+    # Burst Data Rate
+    burst_data_rate_down_cmd = 'config wlan override-rate-limit ' + wlan_id + ' burst-data-rate per-client downstream ' + str(rate)
+    burst_data_rate_up_cmd = 'config wlan override-rate-limit ' + wlan_id + ' burst-data-rate per-client upstream ' + str(rate)
+    # Burst Real-Time Rate
+    burst_realtime_rate_down_cmd = 'config wlan override-rate-limit ' + wlan_id + ' burst-realtime-rate per-client downstream ' + str(rate)
+    burst_realtime_rate_up_cmd = 'config wlan override-rate-limit ' + wlan_id + ' burst-realtime-rate per-client upstream ' + str(rate)
+    # commands end #
+
+    # disabling the Wlan
+    disable_cmd = 'config wlan disable ' + wlan_id
+    disable_cmd_send = net_connect.send_command(disable_cmd)
+    if disable_cmd_send:
+        print(' -> WLAN ' + wlan_name + ' has been disabled')
+    else:
+        print(' -> Something went wrong disabling the WLAN ' + wlan_name)
+
+    # Sending commands
+    # sending override_rate_limit
+    override_rate_limit_down_cmd_send = net_connect.send_command(override_rate_limit_down_cmd)
+    if not override_rate_limit_down_cmd_send:
+        print('=> Something went wrong with override_rate_limit_down')
+    override_rate_limit_up_cmd_send = net_connect.send_command(override_rate_limit_up_cmd)
+    if not override_rate_limit_up_cmd_send:
+        print('=> Something went wrong with override_rate_limit_up')
+
+    # Sending average_realtime_rate
+    average_realtime_rate_down_cmd_send = net_connect.send_command(average_realtime_rate_down_cmd)
+    if not average_realtime_rate_down_cmd_send:
+        print('=> Something went wrong with average_realtime_rate_down')
+    average_realtime_rate_up_cmd_send = net_connect.send_command(average_realtime_rate_up_cmd)
+    if not average_realtime_rate_up_cmd_send:
+        print('=> Something went wrong with average_realtime_rate_up')
+
+    # Sending burst_data_rate
+    burst_data_rate_down_cmd_send = net_connect.send_command(burst_data_rate_down_cmd)
+    if not burst_data_rate_down_cmd_send:
+        print('=> Something went wrong with burst_data_rate_down')
+    burst_data_rate_up_cmd_send = net_connect.send_command(burst_data_rate_up_cmd)
+    if not burst_data_rate_up_cmd_send:
+        print('=> Something went wrong with burst_data_rate_up')
+
+    # Sending burst_realtime_rate
+    burst_realtime_rate_down_cmd_send = net_connect.send_command(burst_realtime_rate_down_cmd)
+    if not burst_realtime_rate_down_cmd_send:
+        print('=> Something went wrong with burst_realtime_rate_down')
+    burst_realtime_rate_up_cmd_send = net_connect.send_command(burst_realtime_rate_up_cmd)
+    if not burst_realtime_rate_up_cmd_send:
+        print('=> Something went wrong with burst_realtime_rate_up')
+
+    # Enabling WLAN
+    enable_cmd = 'config wlan enable ' + wlan_id
+    enable_cmd_send = net_connect.send_command(enable_cmd)
+    if enable_cmd_send:
+        print(' -> WLAN ' + wlan_name + ' has been enabled')
+    else:
+        print(' -> Something went wrong disabling the WLAN ' + wlan_name + '\n')
+
+
 def set_wlc_ap_tx_power(ap, net_connect):
     # checking AP 2.4 and 5Ghz radio status
     check_wlc_five_two_ghz_ap_status(ap, net_connect)
@@ -2538,7 +2625,22 @@ def get_wlc_wlan_qos(net_connect):
     print('=> Burst Data Rate             ', crewnet_wlc_burst_data_rate.group(1) + ' kbps', x * 12,
           crewnet_wlc_burst_data_rate.group(2) + ' kbps')
     print('=> Burst Realtime Data Rate    ', crewnet_wlc_burst_realtime_data_rate.group(1) + ' kbps', x * 12,
-          crewnet_wlc_burst_realtime_data_rate.group(2) + ' kbps')
+          crewnet_wlc_burst_realtime_data_rate.group(2) + ' kbps' + '\n')
+
+    set_qos = input("==> Do you want to change QoS values on MedNet and CrewNet, (Y) to Continue, (N) to Cancel: ").lower()
+    print('\n')
+    if set_qos in yes_option:
+        print('*****======> Changing QoS values for MedNet <======*****')
+        set_wlc_qos(MedNet.group(1), net_connect)
+        print('\n')
+
+        # Calling for CrewNet
+        print('*****======> Changing QoS values for CrewNet <======*****')
+        set_wlc_qos(CreNet.group(1), net_connect)
+
+    elif set_qos in no_option:
+        print("==> No Qos Changes applied <==")
+
 
 
 def get_wlc_wlan_qos_crewcompass(net_connect):
