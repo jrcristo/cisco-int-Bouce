@@ -12,7 +12,7 @@ if __name__ == '__main__':
     net_connect.enable()
 
     # getting cdp neighbor interface
-    cdp = net_connect.send_command('sh cdp ne | sec' + " " + tl_name)
+    cdp = net_connect.send_command('sh cdp ne | sec' + " " + tl_name, read_timeout=703)
 
     if 'Total cdp entries displayed : 0' in cdp or not cdp:
         print("==> I couldn't find" + " " + tl_name + " " + 'is probable down')
