@@ -1674,7 +1674,8 @@ def set_wlc_qos(wlan_id, net_connect):
     disable_cmd = 'config wlan disable ' + wlan_id
     disable_cmd_send = net_connect.send_command(disable_cmd)
     if disable_cmd_send:
-        print(' -> WLAN ' + wlan_name + ' has been disabled')
+        pass
+        # print(' -> WLAN ' + wlan_name + ' has been disabled')
     else:
         print(' -> Something went wrong disabling the WLAN ' + wlan_name)
 
