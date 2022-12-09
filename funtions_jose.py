@@ -951,6 +951,9 @@ def get_credentials_and_interface():
             'password': 'N@v!gaT!nG~',
             'timeout': 41,
             'global_delay_factor': 7,
+            'banner_timeout': 303,
+            'conn_timeout': 650,
+            'read_timeout_override': 701,
         }
         return JC
     else:
@@ -962,6 +965,8 @@ def get_credentials_and_interface():
             'password': 'VRRP cce2010',
             'timeout': 41,
             'global_delay_factor': 9,
+            'banner_timeout': 77,
+            'conn_timeout': 650,
 
         }
         return JC
@@ -990,6 +995,8 @@ def if_credential_connection(ip):
         'password': 'VRRP cce2010',
         'timeout': 29,
         'global_delay_factor': 6,
+        'banner_timeout': 77,
+        'conn_timeout': 650,
     }
     return JC
 
@@ -1674,43 +1681,44 @@ def set_wlc_qos(wlan_id, net_connect):
     # Sending commands
     # sending override_rate_limit
     override_rate_limit_down_cmd_send = net_connect.send_command(override_rate_limit_down_cmd)
-    if not override_rate_limit_down_cmd_send:
-        print('=> Something went wrong with override_rate_limit_down')
+    # if not override_rate_limit_down_cmd_send:
+    #    print('=> Something went wrong with override_rate_limit_down')
     override_rate_limit_up_cmd_send = net_connect.send_command(override_rate_limit_up_cmd)
-    if not override_rate_limit_up_cmd_send:
-        print('=> Something went wrong with override_rate_limit_up')
+    # if not override_rate_limit_up_cmd_send:
+    #    print('=> Something went wrong with override_rate_limit_up')
 
     # Sending average_realtime_rate
     average_realtime_rate_down_cmd_send = net_connect.send_command(average_realtime_rate_down_cmd)
-    if not average_realtime_rate_down_cmd_send:
-        print('=> Something went wrong with average_realtime_rate_down')
+    # if not average_realtime_rate_down_cmd_send:
+    #    print('=> Something went wrong with average_realtime_rate_down')
     average_realtime_rate_up_cmd_send = net_connect.send_command(average_realtime_rate_up_cmd)
-    if not average_realtime_rate_up_cmd_send:
-        print('=> Something went wrong with average_realtime_rate_up')
+    # if not average_realtime_rate_up_cmd_send:
+    #    print('=> Something went wrong with average_realtime_rate_up')
 
     # Sending burst_data_rate
     burst_data_rate_down_cmd_send = net_connect.send_command(burst_data_rate_down_cmd)
-    if not burst_data_rate_down_cmd_send:
-        print('=> Something went wrong with burst_data_rate_down')
+    # if not burst_data_rate_down_cmd_send:
+    #    print('=> Something went wrong with burst_data_rate_down')
     burst_data_rate_up_cmd_send = net_connect.send_command(burst_data_rate_up_cmd)
-    if not burst_data_rate_up_cmd_send:
-        print('=> Something went wrong with burst_data_rate_up')
+    # if not burst_data_rate_up_cmd_send:
+    #    print('=> Something went wrong with burst_data_rate_up')
 
     # Sending burst_realtime_rate
     burst_realtime_rate_down_cmd_send = net_connect.send_command(burst_realtime_rate_down_cmd)
-    if not burst_realtime_rate_down_cmd_send:
-        print('=> Something went wrong with burst_realtime_rate_down')
+    # if not burst_realtime_rate_down_cmd_send:
+    #    print('=> Something went wrong with burst_realtime_rate_down')
     burst_realtime_rate_up_cmd_send = net_connect.send_command(burst_realtime_rate_up_cmd)
-    if not burst_realtime_rate_up_cmd_send:
-        print('=> Something went wrong with burst_realtime_rate_up')
+    # if not burst_realtime_rate_up_cmd_send:
+    #    print('=> Something went wrong with burst_realtime_rate_up')
 
     # Enabling WLAN
     enable_cmd = 'config wlan enable ' + wlan_id
     enable_cmd_send = net_connect.send_command(enable_cmd)
     if enable_cmd_send:
-        print(' -> WLAN ' + wlan_name + ' has been enabled')
+        print('==> QoS parameters has been executed <==')
+        # print(' -> WLAN ' + wlan_name + ' has been enabled')
     else:
-        print(' -> Something went wrong disabling the WLAN ' + wlan_name + '\n')
+        print(' -> Something went wrong enabling the WLAN ' + wlan_name + '\n')
 
 
 def set_wlc_ap_tx_power(ap, net_connect):
