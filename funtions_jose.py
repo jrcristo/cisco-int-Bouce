@@ -1949,6 +1949,7 @@ def wlc_utils_ap(ap_name, net_connect):
         if re.match(r'([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})', ap_name):
             if_mac_add = net_connect.send_command('show ap config general ' + ap_name, read_timeout=801)
             ap_name = re.search(r'Cisco\sAP\sNa\S+\s(.*)', if_mac_add).group(1)
+            print('=> Because you provided a mac-add, this is the current AP name:', ap_name, '\n')
 
         # checking AP neighbor
         cdp = net_connect.send_command('show ap cdp neighbors ap-name ' + ap_name)
