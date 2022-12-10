@@ -9,8 +9,8 @@ if __name__ == '__main__':
 
     ap_name = input("What's the AP name: ")
 
-    if re.match(r'AP[0-9A-F]{4}\.[0-9A-F]{4}\.[0-9A-F]{4}', ap_name):
-        print('==> Default AP name provided <==')
+    if re.match(r'AP[0-9A-Fa-f]{4}\.[0-9A-Fa-f]{4}\.[0-9A-Fa-f]{4}|([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})', ap_name):
+        print('==> Default AP name or mac-add provided <==')
         ship = (input('=> Please provide the ship code: ')).upper()
         try:
             xic = re.match('^XIC', ship)
