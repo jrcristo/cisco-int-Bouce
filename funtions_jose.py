@@ -190,7 +190,7 @@ def cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect):
                     cdp = net_connect.send_command('sh cdp ne ' + neigh['farEndInterface'] + " " + 'de',
                                                    read_timeout=603)
                     neigbor_tl_name = re.search(r'Devi\w+\s\S+\s(.*)', cdp).group(1)
-                    if tl_name == neigbor_tl_name:
+                    if tl_name.lower() == neigbor_tl_name.lower():
                         print('==>*** Input TL and Neighbor TL name match, moving forward ***<==')
                         print(' -> Neighbor name is:', neigbor_tl_name)
                         print(' -> Neighbor name IP is:', re.search(r'IP\sadd\S+\s(.*)', cdp).group(1))
@@ -337,6 +337,13 @@ def factory_default_interface(inter, net_connect):
         exit(0)
 
     return
+
+
+def get_temperature(net_connect):
+    temperature_dev = net_connect.send_command('show environment temperature | inc OK')
+    temperature = net_connect.send_command('show environment temperature | inc Inlet')
+    print(temperature_dev)
+    print(temperature)
 
 
 def default_l2_interface(inter, net_connect, vlan_id):
