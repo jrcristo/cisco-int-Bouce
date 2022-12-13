@@ -191,7 +191,7 @@ if __name__ == '__main__':
     try:
         if ep.group():
             pi_ip = '10.121.100.196'
-            domain = '.ep.cruises.princess.com ' + pi_ip
+            domain = '.ep.cruises.princess.com'
             print('=> Trying to get info from Emerald Prime ' + pi_ip)
             # connecting PI
             funtions_jose.cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect=False)
