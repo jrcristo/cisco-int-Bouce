@@ -11,11 +11,10 @@ if __name__ == '__main__':
     net_connect = ConnectHandler(**JC)
     net_connect.enable()
 
-    # check if interface is up
-    # funtions_jose.check_interface_status(inter, net_connect)
-
     # platform
     platform = net_connect.send_command('sh ver')
+    # getting the time
+    funtions_jose.get_device_date_time(net_connect)
     if 'Nexus' in platform:
         int_nxos_up = net_connect.send_command('sh int' + " " + inter + " " + '| inc Ethernet|port-channel')
         if 'up' in int_nxos_up:
