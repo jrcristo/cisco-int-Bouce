@@ -50,7 +50,10 @@ if __name__ == '__main__':
         # checking the sack size
         stack = net_connect.send_command('sh switch')
         stack_size = re.findall(r'.*Ready', stack)
-        print('=> There are', len(stack_size), 'switches on the stack')
+        if len(stack_size) == 1:
+            print('=> There is', len(stack_size), 'switch in the stack')
+        else:
+            print('=> There are', len(stack_size), 'switches in the stack')
         # print total of cabin affected
         print('=> Total of potentially Cabins affected', len(tl_s) * 2)
         # print total of phones
