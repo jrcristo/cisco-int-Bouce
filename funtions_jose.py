@@ -11,7 +11,10 @@ import re
 import os
 import smtplib
 from email.mime.multipart import MIMEMultipart
+import openpyxl
 from email.mime.text import MIMEText
+from openpyxl import Workbook, load_workbook
+from openpyxl.styles.alignment import Alignment
 
 yes_option = ['yes', 'y']
 no_option = ['no', 'n']
@@ -1062,6 +1065,52 @@ def get_potential_for_disaster(isIP, net_connect):
     print('=> Total of potentially Readers affected', len(readers))
 
 
+def get_idf_switches_from_fzs(net_connect):
+    # Getting hostname
+    name = get_hostname_only(net_connect)
+    name_detail = re.search(r'^\w{3}(\w{2})', name).group(1)
+    # getting interfaces UP
+    int_connected = net_connect.send_command('sh cdp ne', read_timeout=707)
+    # filtering the output to grab interfaces
+    interfaces_up = re.findall(r'PCL\S+\s+(\S+\s\S+)', int_connected)
+    # Excel info
+    v_boldFont = openpyxl.styles.Font(bold=True)
+    v_centerAlignment = openpyxl.styles.Alignment(horizontal="center", vertical="center", wrapText=True)
+    wb = load_workbook(name_detail + '_IDF_Inventory.xlsx')
+    # wb = Workbook()
+    ws = wb.active
+    # wb.create_sheet(get_ship_name)
+    # ws.append(['Neigh_Name', 'Neigh_IP', 'Neigh_Platform', 'Local_Interface', 'Neigh_Interface'])
+    ws.title = 'IDF_Inventory'  # creating sheet title
+
+    for c in interfaces_up:
+        # checking cdp neighbor
+        print('=> Checking cdp neighbor in Interface ' + str(c))
+        cdp = net_connect.send_command('sh cdp ne ' + str(c) + ' de', read_timeout=707)
+        cdp_name = re.search(r'Dev\w+\s\S+\s+([^.]+)', cdp).group(1)
+        if cdp_name and 'IDF' in cdp_name or 'ID' in cdp_name:
+            print('=>yes,IDF')
+            cdp_name = re.search(r'Dev\w+\s\S+\s+([^.]+)', cdp).group(1)
+            cdp_ip = re.search(r'Ent\S+\s\S+\s[\r\n]+(\s+\S+\s+\S+\s(.*))', cdp).group(2)
+            cdp_platform = re.search(r'Plat\S+\s(\S+\s\S+|\S+)', cdp).group(1).rstrip(',')
+            cdp_interface = re.search(r'Int\S+\s(\S+)', cdp).group(1).rstrip(',')
+            cdp_remote_interface = re.search(r'Por\w+\sID\s\S+\s\S+\s(\S+)', cdp).group(1)
+            # filling out the Exel
+            ws.append([cdp_name, cdp_ip, cdp_platform, cdp_interface, cdp_remote_interface])
+
+        else:
+            print('not an IDF')
+
+    # Bold and align to the Center
+    for cell in ws[1]:
+        cell.font = v_boldFont
+        cell.alignment = v_centerAlignment
+
+    # saving the Excel
+    wb.save(name_detail + '_IDF_Inventory.xlsx')
+
+
+
 def get_ios_nxos_version_model(net_connect):
     show_ver = net_connect.send_command('sh ver', read_timeout=603)
     if 'NXOS' in show_ver:
@@ -1107,7 +1156,8 @@ def check_bgp_network(bgp_route, net_connect):
                     # checking if the provided network belong to VRF guest_internet
                     guest_internet_vrf = net_connect.send_command("sh run | sec Guest_Internet")
                     if bgp_route in guest_internet_vrf:
-                        print('=> The provided neighbor ' + bgp_route + " Belongs to guest_internet VRF and isn't in use anymore")
+                        print(
+                            '=> The provided neighbor ' + bgp_route + " Belongs to guest_internet VRF and isn't in use anymore")
 
             else:
                 # testing with vrf details #
@@ -1176,7 +1226,8 @@ def check_bgp_network(bgp_route, net_connect):
                 # checking if the provided network belong to VRF guest_internet
                 guest_internet_vrf = net_connect.send_command("sh run | sec Guest_Internet")
                 if bgp_route in guest_internet_vrf:
-                    print('=> The provided neighbor ' + bgp_route + " Belongs to guest_internet VRF and isn't in use anymore")
+                    print(
+                        '=> The provided neighbor ' + bgp_route + " Belongs to guest_internet VRF and isn't in use anymore")
 
             else:
                 result_first = re.search(r'(\d+\.\d+\.\d+\.\d+\s+\d\s+\d+.\d+)', output)
@@ -1184,6 +1235,7 @@ def check_bgp_network(bgp_route, net_connect):
                 result_3rd = re.search(r'\d+$', output)
                 print('Neighbor        V        AS   Up/Down PfxRcd')
                 print(result_first.group() + " " + result_2nd.group(), result_3rd.group())
+
 
 def check_ap_cdp_neighbor(ap_name, net_connect):
     print("==> Getting CDP neighbor for: ", ap_name)
@@ -1641,11 +1693,13 @@ def check_wlc_five_two_ghz_ap_status(ap, net_connect):
 
 
 def set_wlc_qos(wlan_id, net_connect):
-    print('==>*** Changing WLAN parameters while it is enabled will cause the WLAN to be momentarily disabled and radio reset thus may result in loss of connection ***<==\n')
+    print(
+        '==>*** Changing WLAN parameters while it is enabled will cause the WLAN to be momentarily disabled and radio reset thus may result in loss of connection ***<==\n')
 
     # asking for rate vlue and validating input of 3,4 integers or 0
     try:
-        rate = int(input("Please enter the QoS value(kbps), it will need to be 1, 3 or 4 Integers values starting from 0 to 6, 0 disable QoS: "))
+        rate = int(input(
+            "Please enter the QoS value(kbps), it will need to be 1, 3 or 4 Integers values starting from 0 to 6, 0 disable QoS: "))
     except ValueError:
         print("Sorry, I didn't understand that.")
         exit(0)
@@ -1664,17 +1718,25 @@ def set_wlc_qos(wlan_id, net_connect):
 
     # commands for QoS
     # Average Data Rate
-    override_rate_limit_down_cmd = 'config wlan override-rate-limit ' + wlan_id + ' average-data-rate per-client downstream ' + str(rate)
-    override_rate_limit_up_cmd = 'config wlan override-rate-limit ' + wlan_id + ' average-data-rate per-client upstream ' + str(rate)
+    override_rate_limit_down_cmd = 'config wlan override-rate-limit ' + wlan_id + ' average-data-rate per-client downstream ' + str(
+        rate)
+    override_rate_limit_up_cmd = 'config wlan override-rate-limit ' + wlan_id + ' average-data-rate per-client upstream ' + str(
+        rate)
     # Average Real-Time Rate
-    average_realtime_rate_down_cmd = 'config wlan override-rate-limit ' + wlan_id + ' average-realtime-rate per-client downstream ' + str(rate)
-    average_realtime_rate_up_cmd = 'config wlan override-rate-limit ' + wlan_id + ' average-realtime-rate per-client upstream ' + str(rate)
+    average_realtime_rate_down_cmd = 'config wlan override-rate-limit ' + wlan_id + ' average-realtime-rate per-client downstream ' + str(
+        rate)
+    average_realtime_rate_up_cmd = 'config wlan override-rate-limit ' + wlan_id + ' average-realtime-rate per-client upstream ' + str(
+        rate)
     # Burst Data Rate
-    burst_data_rate_down_cmd = 'config wlan override-rate-limit ' + wlan_id + ' burst-data-rate per-client downstream ' + str(rate)
-    burst_data_rate_up_cmd = 'config wlan override-rate-limit ' + wlan_id + ' burst-data-rate per-client upstream ' + str(rate)
+    burst_data_rate_down_cmd = 'config wlan override-rate-limit ' + wlan_id + ' burst-data-rate per-client downstream ' + str(
+        rate)
+    burst_data_rate_up_cmd = 'config wlan override-rate-limit ' + wlan_id + ' burst-data-rate per-client upstream ' + str(
+        rate)
     # Burst Real-Time Rate
-    burst_realtime_rate_down_cmd = 'config wlan override-rate-limit ' + wlan_id + ' burst-realtime-rate per-client downstream ' + str(rate)
-    burst_realtime_rate_up_cmd = 'config wlan override-rate-limit ' + wlan_id + ' burst-realtime-rate per-client upstream ' + str(rate)
+    burst_realtime_rate_down_cmd = 'config wlan override-rate-limit ' + wlan_id + ' burst-realtime-rate per-client downstream ' + str(
+        rate)
+    burst_realtime_rate_up_cmd = 'config wlan override-rate-limit ' + wlan_id + ' burst-realtime-rate per-client upstream ' + str(
+        rate)
     # commands end #
 
     # disabling the Wlan
@@ -2647,7 +2709,8 @@ def get_wlc_wlan_qos(net_connect):
     print('=> Burst Realtime Data Rate    ', crewnet_wlc_burst_realtime_data_rate.group(1) + ' kbps', x * 12,
           crewnet_wlc_burst_realtime_data_rate.group(2) + ' kbps' + '\n')
 
-    set_qos = input("==> Do you want to change QoS values on MedNet and CrewNet, (Y) to Continue, (N) to Cancel: ").lower()
+    set_qos = input(
+        "==> Do you want to change QoS values on MedNet and CrewNet, (Y) to Continue, (N) to Cancel: ").lower()
     print('\n')
     if set_qos in yes_option:
         print('*****======> Changing QoS values for MedNet <======*****')
@@ -2660,7 +2723,6 @@ def get_wlc_wlan_qos(net_connect):
 
     elif set_qos in no_option:
         print("==> No Qos Changes applied <==")
-
 
 
 def get_wlc_wlan_qos_crewcompass(net_connect):
