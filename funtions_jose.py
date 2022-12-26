@@ -169,6 +169,13 @@ def cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect):
                             'farEndInterface'] + " " + 'is down <==')
                         exit(0)
                     else:
+                        print('==> Testing Cable <==')
+                        cable_test = net_connect.send_command('test cable-diagnostics tdr interface ' + neigh['farEndInterface'], read_timeout=603)
+                        if 'TDR test started on interface' in cable_test:
+                            print(' -> TDR test started')
+                        sleep(11)
+                        cable_test_result = net_connect.send_command('show cable-diagnostics tdr interface ' + neigh['farEndInterface'], read_timeout=603)
+                        print(cable_test_result, '\n')
                         restart_int = input(
                             "==> do you want to reboot the interface facing the TL?, (Y) to continue (N) to cancel:").lower()
                         if restart_int in yes_option:
@@ -248,10 +255,10 @@ def cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect):
 
 
 def send_email():
-    username = "jose.cristo@carniva.com"
-    password = "NTP cce2010"
-    mail_from = "jose.cristo@carnival.com"
-    mail_to = "jrcristo@gmail.com"
+    username = "hsc@mail02.ocean.com"
+    password = ""
+    mail_from = "hsc@mail02.ocean.com"
+    mail_to = "jose.cristo@hsc.com"
     mail_subject = "Test Subject"
     mail_body = "This is a test message"
 
@@ -260,9 +267,9 @@ def send_email():
     mimemsg['To'] = mail_to
     mimemsg['Subject'] = mail_subject
     mimemsg.attach(MIMEText(mail_body, 'plain'))
-    connection = smtplib.SMTP(host='smtp.office365.com', port=587)
+    connection = smtplib.SMTP(host='mailrelay.qa.ocean.com', port=25)
     connection.starttls()
-    connection.login(username, password)
+    # connection.login(username, password)
     connection.send_message(mimemsg)
     connection.quit()
 
