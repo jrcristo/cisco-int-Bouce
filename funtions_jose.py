@@ -163,7 +163,7 @@ def cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect):
                     print(' -> Operational PoE status is:', power_details.group(1))
                     print(
                         ' -> Max Power assigned on port ' + neigh['farEndInterface'] + ' is: ' + power_details.group(2))
-                    print(' -> Device id:', power_details.group(3))
+                    print(' -> Device id:', power_details.group(3), '\n')
                     if 'n/a' in power_details.group(3) and 'off' in power_details.group(1):
                         print('==> Please, create a ticket and call the ITO. Port ' + neigh[
                             'farEndInterface'] + " " + 'is down <==')
