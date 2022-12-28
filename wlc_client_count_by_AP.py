@@ -311,9 +311,9 @@ if __name__ == '__main__':
 
                 if '10.125.71.225' in line:
                     print('==> Enchanted WLC <==')
-                if '10.125.135.225' in line:
+                elif '10.125.135.225' in line:
                     print('==> Discovery WLC <==')
-                if '10.121.199.225' in line:
+                elif '10.121.199.225' in line:
                     print('==> Grand WLC <==')
                 elif '10.120.7.225' in line:
                     print('==> Caribbean WLC <==')
@@ -339,6 +339,8 @@ if __name__ == '__main__':
                     print('==> Sapphire WLC <==')
                 elif '10.125.7.225' in line:
                     print('==> Sky WLC <==')
+                elif '10.5.160.10' in line:
+                    print('==> Princess Cays WLC <==')
 
                 if '10.125.71.225' in line or '10.125.135.225' in line:
                     funtions_jose.wlc_client_count_by_ap_9800(client_count, net_connect)
