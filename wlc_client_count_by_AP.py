@@ -34,7 +34,7 @@ if __name__ == '__main__':
             ru = re.match('^RU', ship)
             sa = re.match('^SA', ship)
             pev2 = re.match('^PEV', ship)
-            test = re.match('^TEST', ship)
+            prc = re.match('^PRC', ship)
 
         except AttributeError:
             pass
@@ -283,9 +283,9 @@ if __name__ == '__main__':
             pass
 
         try:
-            if test.group():
-                isIP = '10.126.140.50'
-                print('==> Connecting to XiC-Old-WLCat' + " " + isIP)
+            if prc.group():
+                isIP = '10.5.160.10'
+                print('==> Connecting to Princess Cays' + " " + isIP)
                 JC = funtions_jose.connect_wlc(isIP)
                 net_connect = ConnectHandler(**JC)
                 net_connect.enable()
