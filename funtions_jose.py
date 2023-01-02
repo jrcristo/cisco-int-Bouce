@@ -170,11 +170,13 @@ def cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect):
                         exit(0)
                     else:
                         print('==> Testing Cable <==')
-                        cable_test = net_connect.send_command('test cable-diagnostics tdr interface ' + neigh['farEndInterface'], read_timeout=603)
+                        cable_test = net_connect.send_command(
+                            'test cable-diagnostics tdr interface ' + neigh['farEndInterface'], read_timeout=603)
                         if 'TDR test started on interface' in cable_test:
                             print(' -> TDR test started')
                         sleep(11)
-                        cable_test_result = net_connect.send_command('show cable-diagnostics tdr interface ' + neigh['farEndInterface'], read_timeout=603)
+                        cable_test_result = net_connect.send_command(
+                            'show cable-diagnostics tdr interface ' + neigh['farEndInterface'], read_timeout=603)
                         print(cable_test_result, '\n')
                         restart_int = input(
                             "==> do you want to reboot the interface facing the TL?, (Y) to continue (N) to cancel:").lower()
@@ -254,13 +256,15 @@ def cisco_prime_api_results_devices(tl_name, pi_ip, domain, net_connect):
         exit(0)
 
 
-def send_email():
+def send_email(body):
     username = "hsc@mail02.ocean.com"
-    password = ""
+    password = "123"
     mail_from = "hsc@mail02.ocean.com"
     mail_to = "jose.cristo@hsc.com"
-    mail_subject = "Test Subject"
-    mail_body = "This is a test message"
+    # mail_subject = "Test Subject"
+    mail_subject = 'testing'
+    # mail_body = "This is a test message"
+    mail_body = body
 
     mimemsg = MIMEMultipart()
     mimemsg['From'] = mail_from
@@ -268,7 +272,7 @@ def send_email():
     mimemsg['Subject'] = mail_subject
     mimemsg.attach(MIMEText(mail_body, 'plain'))
     connection = smtplib.SMTP(host='mailrelay.qa.ocean.com', port=25)
-    connection.starttls()
+    ### connection.starttls()
     # connection.login(username, password)
     connection.send_message(mimemsg)
     connection.quit()
@@ -1115,7 +1119,6 @@ def get_idf_switches_from_fzs(net_connect):
 
     # saving the Excel
     wb.save(name_detail + '_IDF_Inventory.xlsx')
-
 
 
 def get_ios_nxos_version_model(net_connect):
@@ -3349,6 +3352,9 @@ def get_wlc_ap_facts(ap_name, net_connect):
     # dot1x
     dot1 = re.search(r'AP\sDo\w+\sE.*', output)
     print(dot1.group())
+
+    # testing email
+    send_email(join.group())
 
 
 def get_wlc_airos_clients_connected_by_ap(ap_name, net_connect):
