@@ -521,7 +521,7 @@ def set_readers_interface(inter, net_connect):
     if '-' in inter:
         print('==> Selecting multiples interface with "-" command')
         config_commands = ['int' + " " + inter, 'desc [RDR] MED-READER', 'spanning-tree portfast',
-                           'spanning-tree bpduguard en', 'sw mod acc', 'sw acc vlan 1310',
+                           'spanning-tree bpduguard en', 'switchport nonegotiate', 'sw mod acc', 'sw acc vlan 1310',
                            'power inline static max 30000']
         output = net_connect.send_config_set(config_commands)
         if 'int rang' + " " + inter.lower() in output:
