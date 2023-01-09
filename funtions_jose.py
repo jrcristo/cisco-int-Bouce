@@ -773,7 +773,7 @@ def check_mac_add_interface_dst(mac, net_connect):
 # getting cdp_nei_IP
 def get_cdp_neighbor(inter, net_connect):
     # getting cdp neighbor
-    cdp = net_connect.send_command('sh cdp ne' + " " + inter + " " + 'de')
+    cdp = net_connect.send_command('sh cdp ne' + " " + inter + " " + 'de', read_timeout=903     )
 
     if 'Total cdp entries displayed : 0' in cdp:
         print('==> No CDP neighbor')
