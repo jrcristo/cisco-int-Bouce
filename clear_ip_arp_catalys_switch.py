@@ -17,8 +17,8 @@ if __name__ == '__main__':
     # executing the loop
     i = 2
     while i <= 254:
-        ip_arp_clean = net_connect.send_command("clear ip arp 10.5.144." + str(i))
-        print('Executing =>', "clear ip arp 10.5.144." + str(i))
+        ip_arp_clean = net_connect.send_command("clear ip arp 10.126.161." + str(i))
+        print('Executing =>', "clear ip arp 10.126.161." + str(i))
         i += 1
 
 
